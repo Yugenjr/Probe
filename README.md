@@ -1,6 +1,6 @@
 <!-- Banner Placeholder -->
 <div align="center">
-  <img src="docs/images/banner.png" alt="Probe Platform Banner" width="100%">
+  <img width="997" height="467" alt="image" src="https://github.com/user-attachments/assets/2ede2115-b49f-4619-827f-09d0b95a077c"  alt="Probe Platform Banner" width="100%"/>
 </div>
 
 # Probe
