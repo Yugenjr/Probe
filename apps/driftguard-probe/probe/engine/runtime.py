@@ -70,13 +70,20 @@ class InvestigationRuntime:
                     session.transition_to(InvestigationStatus.PLANNING, f"Running step: {step.description}")
                 elif role == "Investigator":
                     session.transition_to(InvestigationStatus.COLLECTING_EVIDENCE, f"Running step: {step.description}")
+                elif role == "Hypothesis":
+                    session.transition_to(InvestigationStatus.HYPOTHESIS_SYNTHESIS, f"Running step: {step.description}")
+                elif role == "Evaluator":
+                    session.transition_to(InvestigationStatus.EXPERIMENTAL_VALIDATION, f"Running step: {step.description}")
                 elif role == "Reporter":
                     session.transition_to(InvestigationStatus.REMEDIATION_READY, f"Running step: {step.description}")
 
                 await self.session_repo.save(session)
 
                 # Run agent using the executor
-                await self.executor.execute(role, session)
+                try:
+                    await self.executor.execute(role, session)
+                except Exception as e:
+                    logger.error("Agent execution failed for role '%s': %s", role, e)
 
             # 3. Complete investigation
             session.transition_to(

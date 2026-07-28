@@ -1,0 +1,146 @@
+{
+  "session_id": "session-api-01",
+  "investigation_id": "session-api-01",
+  "status": "RECEIVED",
+  "incident": {
+    "incident_id": "inc-api-test",
+    "model_id": "api-model",
+    "model_version": null,
+    "source_platform": "DriftGuard",
+    "trigger_type": "drift_detected",
+    "severity": "HIGH",
+    "status": "OPEN",
+    "detected_at": "2026-07-28T15:18:21.885056Z",
+    "raw_payload": {},
+    "metadata": {}
+  },
+  "investigation_context": null,
+  "active_workflow_name": null,
+  "universal_evidence": [
+    {
+      "evidence_id": "ev-api-01",
+      "source_provider": "Evidently",
+      "retrieved_by_tool": "DriftExtractor",
+      "timestamp": "2026-07-28T15:18:21.885080Z",
+      "summary": "Drift detected on age",
+      "confidence_weight": 0.9,
+      "evidence_type": "drift_stats",
+      "feature_name": "age",
+      "distance_algorithm": "psi",
+      "observed_distance": 0.18,
+      "alarm_threshold": 0.08,
+      "is_anomalous": true
+    }
+  ],
+  "evidence_items": [],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp-api-01",
+      "title": "Feature Skew",
+      "detailed_reasoning": "Observed statistical feature distance drift.",
+      "supporting_evidence_ids": [
+        "ev-api-01"
+      ],
+      "likelihood_score": 0.9,
+      "verified_by_simulation": false,
+      "explanation": "Observed statistical feature distance drift.",
+      "confidence": 0.9,
+      "weaknesses": [],
+      "created_at": "2026-07-28T15:18:21.885103Z"
+    }
+  ],
+  "evaluation_result": {
+    "best_hypothesis": {
+      "hypothesis_id": "hyp-api-01",
+      "title": "Feature Skew",
+      "detailed_reasoning": "Observed statistical feature distance drift.",
+      "supporting_evidence_ids": [
+        "ev-api-01"
+      ],
+      "likelihood_score": 0.9,
+      "verified_by_simulation": false,
+      "explanation": "Observed statistical feature distance drift.",
+      "confidence": 0.9,
+      "weaknesses": [],
+      "created_at": "2026-07-28T15:18:21.885103Z"
+    },
+    "alternatives": [],
+    "recommended_actions": [
+      {
+        "recommendation_id": "rec-26b334",
+        "action_type": "ROLLBACK_MODEL",
+        "title": "",
+        "justification": "",
+        "target_model_id": "",
+        "target_version": null,
+        "requires_human_approval": true,
+        "action": "Rollback",
+        "reason": "Preprocessing bug in deployed commit.",
+        "priority": "P0",
+        "estimated_risk": "Low",
+        "estimated_time": "5 min"
+      }
+    ],
+    "confidence": 0.9
+  },
+  "remediation_plan": null,
+  "report": {
+    "report_id": "rep-api-01",
+    "investigation_id": "session-api-01",
+    "generated_at": "2026-07-28T15:18:21.885143Z",
+    "incident_summary": {
+      "incident_id": "inc-api-test",
+      "model_id": "api-model",
+      "model_version": null,
+      "source_platform": "DriftGuard",
+      "trigger_type": "drift_detected",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "detected_at": "2026-07-28T15:18:21.885056Z",
+      "raw_payload": {},
+      "metadata": {}
+    },
+    "primary_root_cause": "Feature Skew",
+    "supporting_evidence": [],
+    "tested_hypotheses": [
+      {
+        "hypothesis_id": "hyp-api-01",
+        "title": "Feature Skew",
+        "detailed_reasoning": "Observed statistical feature distance drift.",
+        "supporting_evidence_ids": [
+          "ev-api-01"
+        ],
+        "likelihood_score": 0.9,
+        "verified_by_simulation": false,
+        "explanation": "Observed statistical feature distance drift.",
+        "confidence": 0.9,
+        "weaknesses": [],
+        "created_at": "2026-07-28T15:18:21.885103Z"
+      }
+    ],
+    "experiments": [],
+    "recommended_action": {
+      "recommendation_id": "rec-26b334",
+      "action_type": "ROLLBACK_MODEL",
+      "title": "",
+      "justification": "",
+      "target_model_id": "",
+      "target_version": null,
+      "requires_human_approval": true,
+      "action": "Rollback",
+      "reason": "Preprocessing bug in deployed commit.",
+      "priority": "P0",
+      "estimated_risk": "Low",
+      "estimated_time": "5 min"
+    },
+    "markdown_content": "# Investigation Report\n\n- Feature Skew"
+  },
+  "agent_results": [],
+  "started_at": "2026-07-28T15:18:21.885071Z",
+  "updated_at": "2026-07-28T15:18:21.885106Z",
+  "completed_at": null,
+  "execution_history": [
+    "[2026-07-28T15:18:21.885087+00:00] [Evidence] Accrued drift_stats evidence from Evidently.",
+    "[2026-07-28T15:18:21.885106+00:00] [Hypothesis] Synthesized hyp-api-01: Feature Skew (Likelihood: 0.9)."
+  ]
+}

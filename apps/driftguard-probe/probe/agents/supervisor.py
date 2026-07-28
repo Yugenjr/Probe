@@ -24,6 +24,8 @@ class SupervisorAgent(BaseAgent):
             steps=[
                 ExecutionStep(agent_role="Planner", description="Establish investigation scope and objectives"),
                 ExecutionStep(agent_role="Investigator", description="Ingest and analyze telemetry data anomalies"),
+                ExecutionStep(agent_role="Hypothesis", description="Formulate causal root-cause theories from evidence"),
+                ExecutionStep(agent_role="Evaluator", description="Evaluate hypotheses and recommend optimal intervention"),
                 ExecutionStep(agent_role="Reporter", description="Synthesize findings and compile forensic report")
             ]
         )

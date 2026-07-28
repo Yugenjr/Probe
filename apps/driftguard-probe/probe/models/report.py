@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from .incident import Incident
 from .evidence import EvidenceItem
-from .hypothesis import Hypothesis
+from ..domain.hypothesis import Hypothesis
 from .recommendation import Recommendation
 from .experiment import Experiment
 

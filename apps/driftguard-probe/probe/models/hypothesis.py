@@ -21,5 +21,13 @@ class Hypothesis(BaseModel):
     supporting_evidence_ids: List[str] = Field(default_factory=list, description="List of evidence IDs justifying this hypothesis")
     tested: bool = Field(default=False, description="Whether an experiment has evaluated this hypothesis")
     refuted: bool = Field(default=False, description="Whether experimental testing proved hypothesis incorrect")
+    explanation: str = Field(default="", description="Detailed explanation linking evidence to theoretical root cause")
+    confidence: float = Field(default=0.5, description="Estimated confidence score in root cause accuracy")
+    weaknesses: List[str] = Field(default_factory=list, description="Weaknesses of this hypothesis")
+
+
+class HypothesisCollection(BaseModel):
+    """Collection of formulated hypotheses."""
+    hypotheses: List[Hypothesis] = Field(default_factory=list)
 
     # TODO: Implementation pending for confidence updates based on Bayesian evaluation results

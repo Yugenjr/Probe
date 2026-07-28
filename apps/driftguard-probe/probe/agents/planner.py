@@ -8,6 +8,7 @@ from ..core.lifecycle import InvestigationStatus
 logger = logging.getLogger(__name__)
 
 
+import json
 from pydantic import BaseModel, Field
 
 class InvestigationPlan(BaseModel):
@@ -38,36 +39,28 @@ class PlannerAgent(BaseAgent):
             "evidence_needed": ["Drift telemetry", "Prometheus performance metrics"]
         }
         
-        if self.llm_provider:
-            # 1. Compile context data string
-            context_data = ""
+        if self.llm_provider and hasattr(self.llm_provider, "generate_step_structured"):
+            # 1. Compile context dictionary
+            context_data = {}
             if state.investigation_context:
-                context_data = state.investigation_context.model_dump_json(indent=2)
+                context_data["context"] = state.investigation_context.model_dump(mode="json")
             else:
-                context_data = state.incident.model_dump_json(indent=2)
+                context_data["incident"] = state.incident.model_dump(mode="json")
 
-            # 2. Build system and user prompts
-            system_prompt = (
-                "You are the Planner Agent for DriftGuard Probe, an AI-driven MLOps anomaly investigation system.\n"
-                "Your role is to examine the incident context and construct a structured investigation plan."
-            )
-            user_prompt = (
-                f"Here is the collected incident telemetry and context:\n\n{context_data}\n\n"
-                "Formulate a precise InvestigationPlan containing: primary objectives, diagnostic questions to answer, "
-                "and the specific evidence needed to confirm or falsify root causes."
-            )
+            context_json = json.dumps(context_data, indent=2)
 
             try:
-                # 3. Call structured LLM generation
-                plan = await self.llm_provider.generate_structured(
+                # 2. Call structured step generation
+                plan = await self.llm_provider.generate_step_structured(
+                    prompt_name="planner",
+                    prompt_version="v1",
                     response_model=InvestigationPlan,
-                    system_prompt=system_prompt,
-                    user_prompt=user_prompt,
+                    context={"context_json": context_json},
                     temperature=0.1
                 )
                 logger.info("Planner Agent successfully generated plan via LLM.")
                 
-                # 4. Update execution history and return JSON payload
+                # 3. Update execution history and return JSON payload
                 state.execution_history.append(
                     f"[Planner] LLM Generated InvestigationPlan: objectives={plan.objectives}, questions={plan.questions}, evidence_needed={plan.evidence_needed}"
                 )

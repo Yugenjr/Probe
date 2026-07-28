@@ -35,10 +35,14 @@ def get_agent_registry() -> AgentRegistry:
         from ..agents.supervisor import SupervisorAgent
         from ..agents.planner import PlannerAgent
         from ..agents.investigator import InvestigatorAgent
+        from ..agents.hypothesis import HypothesisAgent
+        from ..agents.evaluator import EvaluatorAgent
         from ..agents.reporter import ReporterAgent
 
         _registry.register("Supervisor", SupervisorAgent)
         _registry.register("Planner", PlannerAgent)
         _registry.register("Investigator", InvestigatorAgent)
+        _registry.register("Hypothesis", HypothesisAgent)
+        _registry.register("Evaluator", EvaluatorAgent)
         _registry.register("Reporter", ReporterAgent)
     return _registry

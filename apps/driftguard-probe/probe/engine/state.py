@@ -16,6 +16,7 @@ from ..domain.evidence import (
 from ..context.models import InvestigationContext
 # Backward-compatibility alias for legacy tests and workflows
 from ..models.evidence import EvidenceItem
+from ..models.recommendation import EvaluationResult
 
 
 class InvestigationStatus(str, Enum):
@@ -48,6 +49,7 @@ class AgentResult(BaseModel):
     cost: float = 0.0
     tokens: int = 0
     latency: float
+    retries: int = 0
 
 
 class InvestigationSession(BaseModel):
@@ -65,6 +67,7 @@ class InvestigationSession(BaseModel):
     universal_evidence: List[UniversalEvidence] = Field(default_factory=list, description="Strictly typed domain evidence items")
     evidence_items: List[EvidenceItem] = Field(default_factory=list, description="Legacy general evidence list for compatibility")
     hypotheses: List[Hypothesis] = Field(default_factory=list)
+    evaluation_result: Optional[EvaluationResult] = None
     remediation_plan: Optional[RemediationPlan] = None
     report: Optional[Any] = None
     agent_results: List[AgentResult] = Field(default_factory=list, description="Completed agent execution trace results")

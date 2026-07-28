@@ -28,7 +28,9 @@ def test_supervisor_initializes_and_completes_investigation():
     plan = asyncio.run(agent.execute(state))
 
     assert plan is not None
-    assert len(plan.steps) == 3
+    assert len(plan.steps) == 5
     assert plan.steps[0].agent_role == "Planner"
     assert plan.steps[1].agent_role == "Investigator"
-    assert plan.steps[2].agent_role == "Reporter"
+    assert plan.steps[2].agent_role == "Hypothesis"
+    assert plan.steps[3].agent_role == "Evaluator"
+    assert plan.steps[4].agent_role == "Reporter"
