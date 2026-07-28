@@ -9,19 +9,47 @@ class ContextBuilder:
     Its responsibility is ONLY to gather information.
     No reasoning. No confidence scoring. No recommendations. No hypothesis generation.
     """
-    def __init__(self, adapter: ProviderAdapter):
+    def __init__(self, adapter: Optional[ProviderAdapter] = None):
         self._adapter = adapter
 
-    def build_context(self, investigation_id: str, target_model_id: str, tenant_id: str = "default") -> InvestigationContext:
+    def build_context(
+        self,
+        investigation_id: str,
+        target_model_id: str,
+        tenant_id: str = "default",
+        model_details: Optional[Dict[str, Any]] = None,
+        model_versions: Optional[List[Dict[str, Any]]] = None,
+        audit_logs: Optional[List[Dict[str, Any]]] = None,
+        drift_logs: Optional[List[Dict[str, Any]]] = None,
+        retrain_logs: Optional[List[Dict[str, Any]]] = None,
+        metrics: Optional[List[Dict[str, Any]]] = None
+    ) -> InvestigationContext:
         now_utc = datetime.datetime.now(datetime.timezone.utc).isoformat()
         
-        # 1. Fetch raw data across provider interface without knowing implementation details
-        model_details = self._adapter.fetch_model_details(target_model_id)
-        model_versions = self._adapter.fetch_model_versions(target_model_id)
-        audit_logs = self._adapter.fetch_audit_logs(target_model_id)
-        drift_logs = self._adapter.fetch_drift_history(target_model_id, limit=500)
-        retrain_logs = self._adapter.fetch_retraining_history(target_model_id)
-        metrics = self._adapter.fetch_system_metrics(target_model_id)
+        # 1. Fetch raw data across provider interface or use injected raw data
+        if model_details is None and self._adapter:
+            model_details = self._adapter.fetch_model_details(target_model_id)
+        model_details = model_details or {}
+
+        if model_versions is None and self._adapter:
+            model_versions = self._adapter.fetch_model_versions(target_model_id)
+        model_versions = model_versions or []
+
+        if audit_logs is None and self._adapter:
+            audit_logs = self._adapter.fetch_audit_logs(target_model_id)
+        audit_logs = audit_logs or []
+
+        if drift_logs is None and self._adapter:
+            drift_logs = self._adapter.fetch_drift_history(target_model_id, limit=500)
+        drift_logs = drift_logs or []
+
+        if retrain_logs is None and self._adapter:
+            retrain_logs = self._adapter.fetch_retraining_history(target_model_id)
+        retrain_logs = retrain_logs or []
+
+        if metrics is None and self._adapter:
+            metrics = self._adapter.fetch_system_metrics(target_model_id)
+        metrics = metrics or []
 
         # 2. Extract active version
         active_version = model_details.get("version", "")
@@ -73,7 +101,7 @@ class ContextBuilder:
             investigation_id=investigation_id,
             tenant_id=tenant_id,
             timestamp_utc=now_utc,
-            provider_name=self._adapter.provider_name,
+            provider_name=self._adapter.provider_name if self._adapter else "DriftGuard-Core-v3",
             incident=incident_event,
             model=model_details,
             model_version=active_version,

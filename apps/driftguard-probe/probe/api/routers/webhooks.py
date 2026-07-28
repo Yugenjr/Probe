@@ -1,17 +1,17 @@
 """Incident webhook reception endpoints."""
-import uuid
-from fastapi import APIRouter, BackgroundTasks, status
+import logging
+from fastapi import APIRouter, Depends, HTTPException, status
 from ...schemas.webhooks import WebhookPayload, WebhookResponse
-from ...models.incident import Incident, IncidentSeverity
-from ...core.supervisor import CoreSupervisor
+from ...services.investigation_service import get_investigation_service, InvestigationService
+from ...services.driftguard_client import (
+    DriftGuardAuthenticationError,
+    DriftGuardNotFoundError,
+    DriftGuardServerError,
+    DriftGuardConnectionError,
+)
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/webhooks", tags=["webhooks"])
-
-
-async def background_investigate(incident: Incident) -> None:
-    """Asynchronous background execution handler running supervisor workflow loop."""
-    supervisor = CoreSupervisor()
-    await supervisor.initiate_investigation(incident)
 
 
 @router.post(
@@ -20,25 +20,46 @@ async def background_investigate(incident: Incident) -> None:
     status_code=status.HTTP_202_ACCEPTED,
     summary="Receive anomaly event payload and trigger autonomous investigation",
 )
-async def receive_webhook(payload: WebhookPayload, background_tasks: BackgroundTasks) -> WebhookResponse:
+async def receive_webhook(
+    payload: WebhookPayload,
+    investigation_service: InvestigationService = Depends(get_investigation_service)
+) -> WebhookResponse:
     """Accept incoming anomaly event notifications from DriftGuard or monitoring platforms."""
-    incident_id = f"inc-{uuid.uuid4().hex[:8]}"
-    inv_id = f"inv-{incident_id}"
-
-    incident = Incident(
-        incident_id=incident_id,
-        model_id=payload.model_id,
-        model_version=payload.model_version,
-        trigger_type=payload.event_type,
-        severity=IncidentSeverity.MEDIUM,
-        raw_payload=payload.model_dump(mode="json"),
-    )
-
-    # Dispatch non-blocking reasoning execution loop to background task queue
-    background_tasks.add_task(background_investigate, incident)
+    try:
+        session = await investigation_service.create_from_webhook(payload)
+    except DriftGuardAuthenticationError as e:
+        logger.warning("Authentication failure with SDK during webhook execution: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Unauthorized: SDK authentication failed."
+        )
+    except DriftGuardNotFoundError as e:
+        logger.warning("Resource not found in SDK during webhook execution: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Not Found: Model or resource not found on SDK."
+        )
+    except DriftGuardServerError as e:
+        logger.error("Internal Server Error reported by SDK during webhook execution: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal Server Error: SDK reported server failure."
+        )
+    except DriftGuardConnectionError as e:
+        logger.error("Connection failure calling SDK during webhook execution: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Service Unavailable: SDK connection failed."
+        )
+    except Exception as exc:
+        logger.error("Unknown error occurred during webhook execution: %s", exc, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Server Error: Unknown error during SDK integration."
+        )
 
     return WebhookResponse(
-        investigation_id=inv_id,
+        investigation_id=session.session_id,
         status="ACCEPTED",
         message="Investigation workflow dispatched asynchronously.",
     )

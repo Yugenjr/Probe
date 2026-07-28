@@ -2,7 +2,6 @@
 from typing import Any, Dict, List, Optional, Union
 from probe.interfaces.adapter import PlatformProvider
 from probe.interfaces.context import ResourceContext
-import httpx
 
 
 class DriftGuardAdapter(PlatformProvider):
@@ -10,33 +9,24 @@ class DriftGuardAdapter(PlatformProvider):
     
     Resides cleanly in top-level probe_adapters/ to guarantee zero core dependency leakage.
     """
-    def __init__(self, base_url: str = "http://localhost:8000", api_key: Optional[str] = None):
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
-        self._client = httpx.AsyncClient(base_url=self.base_url, timeout=10.0)
-
-    def _get_headers(self) -> Dict[str, str]:
-        headers = {}
-        if self.api_key:
-            headers["X-API-Key"] = self.api_key
-        return headers
-
-    async def _handle_response(self, response: httpx.Response) -> Any:
-        response.raise_for_status()
-        return response.json()
+    def __init__(self, base_url: Optional[str] = None, api_key: Optional[str] = None):
+        from probe.core.config import get_settings
+        from probe.services.driftguard_client import DriftGuardClient
+        settings = get_settings()
+        self.base_url = (base_url or settings.driftguard_base_url).rstrip("/")
+        self.api_key = api_key or settings.driftguard_api_key
+        self._client = DriftGuardClient(base_url=self.base_url, api_key=self.api_key)
 
     def _resolve_model_id(self, target: Union[str, ResourceContext]) -> str:
         return target.model_id if isinstance(target, ResourceContext) else str(target)
 
     async def get_model(self, target: Union[str, ResourceContext]) -> Dict[str, Any]:
         model_id = self._resolve_model_id(target)
-        resp = await self._client.get(f"/models/{model_id}", headers=self._get_headers())
-        return await self._handle_response(resp)
+        return await self._client.aget_model_details(model_id)
 
     async def get_drift_metrics(self, target: Union[str, ResourceContext], limit: int = 100) -> List[Dict[str, Any]]:
         model_id = self._resolve_model_id(target)
-        resp = await self._client.get(f"/drift/{model_id}", headers=self._get_headers())
-        data = await self._handle_response(resp)
+        data = await self._client.aget_drift_history(model_id)
         return data[:limit] if isinstance(data, list) else []
 
     async def fetch_feature_drift(self, target: Union[str, ResourceContext], time_range_hours: int = 24) -> List[Dict[str, Any]]:
@@ -53,8 +43,7 @@ class DriftGuardAdapter(PlatformProvider):
 
     async def get_audit_logs(self, target: Union[str, ResourceContext], limit: int = 50) -> List[Dict[str, Any]]:
         model_id = self._resolve_model_id(target)
-        resp = await self._client.get(f"/audit/{model_id}", headers=self._get_headers())
-        data = await self._handle_response(resp)
+        data = await self._client.aget_audit_logs(model_id)
         return data[:limit] if isinstance(data, list) else []
 
     async def fetch_audit_trails(self, target: Union[str, ResourceContext], limit: int = 50) -> List[Dict[str, Any]]:
@@ -65,8 +54,7 @@ class DriftGuardAdapter(PlatformProvider):
 
     async def trigger_retraining(self, target: Union[str, ResourceContext], dataset_path: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
         model_id = self._resolve_model_id(target)
-        resp = await self._client.post(f"/retrain/{model_id}", headers=self._get_headers(), json={"drift_score": 0.15})
-        return await self._handle_response(resp)
+        return await self._client.atrigger_retraining(model_id, drift_score=0.15)
 
     async def trigger_remediation_pipeline(self, target: Union[str, ResourceContext], parameters: Dict[str, Any]) -> Dict[str, Any]:
         return await self.trigger_retraining(target, **parameters)

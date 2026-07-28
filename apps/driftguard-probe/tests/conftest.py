@@ -51,3 +51,59 @@ def api_client() -> TestClient:
     app = create_app()
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture(autouse=True)
+def mock_driftguard_client_global():
+    """Globally mock DriftGuardClient to prevent tests from hitting live port 8000."""
+    from unittest.mock import MagicMock, AsyncMock, patch
+    with patch("probe.services.investigation_service.DriftGuardClient") as mock_service_client, \
+         patch("probe.providers.adapters.driftguard.DriftGuardClient") as mock_adapter_client, \
+         patch("probe.services.driftguard_client.DriftGuardClient") as mock_client_client:
+        
+        # Configure all mock classes to use the same mock instance
+        for mock_class in (mock_service_client, mock_adapter_client, mock_client_client):
+            mock_instance = mock_class.return_value
+            
+            # Async methods mocking
+            mock_instance.aget_model_details = AsyncMock(return_value={
+                "model_id": "test-model",
+                "status": "active",
+                "version": "9.9.9",
+                "drift_threshold": 0.15,
+                "features": [],
+                "reference_data_path": "",
+                "created_at": "2026-07-28T12:00:00"
+            })
+            mock_instance.aget_model_versions = AsyncMock(return_value=[
+                {"version": "9.9.9", "status": "champion"}
+            ])
+            mock_instance.aget_drift_history = AsyncMock(return_value=[
+                {"timestamp": "2026-07-28T12:00:00Z", "drift_score": 0.25, "features": {}, "prediction": {}}
+            ])
+            mock_instance.aget_audit_logs = AsyncMock(return_value=[])
+            mock_instance.aget_retraining_history = AsyncMock(return_value=[])
+            mock_instance.aget_metrics = AsyncMock(return_value="")
+            mock_instance.atrigger_retraining = AsyncMock(return_value={"status": "DISPATCHED"})
+            
+            # Sync methods mocking
+            mock_instance.get_model_details = MagicMock(return_value={
+                "model_id": "test-model",
+                "status": "active",
+                "version": "9.9.9",
+                "drift_threshold": 0.15,
+                "features": [],
+                "reference_data_path": "",
+                "created_at": "2026-07-28T12:00:00"
+            })
+            mock_instance.get_model_versions = MagicMock(return_value=[])
+            mock_instance.get_drift_history = MagicMock(return_value=[])
+            mock_instance.get_audit_logs = MagicMock(return_value=[])
+            mock_instance.get_retraining_history = MagicMock(return_value=[])
+            mock_instance.get_metrics = MagicMock(return_value="")
+            mock_instance.trigger_retraining = MagicMock(return_value={"status": "DISPATCHED"})
+            
+            mock_instance.aclose = AsyncMock()
+            mock_instance.close = MagicMock()
+            
+        yield mock_service_client.return_value

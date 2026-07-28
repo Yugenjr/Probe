@@ -18,6 +18,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     settings = get_settings()
     setup_logging(settings)
     initialize_telemetry(settings)
+    
+    # Initialize and subscribe the agent runtime to the event bus
+    from ..engine.runtime import get_investigation_runtime
+    runtime = get_investigation_runtime()
+    runtime.subscribe_to_bus()
+    
     logger.info("DriftGuard Probe application startup completed. AI Investigation Engine active.")
     yield
     logger.info("DriftGuard Probe graceful shutdown completed.")

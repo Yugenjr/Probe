@@ -13,6 +13,7 @@ from ..domain.evidence import (
     RunbookReferenceEvidence,
     UniversalEvidence,
 )
+from ..context.models import InvestigationContext
 # Backward-compatibility alias for legacy tests and workflows
 from ..models.evidence import EvidenceItem
 
@@ -21,6 +22,7 @@ class InvestigationStatus(str, Enum):
     """Exhaustive lifecycle execution phases governing automated forensic investigations."""
     RECEIVED = "RECEIVED"
     CREATED = "CREATED"
+    PLANNING = "PLANNING"
     COLLECTING_EVIDENCE = "COLLECTING_EVIDENCE"
     RESEARCHING = "RESEARCHING" # Legacy workflow compatibility
     ANALYZING = "ANALYZING" # Legacy workflow compatibility
@@ -35,6 +37,19 @@ class InvestigationStatus(str, Enum):
     FAILED = "FAILED"
 
 
+class AgentResult(BaseModel):
+    """Execution audit snapshot returned by a completed agent invocation."""
+    agent_name: str
+    started_at: datetime
+    finished_at: datetime
+    success: bool
+    output: Any
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+    cost: float = 0.0
+    tokens: int = 0
+    latency: float
+
+
 class InvestigationSession(BaseModel):
     """Runtime execution state representing the active investigation session.
     
@@ -45,11 +60,14 @@ class InvestigationSession(BaseModel):
     investigation_id: str = Field(..., description="Backwards-compatible investigation identifier alias")
     status: InvestigationStatus = Field(default=InvestigationStatus.RECEIVED)
     incident: Incident
+    investigation_context: Optional[InvestigationContext] = None
     active_workflow_name: Optional[str] = Field(default=None, description="Active deterministic workflow loop name")
     universal_evidence: List[UniversalEvidence] = Field(default_factory=list, description="Strictly typed domain evidence items")
     evidence_items: List[EvidenceItem] = Field(default_factory=list, description="Legacy general evidence list for compatibility")
     hypotheses: List[Hypothesis] = Field(default_factory=list)
     remediation_plan: Optional[RemediationPlan] = None
+    report: Optional[Any] = None
+    agent_results: List[AgentResult] = Field(default_factory=list, description="Completed agent execution trace results")
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None

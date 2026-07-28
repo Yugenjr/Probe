@@ -1,7 +1,7 @@
 """Async pub/sub Event Bus implementation."""
 import asyncio
 import logging
-from typing import Callable, Coroutine, Dict, List, Set
+from typing import Any, Callable, Coroutine, Dict, List, Set
 from .models import DomainEvent, EventType
 
 logger = logging.getLogger(__name__)

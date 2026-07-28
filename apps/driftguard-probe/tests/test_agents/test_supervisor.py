@@ -23,9 +23,12 @@ def test_supervisor_initializes_and_completes_investigation():
     assert state.status == InvestigationStatus.COLLECTING_EVIDENCE
     assert len(state.execution_history) == 1
 
-    # Execute supervisor agent workflow routing
+    # Execute supervisor agent to get ExecutionPlan
     agent = SupervisorAgent()
-    state = asyncio.run(agent.execute(state))
+    plan = asyncio.run(agent.execute(state))
 
-    assert state.status == InvestigationStatus.COMPLETED
-    assert len(state.execution_history) >= 3
+    assert plan is not None
+    assert len(plan.steps) == 3
+    assert plan.steps[0].agent_role == "Planner"
+    assert plan.steps[1].agent_role == "Investigator"
+    assert plan.steps[2].agent_role == "Reporter"
