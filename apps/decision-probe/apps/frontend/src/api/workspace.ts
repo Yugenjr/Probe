@@ -54,6 +54,41 @@ export const workspaceApi = {
     return res.json();
   },
 
+  async uploadDocument(id: string, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const res = await fetch(`${API_BASE}/workspaces/${id}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) throw new Error('Failed to upload document');
+    return res.json();
+  },
+
+  async getDocumentStatus(id: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/workspaces/${id}/status`);
+    if (!res.ok) throw new Error('Failed to fetch document status');
+    return res.json();
+  },
+
+  async startInvestigation(id: string, goal: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/workspaces/${id}/investigate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal })
+    });
+    if (!res.ok) throw new Error('Failed to start investigation');
+    return res.json();
+  },
+
+  async getPlan(id: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/workspaces/${id}/plan`);
+    if (!res.ok) throw new Error('Failed to fetch plan');
+    return res.json();
+  },
+
+
   async getProviders(): Promise<any[]> {
     const res = await fetch(`${API_BASE}/workspaces/settings/providers`);
     if (!res.ok) throw new Error('Failed to fetch providers');

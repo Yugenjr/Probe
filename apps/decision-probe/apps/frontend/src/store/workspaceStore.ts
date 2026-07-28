@@ -41,6 +41,8 @@ interface WorkspaceState {
   // Ephemeral UI State
   isThinking: boolean;
   errorMessage: string;
+  isPlanning: boolean;
+  indexingDocuments: any[];
   
   // Actions
   appendMessage: (msg: ChatMessage) => void;
@@ -48,6 +50,8 @@ interface WorkspaceState {
   clearExecutionLogs: () => void;
   setIsThinking: (val: boolean) => void;
   setErrorMessage: (msg: string) => void;
+  setIsPlanning: (val: boolean) => void;
+  setIndexingDocuments: (docs: any[]) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceState>()(
@@ -55,11 +59,15 @@ export const useWorkspaceStore = create<WorkspaceState>()(
     activeWorkspace: null,
     isThinking: false,
     errorMessage: "",
+    isPlanning: false,
+    indexingDocuments: [],
     
-    setActiveWorkspace: (workspace) => set({ activeWorkspace: workspace }),
+    setActiveWorkspace: (workspace) => set({ activeWorkspace: workspace, indexingDocuments: [] }),
     
     setIsThinking: (val) => set({ isThinking: val }),
     setErrorMessage: (msg) => set({ errorMessage: msg }),
+    setIsPlanning: (val) => set({ isPlanning: val }),
+    setIndexingDocuments: (docs) => set({ indexingDocuments: docs }),
     
     appendMessage: (msg) => set((state) => {
       if (!state.activeWorkspace) return state;

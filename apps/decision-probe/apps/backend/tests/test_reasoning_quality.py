@@ -15,9 +15,10 @@ def load_incident(filename: str):
 
 @pytest.fixture
 def client():
-    # Only run if we have an API key, otherwise skip
-    if not os.getenv("GEMINI_API_KEY"):
-        pytest.skip("GEMINI_API_KEY not set")
+    # Only run if we have a real API key, otherwise skip
+    groq_key = os.getenv("GROQ_API_KEY")
+    if not groq_key or groq_key == "dummy_key_for_testing" or groq_key == "dummy":
+        pytest.skip("GROQ_API_KEY not set or is dummy")
     return InferenceClient()
 
 def create_context(incident: dict) -> ReasoningContext:

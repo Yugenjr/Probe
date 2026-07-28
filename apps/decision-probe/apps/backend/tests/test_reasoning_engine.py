@@ -2,7 +2,7 @@ import pytest
 from sqlmodel import Session, SQLModel, create_engine
 from storage.models import Workspace, Block, ProviderSetting
 from services.context_builder import ContextBuilder
-from services.planner import Planner
+from services.planner import LegacyPlanner as Planner
 from services.prompt_builder import PromptBuilder
 
 @pytest.fixture(name="session")
@@ -54,5 +54,5 @@ def test_planner():
 def test_prompt_builder():
     builder = PromptBuilder()
     sys_prompt = builder.build_system_prompt()
-    assert "DecisionVerse Patch Schema" in sys_prompt
+    assert "PATCH SCHEMA" in sys_prompt
     assert "You are the reasoning engine" in sys_prompt

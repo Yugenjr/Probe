@@ -23,9 +23,8 @@ def dummy_context():
 async def test_inference_client_success(dummy_context):
     client = InferenceClient()
     
-    mock_response = MagicMock()
-    # Mocking the JSON response from Gemini
-    mock_response.text = json.dumps({
+    mock_choice = MagicMock()
+    mock_choice.message.content = json.dumps({
         "operations": [
             {
                 "op": "append_block",
@@ -37,26 +36,25 @@ async def test_inference_client_success(dummy_context):
         ]
     })
     
-    with patch('google.genai.models.AsyncModels.generate_content', new_callable=AsyncMock) as mock_generate:
-        mock_generate.return_value = mock_response
-        
+    mock_create = AsyncMock()
+    mock_create.return_value.choices = [mock_choice]
+    
+    with patch.object(client.client.chat.completions, 'create', mock_create):
         result = await client.generate(dummy_context)
         
         assert isinstance(result, LLMResponse)
         assert len(result.operations) == 1
         assert result.operations[0].op == "append_block"
         assert result.operations[0].payload.type == "decision"
-        mock_generate.assert_called_once()
+        mock_create.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_inference_client_retry_logic(dummy_context):
     client = InferenceClient()
     
-    invalid_response = MagicMock()
-    invalid_response.text = "this is not json"
-    
-    valid_response = MagicMock()
-    valid_response.text = json.dumps({
+    # Mocking first call throwing JSON Decode error, second succeeding
+    mock_choice_valid = MagicMock()
+    mock_choice_valid.message.content = json.dumps({
         "operations": [
             {
                 "op": "append_block",
@@ -68,12 +66,22 @@ async def test_inference_client_retry_logic(dummy_context):
         ]
     })
     
-    with patch('google.genai.models.AsyncModels.generate_content', new_callable=AsyncMock) as mock_generate:
-        # First call fails, second succeeds
-        mock_generate.side_effect = [invalid_response, valid_response]
-        
+    mock_choice_invalid = MagicMock()
+    mock_choice_invalid.message.content = "this is not json"
+    
+    mock_create = AsyncMock()
+    # First returns invalid response (will throw json.JSONDecodeError), second returns valid
+    mock_resp_invalid = MagicMock()
+    mock_resp_invalid.choices = [mock_choice_invalid]
+    mock_resp_valid = MagicMock()
+    mock_resp_valid.choices = [mock_choice_valid]
+    
+    mock_create.side_effect = [mock_resp_invalid, mock_resp_valid]
+    
+    with patch.object(client.client.chat.completions, 'create', mock_create):
         result = await client.generate(dummy_context)
         
         assert isinstance(result, LLMResponse)
         assert len(result.operations) == 1
-        assert mock_generate.call_count == 2
+        assert mock_create.call_count == 2
+
