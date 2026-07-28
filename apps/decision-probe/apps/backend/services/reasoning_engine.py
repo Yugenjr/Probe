@@ -1,6 +1,6 @@
 from sqlmodel import Session
 from .context_builder import ContextBuilder
-from .planner import Planner
+from .planner import LegacyPlanner as Planner
 from .prompt_builder import PromptBuilder
 from .patch_builder import PatchBuilder
 from storage.models import ExecutionLog

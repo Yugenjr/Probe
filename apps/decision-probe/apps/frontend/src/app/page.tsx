@@ -12,7 +12,9 @@ export default function Home() {
     activeWorkspace, setActiveWorkspace, applyPatches,
     isThinking, setIsThinking,
     errorMessage, setErrorMessage,
-    appendMessage, appendLog, clearExecutionLogs
+    appendMessage, appendLog, clearExecutionLogs,
+    isPlanning, setIsPlanning,
+    indexingDocuments, setIndexingDocuments
   } = useWorkspaceStore();
   
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
@@ -22,6 +24,55 @@ export default function Home() {
   const [isOffline, setIsOffline] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [investigationGoal, setInvestigationGoal] = useState("Analyze the uploaded files for anomalies and root causes.");
+
+  useEffect(() => {
+    if (!activeWorkspace) return;
+    
+    const fetchStatus = async () => {
+      try {
+        const statusData = await workspaceApi.getDocumentStatus(activeWorkspace.id);
+        setIndexingDocuments(statusData.documents || []);
+      } catch (e) {
+        console.error("Failed to fetch document status:", e);
+      }
+    };
+    
+    fetchStatus();
+    
+    const interval = setInterval(async () => {
+      try {
+        const statusData = await workspaceApi.getDocumentStatus(activeWorkspace.id);
+        setIndexingDocuments(statusData.documents || []);
+      } catch (e) {
+        console.error("Error polling document status:", e);
+      }
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [activeWorkspace, setIndexingDocuments]);
+
+  const handleStartInvestigation = async (goalText: string) => {
+    if (!activeWorkspace || isPlanning) return;
+    setIsPlanning(true);
+    setErrorMessage("");
+    clearExecutionLogs();
+    appendLog({ message: "Starting lead planner agent...", success: true });
+    
+    try {
+      await workspaceApi.startInvestigation(activeWorkspace.id, goalText);
+      appendLog({ message: "Investigation plan generated.", success: true });
+      
+      const updatedWs = await workspaceApi.getWorkspace(activeWorkspace.id);
+      setActiveWorkspace(updatedWs);
+    } catch (e: any) {
+      setErrorMessage(e.message || "Failed to generate investigation plan.");
+      appendLog({ message: "Planning failed.", success: false });
+    } finally {
+      setIsPlanning(false);
+    }
+  };
+
 
   const thinkingStages = [
     "Planning investigation",
@@ -91,10 +142,19 @@ export default function Home() {
   const onDrop = async (acceptedFiles: File[]) => {
     if (!activeWorkspace || acceptedFiles.length === 0) return;
     try {
-      const block = await workspaceApi.uploadResource(activeWorkspace.id, acceptedFiles[0]);
-      applyPatches([{ type: 'PatchOperation', operations: [{ op: 'append_block', payload: block }] }]);
-    } catch (e) { console.error("Failed to upload resource:", e); }
+      appendLog({ message: `Uploading ${acceptedFiles[0].name}...`, success: true });
+      await workspaceApi.uploadDocument(activeWorkspace.id, acceptedFiles[0]);
+      appendLog({ message: `Upload completed. Parsing and indexing document...`, success: true });
+      
+      const statusData = await workspaceApi.getDocumentStatus(activeWorkspace.id);
+      setIndexingDocuments(statusData.documents || []);
+    } catch (e) { 
+      console.error("Failed to upload document:", e); 
+      setErrorMessage("Failed to upload document.");
+      appendLog({ message: "Upload failed.", success: false });
+    }
   };
+
 
   const { getInputProps, open } = useDropzone({ onDrop, noClick: true, noKeyboard: true });
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
@@ -370,23 +430,105 @@ export default function Home() {
           )}
 
           {activeWorkspace && !hasBlocks && (
-            <div className="flex flex-col items-center justify-center h-full text-center px-8">
-              <div className="grid h-16 w-16 place-items-center rounded-xl bg-raised/50 border border-border-subtle mb-6">
-                <span className="text-2xl opacity-50">🔍</span>
+            <div className="mx-auto max-w-2xl py-12 px-8 space-y-8">
+              <div className="text-center">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-raised/50 border border-border-subtle mb-4">
+                  <span className="text-xl">🔍</span>
+                </div>
+                <h2 className="text-[17px] font-semibold text-fg-strong">Investigation Workspace Setup</h2>
+                <p className="mt-1.5 text-[12.5px] text-fg-muted max-w-md mx-auto">
+                  Provide an investigation goal and upload system logs, PDFs, or configurations.
+                </p>
               </div>
-              <h2 className="text-[15px] font-medium text-fg-strong mb-2">Investigation Workspace</h2>
-              <p className="text-[13px] text-fg-muted max-w-[320px] mb-8">
-                Upload evidence or provide an incident description to begin the automated investigation.
-              </p>
-              
-              <div className="flex flex-col gap-2 w-64 text-left">
-                <button onClick={() => { setChatMessage("Investigate this incident"); chatInputRef.current?.focus(); }} className="flex items-center justify-between px-4 py-2.5 rounded-lg border border-border-subtle bg-raised/30 hover:bg-raised transition-colors group">
-                  <span className="text-[12.5px] text-foreground font-medium">Start investigation</span>
-                  <span className="text-fg-muted group-hover:text-foreground">→</span>
-                </button>
-                <button onClick={open} className="flex items-center justify-between px-4 py-2.5 rounded-lg border border-border-subtle bg-raised/30 hover:bg-raised transition-colors group">
-                  <span className="text-[12.5px] text-foreground font-medium">Upload evidence files</span>
-                  <span className="text-fg-muted group-hover:text-foreground">→</span>
+
+              {/* Ingestion & Files Section */}
+              <div className="space-y-4 rounded-xl border border-border bg-panel p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-fg-strong">Evidence & Documents</h3>
+                  <button 
+                    onClick={open}
+                    className="rounded bg-accent/10 px-2.5 py-1 text-[11.5px] font-medium text-accent border border-accent/20 hover:bg-accent/20 transition-all"
+                  >
+                    Upload File
+                  </button>
+                </div>
+
+                {/* Indexing documents list */}
+                {indexingDocuments.length > 0 ? (
+                  <ul className="space-y-2">
+                    {indexingDocuments.map((doc: any) => (
+                      <li key={doc.id} className="flex items-center justify-between text-[12.5px] rounded border border-border-subtle bg-background/50 px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[14px]">📄</span>
+                          <span className="font-medium text-foreground truncate max-w-[260px]">{doc.filename}</span>
+                          <span className="text-[10px] uppercase text-fg-muted bg-raised px-1 py-0.5 rounded font-mono">{doc.file_type}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          {doc.status === "pending" && (
+                            <span className="text-[11px] text-fg-muted flex items-center gap-1">
+                              <span className="inline-block h-1.5 w-1.5 rounded-full bg-fg-muted animate-pulse" /> Pending
+                            </span>
+                          )}
+                          {doc.status === "processing" && (
+                            <span className="text-[11px] text-accent font-medium flex items-center gap-1">
+                              <span className="animate-spin text-[10px]">⟳</span> Processing
+                            </span>
+                          )}
+                          {doc.status === "indexed" && (
+                            <span className="text-[11px] text-success font-medium flex items-center gap-1">
+                              ✓ Indexed <span className="text-[10px] text-fg-muted">({doc.chunk_count} chunks)</span>
+                            </span>
+                          )}
+                          {doc.status === "failed" && (
+                            <span className="text-[11px] text-danger font-medium flex items-center gap-1" title={doc.error_message}>
+                              ✗ Failed
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div 
+                    onClick={open}
+                    className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border-subtle py-8 text-center cursor-pointer hover:bg-raised/30 transition-all"
+                  >
+                    <span className="text-xl mb-1.5">📥</span>
+                    <span className="text-[12px] text-fg-muted font-medium">Drag & Drop files here, or click to browse</span>
+                    <span className="text-[10.5px] text-fg-muted mt-0.5">Supports PDF, TXT, MD, LOG</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Goal Input Section */}
+              <div className="space-y-3">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-fg-strong">Investigation Goal</label>
+                <textarea
+                  value={investigationGoal}
+                  onChange={(e) => setInvestigationGoal(e.target.value)}
+                  placeholder="Describe what you want the agent to investigate (e.g. Analyze logs to identify source of the database timeout)..."
+                  className="w-full rounded-xl border border-border bg-panel px-4 py-3 text-[13px] text-foreground placeholder:text-fg-muted focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none min-h-[90px] resize-y shadow-sm"
+                />
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <button
+                  disabled={isPlanning}
+                  onClick={() => handleStartInvestigation(investigationGoal)}
+                  className="w-full flex h-10 items-center justify-center gap-2 rounded-xl bg-accent text-[13px] font-semibold text-accent-foreground shadow-md hover:bg-accent/90 disabled:bg-accent/50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isPlanning ? (
+                    <>
+                      <span className="animate-spin text-[14px]">⟳</span>
+                      <span>Planner Agent reasoning...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🚀</span>
+                      <span>Start Investigation</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

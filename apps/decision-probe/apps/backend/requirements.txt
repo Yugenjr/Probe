@@ -3,3 +3,6 @@ uvicorn
 pydantic
 pydantic-settings
 sqlmodel
+pypdf
+groq
+

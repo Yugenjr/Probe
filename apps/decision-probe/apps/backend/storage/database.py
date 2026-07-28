@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, create_engine, Session
-from .models import Workspace, Block
+from .models import Workspace, Block, Document, DocumentChunk
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
