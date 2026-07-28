@@ -162,6 +162,12 @@ Expected JSON Output Schema:
         else:
             ref_chunk2 = ref_chunk
 
+        # Dynamically scale confidence if multiple evidence sources are provided
+        doc_ids = {c.get("document_id") for c in chunks if isinstance(c, dict) and c.get("document_id")}
+        has_multiple_docs = len(doc_ids) >= 2 or len(chunks) >= 2
+        
+        h1_confidence = 0.93 if has_multiple_docs else 0.80
+
         return {
             "hypotheses": [
                 {
@@ -169,7 +175,7 @@ Expected JSON Output Schema:
                     "title": h1_title,
                     "description": h1_desc,
                     "supporting_evidence": [ref_chunk],
-                    "confidence": 0.80,
+                    "confidence": h1_confidence,
                     "assumptions": ["Connection pool size was configured too low", "Concurrent user requests increased"]
                 },
                 {
