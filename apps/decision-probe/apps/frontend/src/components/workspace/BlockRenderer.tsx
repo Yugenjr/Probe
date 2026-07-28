@@ -11,6 +11,24 @@ import { SummaryBlock } from './SummaryBlock';
 import { PlanBlock } from './PlanBlock';
 import { HypothesisBlock } from './HypothesisBlock';
 import { CriticBlock } from './CriticBlock';
+import { ValidationBlock } from './ValidationBlock';
+import { RemediationBlock } from './RemediationBlock';
+import { EvidenceGapBlock } from './EvidenceGapBlock';
+import { EvidenceRequestBlock } from './EvidenceRequestBlock';
+import { InvestigationIterationBlock } from './InvestigationIterationBlock';
+import { ExternalEvidenceBlock } from './ExternalEvidenceBlock';
+import { DeploymentChangeBlock } from './DeploymentChangeBlock';
+import { MetricAnalysisBlock } from './MetricAnalysisBlock';
+import { GitAnalysisBlock } from './GitAnalysisBlock';
+import { IncidentSummaryBlock } from './IncidentSummaryBlock';
+import { SeverityBlock } from './SeverityBlock';
+import { ResponsePlanBlock } from './ResponsePlanBlock';
+import { CommunicationBlock } from './CommunicationBlock';
+import { ResolutionBlock } from './ResolutionBlock';
+import { KnowledgeBlock } from './KnowledgeBlock';
+import { SimilarIncidentBlock } from './SimilarIncidentBlock';
+import { LearningRecommendationBlock } from './LearningRecommendationBlock';
+import { FailurePatternBlock } from './FailurePatternBlock';
 import { Block } from '@/store/workspaceStore';
 
 const BlockRegistry: Record<string, React.FC<{ block: Block }>> = {
@@ -24,7 +42,25 @@ const BlockRegistry: Record<string, React.FC<{ block: Block }>> = {
   plan: PlanBlock as any,
   hypotheses: HypothesisBlock as any,
   review: CriticBlock as any,
-  root_cause: DecisionBlock as any
+  root_cause: DecisionBlock as any,
+  validation: ValidationBlock as any,
+  remediation: RemediationBlock as any,
+  evidence_gap: EvidenceGapBlock as any,
+  evidence_request: EvidenceRequestBlock as any,
+  investigation_iteration: InvestigationIterationBlock as any,
+  external_evidence: ExternalEvidenceBlock as any,
+  deployment_changes: DeploymentChangeBlock as any,
+  metric_analysis: MetricAnalysisBlock as any,
+  git_analysis: GitAnalysisBlock as any,
+  incident_summary: IncidentSummaryBlock as any,
+  severity: SeverityBlock as any,
+  response_plan: ResponsePlanBlock as any,
+  communication: CommunicationBlock as any,
+  resolution: ResolutionBlock as any,
+  incident_knowledge: KnowledgeBlock as any,
+  incident_similarity: SimilarIncidentBlock as any,
+  learning_recommendations: LearningRecommendationBlock as any,
+  failure_patterns: FailurePatternBlock as any
 };
 
 export function BlockRenderer({ block }: { block: Block }) {
