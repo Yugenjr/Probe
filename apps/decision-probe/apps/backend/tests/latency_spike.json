@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-003",
+  "title": "API Gateway Latency Spike",
+  "source": "Datadog Alerts",
+  "severity": "critical",
+  "description": "P99 latency on the main API gateway increased from 45ms to 1200ms. Error rates on downstream services are rising.",
+  "timestamp": "2026-07-27T11:15:00Z",
+  "metrics": {
+    "p99_latency_ms": 1200,
+    "error_rate": "4.2%",
+    "affected_endpoints": ["/api/v1/checkout", "/api/v1/search"]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-004",
+  "title": "Unexpected Increase in Subscription Cancellations",
+  "source": "Stripe Webhooks",
+  "severity": "medium",
+  "description": "Daily subscription cancellations are up 25% compared to the 30-day moving average. The most common exit reason selected is 'Too expensive'.",
+  "timestamp": "2026-07-27T09:00:00Z",
+  "metrics": {
+    "cancellation_rate_increase": "25%",
+    "primary_reason": "Pricing",
+    "mrr_impact": "-$12,500"
+  }
+}

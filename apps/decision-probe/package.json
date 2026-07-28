@@ -1,0 +1,13 @@
+{
+  "name": "decision-verse",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AI-native Decision Workspace",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces"
+  }
+}

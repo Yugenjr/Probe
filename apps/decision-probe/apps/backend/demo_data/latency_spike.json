@@ -1,0 +1,9 @@
+{
+  "incident_id": "INC-2026-1022",
+  "title": "Database Connection Pool Exhaustion & Search API Latency",
+  "description": "The primary Postgres database is rejecting connections. Search API latency has spiked from 45ms to 12,000ms.",
+  "observed_issue": "Max connections reached on pg-cluster-1. API gateway returning 503 Service Unavailable for search requests.",
+  "source": "Prometheus & Grafana",
+  "severity": "medium",
+  "affected_systems": ["search-api", "postgres-primary", "api-gateway"]
+}

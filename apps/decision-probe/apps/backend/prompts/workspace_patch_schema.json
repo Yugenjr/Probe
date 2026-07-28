@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["operations"],
+  "properties": {
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["op", "payload"],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": ["append_block", "update_block", "delete_block", "replace_block"]
+          },
+          "target_id": {
+            "type": ["string", "null"]
+          },
+          "payload": {
+            "type": "object",
+            "required": ["type", "content"],
+            "properties": {
+              "id": {
+                "type": ["string", "null"]
+              },
+              "type": {
+                "type": "string",
+                "enum": ["incident", "reasoning", "decision", "evidence", "timeline", "chart", "summary", "metrics"]
+              },
+              "order": {
+                "type": ["integer", "null"]
+              },
+              "content": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

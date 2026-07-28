@@ -1,0 +1,8 @@
+evidently==0.4.30
+pandas==2.2.2
+numpy==1.26.4
+pydantic==1.10.13
+fastapi==0.111.0
+uvicorn==0.28.1
+python-dotenv==1.0.1
+prometheus-client==0.20.0

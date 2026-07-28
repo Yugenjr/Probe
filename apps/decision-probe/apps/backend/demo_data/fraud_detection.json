@@ -1,0 +1,9 @@
+{
+  "incident_id": "INC-2026-9901",
+  "title": "Abnormal Account Creation Spike & High Risk Transactions",
+  "description": "Risk models flagged a 400% increase in new account creations from ASN 13335 (Cloudflare) associated with immediate high-value transfers.",
+  "observed_issue": "High rate of chargebacks and flagged transfers bypassing initial KYC gates.",
+  "source": "Risk & Fraud ML Model (DriftGuard)",
+  "severity": "high",
+  "affected_systems": ["auth-service", "kyc-gateway", "ledger-db"]
+}

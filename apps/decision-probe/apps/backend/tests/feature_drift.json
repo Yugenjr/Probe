@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-002",
+  "title": "Recommendation Engine Accuracy Drop",
+  "source": "ML Metrics Dashboard",
+  "severity": "medium",
+  "description": "CTR on the home page recommendations dropped by 14% over the last 3 days. Model drift suspected.",
+  "timestamp": "2026-07-27T10:00:00Z",
+  "metrics": {
+    "ctr_drop": "14%",
+    "model_version": "v3.2.1",
+    "last_trained": "2026-07-20"
+  }
+}

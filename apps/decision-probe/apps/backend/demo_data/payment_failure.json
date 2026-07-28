@@ -1,0 +1,9 @@
+{
+  "incident_id": "INC-2026-8092",
+  "title": "Stripe API Webhook Latency & Payment Failures",
+  "description": "Critical alerting triggered on Checkout Service. Payments are timing out after 30s.",
+  "observed_issue": "Checkout API returning 504 Gateway Timeout for 45% of requests over the last 15 minutes.",
+  "source": "Datadog APM",
+  "severity": "critical",
+  "affected_systems": ["checkout-service", "billing-worker", "stripe-gateway"]
+}

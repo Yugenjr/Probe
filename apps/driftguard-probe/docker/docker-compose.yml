@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  probe-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: probe-gateway-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PROBE_DATABASE_URL=postgresql+asyncpg://probe_user:secret_pw@postgres:5432/probedb
+      - PROBE_REDIS_URL=redis://redis:6379/0
+      - PROBE_VECTOR_URL=http://qdrant:6333
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+    networks:
+      - probe-internal
+    restart: always
+
+  probe-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: probe-inference-worker
+    command: ["python", "-m", "probe.engine.worker"]
+    environment:
+      - PROBE_DATABASE_URL=postgresql+asyncpg://probe_user:secret_pw@postgres:5432/probedb
+      - PROBE_REDIS_URL=redis://redis:6379/0
+      - PROBE_VECTOR_URL=http://qdrant:6333
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+    networks:
+      - probe-internal
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: probe-state-store
+    environment:
+      - POSTGRES_USER=probe_user
+      - POSTGRES_PASSWORD=secret_pw
+      - POSTGRES_DB=probedb
+    volumes:
+      - pg_state_data:/var/lib/postgresql/data
+    networks:
+      - probe-internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: probe-event-broker
+    ports:
+      - "6379:6379"
+    networks:
+      - probe-internal
+
+  qdrant:
+    image: qdrant/qdrant:v1.9.0
+    container_name: probe-vector-memory
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - probe-internal
+
+networks:
+  probe-internal:
+    driver: bridge
+
+volumes:
+  pg_state_data:
+  qdrant_storage:

@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-005",
+  "title": "Stripe Integration Failing for EU Customers",
+  "source": "Sentry",
+  "severity": "critical",
+  "description": "Payments failing for users originating from the EU. The error logs indicate a missing SCA (Strong Customer Authentication) intent parameter.",
+  "timestamp": "2026-07-27T12:00:00Z",
+  "metrics": {
+    "failed_transactions": 341,
+    "error_code": "payment_intent_authentication_failure",
+    "region_affected": "EU"
+  }
+}
