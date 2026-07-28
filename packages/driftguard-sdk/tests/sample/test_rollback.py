@@ -26,9 +26,9 @@ from driftguard import DriftGuard
 # Config
 # ──────────────────────────────────────────────
 API_URL    = "http://localhost:8000"
-API_KEY    = "dg-b78ddaa2f14565939175e68896671883"
-MODEL_ID   = "demo-rollback-fixed"
-PROJECT_ID = 5
+API_KEY    = "dg-72159ab831942f6bfb2dea30c3b460a9"
+MODEL_ID   = "demo-rollback-v2"
+PROJECT_ID = None
 
 print("=" * 60)
 print(f"  DriftGuard Rollback Test")
