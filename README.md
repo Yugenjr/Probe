@@ -1,6 +1,6 @@
 <!-- Banner Placeholder -->
 <div align="center">
-  <img src="https://via.placeholder.com/1200x300?text=Probe+Platform" alt="Probe Banner" width="100%">
+  <img src="docs/images/banner.png" alt="Probe Platform Banner" width="100%">
 </div>
 
 # Probe
