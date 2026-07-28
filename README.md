@@ -31,24 +31,21 @@ Probe is structured as a monorepo containing distinct applications and a shared 
 
 ```mermaid
 graph TD
-    Probe[Probe Repository]
-    Apps[apps/]
-    Packages[packages/]
-    
-    DP[decision-probe]
-    DGP[driftguard-probe]
-    SDK[driftguard-sdk]
-    
-    Probe --> Apps
-    Probe --> Packages
-    
-    Apps --> DP
-    Apps --> DGP
-    
-    Packages --> SDK
-    
-    DP -.->|depends on| SDK
-    DGP -.->|depends on| SDK
+    subgraph "Probe Platform Architecture"
+        SDK["DriftGuard SDK<br/>(Shared Runtime, Adapters, Pipelines)"]
+        
+        DP["Decision Probe<br/>(Historical Investigation)"]
+        DGP["DriftGuard Probe<br/>(Real-time Engine)"]
+        
+        SDK ===|Powers| DP
+        SDK ===|Powers| DGP
+    end
+
+    DP_In["Reports, PDFs, Logs"] -.-> DP
+    DP -.-> DP_Out["Hypotheses, Reasoning, RCA"]
+
+    DGP_In["Telemetry, Alerts, Drift"] -.-> DGP
+    DGP -.-> DGP_Out["Autonomous Decisions, Remediation"]
 ```
 
 * **`apps/decision-probe`**: AI-powered incident investigation application focused on historical data, documents, and post-mortem analysis.
@@ -61,17 +58,58 @@ graph TD
 
 Probe utilizes a specialized, multi-agent architecture where distinct agents collaborate to resolve complex investigations.
 
+```mermaid
+graph TD
+    Req["User Request"] --> Planner
+    
+    subgraph "Reasoning Pipeline"
+        Planner --> Architect
+        Architect --> Investigator
+        Investigator --> Researcher
+        Researcher --> Hypothesis
+        Hypothesis --> Causal["Causal Agent"]
+        Causal --> Critic
+        Critic --> Evaluator
+        Evaluator --> Reporter
+        Reporter --> Supervisor
+        
+        Supervisor --> Remediation["Remediation Agent"]
+        Supervisor --> Compliance["Compliance Agent"]
+    end
+    
+    Memory[("Memory Agent")]
+    
+    Planner -.- Memory
+    Architect -.- Memory
+    Investigator -.- Memory
+    Researcher -.- Memory
+    Hypothesis -.- Memory
+    Causal -.- Memory
+    Critic -.- Memory
+    Evaluator -.- Memory
+    Supervisor -.- Memory
+    
+    Supervisor --> Validation["Validation Agent"]
+    Remediation --> Validation
+    Compliance --> Validation
+    
+    Validation --> Out["Decision / Report"]
+```
+
 * **Planner Agent**: Deconstructs high-level objectives into sequential, actionable investigation steps.
+* **Architect Agent**: Analyzes structural dependencies and system topologies to provide architectural context.
 * **Investigator Agent**: Navigates environments and queries systems to gather required data.
 * **Researcher Agent**: Performs deep contextual retrieval across documents, wikis, and historical incident records.
 * **Hypothesis Agent**: Synthesizes available evidence to formulate potential root causes and contributing factors.
-* **Causal Analysis Agent**: Validates hypotheses against the evidence timeline to establish definitive cause-and-effect relationships.
+* **Causal Agent**: Validates hypotheses against the evidence timeline to establish definitive cause-and-effect relationships.
 * **Critic Agent**: Challenges proposed hypotheses and reasoning chains to eliminate bias and logical fallacies.
 * **Evaluator Agent**: Quantifies the confidence level of conclusions based on evidence quality and reasoning validity.
-* **Reporter Agent**: Compiles findings, timelines, and remediation steps into structured, human-readable investigation reports.
-* **Supervisor Agent**: Orchestrates the agent collective, managing state, routing tasks, and ensuring adherence to the investigation plan.
+* **Reporter Agent**: Compiles findings, timelines, and remediation steps into structured, human-readable reports.
+* **Supervisor Agent**: Orchestrates the agent collective, managing state, routing tasks, and ensuring adherence to the plan.
 * **Memory Agent**: Maintains short-term context and long-term investigation history for stateful reasoning.
-* **Architect Agent**: Analyzes structural dependencies and system topologies to provide architectural context to investigations.
+* **Remediation Agent**: Formulates and executes automated corrective actions on live infrastructure.
+* **Compliance Agent**: Ensures proposed actions and investigations adhere to organizational policies and regulatory standards.
+* **Validation Agent**: Performs final integrity and safety checks before producing decisions or outputs.
 
 ---
 
@@ -81,15 +119,25 @@ The platform follows a deterministic, evidence-based investigation lifecycle.
 
 ```mermaid
 graph TD
-    A[User Input / System Alert] --> B(Planning)
-    B --> C(Evidence Collection)
-    C --> D(Reasoning)
-    D --> E(Hypothesis Generation)
-    E --> F(Confidence Evaluation)
-    F --> G{Decision}
-    G -->|Insufficient Evidence| C
-    G -->|Threshold Met| H(Report Generation)
-    H --> I[Workspace Update / Remediation]
+    subgraph "Input Layer"
+        DP_In["Decision Probe<br/>(Historical Input)"]
+        DGP_In["DriftGuard Probe<br/>(Live Telemetry)"]
+    end
+
+    DP_In --> Plan["Planning"]
+    DGP_In --> Plan
+    
+    subgraph "Shared Investigation Lifecycle"
+        Plan --> Evid["Evidence Collection"]
+        Evid --> Ctx["Context Building"]
+        Ctx --> Reason["Reasoning"]
+        Reason --> Hypo["Hypothesis Generation"]
+        Hypo --> Conf["Confidence Evaluation"]
+        Conf --> Dec["Decision Making"]
+        Dec --> Rep["Report Generation"]
+    end
+    
+    Rep --> Update["Workspace Update"]
 ```
 
 ---
@@ -141,34 +189,28 @@ The `driftguard-sdk` package provides the reusable infrastructure required to bu
 
 ## Repository Structure
 
-```text
-probe/
-├── apps/
-│   ├── decision-probe/
-│   │   ├── src/
-│   │   ├── tests/
-│   │   ├── config/
-│   │   └── package.json
-│   └── driftguard-probe/
-│       ├── src/
-│       ├── tests/
-│       ├── config/
-│       └── package.json
-├── packages/
-│   └── driftguard-sdk/
-│       ├── src/
-│       │   ├── agents/
-│       │   ├── core/
-│       │   ├── tools/
-│       │   └── utils/
-│       ├── tests/
-│       └── package.json
-├── docs/
-├── scripts/
-├── .github/
-│   └── workflows/
-├── README.md
-└── package.json
+```mermaid
+graph LR
+    Probe["Probe/"]
+    
+    Apps["apps/"]
+    Pkgs["packages/"]
+    Docs["docs/"]
+    Readme["README.md"]
+    
+    DP["decision-probe/"]
+    DGP["driftguard-probe/"]
+    SDK["driftguard-sdk/"]
+    
+    Probe --> Apps
+    Probe --> Pkgs
+    Probe --> Docs
+    Probe --> Readme
+    
+    Apps --> DP
+    Apps --> DGP
+    
+    Pkgs --> SDK
 ```
 
 ---
