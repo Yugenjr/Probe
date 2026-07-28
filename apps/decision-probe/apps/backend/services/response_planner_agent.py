@@ -1,0 +1,118 @@
+import os
+import json
+import logging
+from typing import List, Dict, Any
+
+logger = logging.getLogger(__name__)
+
+# Try importing google-genai
+try:
+    from google import genai
+    from google.genai import types
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+
+class ResponsePlannerAgent:
+    def __init__(self):
+        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.use_real_client = GENAI_AVAILABLE and bool(self.api_key) and self.api_key != "dummy"
+        
+        if self.use_real_client:
+            logger.info("Response Planner Agent initializing real GenAI Client.")
+            self.client = genai.Client(api_key=self.api_key)
+        else:
+            logger.warning("Response Planner Agent running in OFFLINE/MOCK mode.")
+            self.client = None
+
+    async def generate_response_plan(
+        self,
+        incident_overview: Dict[str, Any],
+        remediation: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Formulates response actions and tickets to resolve the incident.
+        """
+        if not self.use_real_client:
+            logger.info("Using offline mock response planner agent.")
+            return self._generate_mock_plan(remediation)
+
+        prompt = f"""You are the Response Planner Agent inside Decision Probe.
+Your responsibility is to take an incident overview and remediation options to generate high-priority response tasks.
+
+Incident Overview: {json.dumps(incident_overview)}
+Remediation Recommendations: {json.dumps(remediation)}
+
+CRITICAL RULES:
+1. Formulate actionable tickets/tasks to resolve the outage.
+2. Output MUST be a single raw JSON object matching the schema below (do not wrap in markdown codeblocks):
+
+Expected JSON Output Schema:
+{{
+  "tasks": [
+    {{
+      "title": "Actionable task description",
+      "priority": "high" or "medium" or "low",
+      "owner": "Target Team Name (e.g. Backend Team, DevOps Team, SRE Team)",
+      "status": "pending"
+    }}
+  ]
+}}
+"""
+        try:
+            logger.info("Calling Gemini API to generate response plan.")
+            model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            response = self.client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.0
+                )
+            )
+            raw_text = response.text
+            return self._parse_json(raw_text)
+        except Exception as e:
+            logger.error(f"Failed to generate response plan via Gemini: {e}. Falling back to mock plan.")
+            return self._generate_mock_plan(remediation)
+
+    def _parse_json(self, raw_text: str) -> Dict[str, Any]:
+        raw_text = raw_text.strip()
+        if raw_text.startswith("```json"):
+            raw_text = raw_text[7:]
+        if raw_text.endswith("```"):
+            raw_text = raw_text[:-3]
+        raw_text = raw_text.strip()
+        
+        parsed = json.loads(raw_text)
+        return {
+            "tasks": parsed.get("tasks", [])
+        }
+
+    def _generate_mock_plan(self, remediation: Dict[str, Any]) -> Dict[str, Any]:
+        # Formulate based on remediation immediate actions
+        actions = remediation.get("immediate_actions", [])
+        tasks = []
+        if actions:
+            for act in actions:
+                tasks.append({
+                    "title": act,
+                    "priority": "high",
+                    "owner": "Backend Team",
+                    "status": "pending"
+                })
+        else:
+            tasks.append({
+                "title": "Increase database connection pool limit",
+                "priority": "high",
+                "owner": "Backend Team",
+                "status": "pending"
+            })
+            
+        tasks.append({
+            "title": "Configure Prometheus database alerts threshold",
+            "priority": "medium",
+            "owner": "SRE Team",
+            "status": "pending"
+        })
+        return {"tasks": tasks}
