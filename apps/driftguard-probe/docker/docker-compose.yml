@@ -7,7 +7,7 @@ services:
       dockerfile: docker/Dockerfile
     container_name: probe-gateway-api
     ports:
-      - "8000:8000"
+      - "8002:8000"
     environment:
       - PROBE_DATABASE_URL=postgresql+asyncpg://probe_user:secret_pw@postgres:5432/probedb
       - PROBE_REDIS_URL=redis://redis:6379/0
