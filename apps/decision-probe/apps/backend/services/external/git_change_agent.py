@@ -1,3 +1,4 @@
+import subprocess
 from typing import Dict, Any, List
 
 class GitChangeAgent:
@@ -5,19 +6,41 @@ class GitChangeAgent:
         pass
 
     async def fetch(self, repo_path: str = None) -> List[Dict[str, Any]]:
-        # Simulated Git commit details (e.g. GitHub/Git CLI local inspection)
-        raw_commits = [
-            {
-                "commit_hash": "a4f8d29b",
-                "committer": "alex.engineer@company.com",
-                "msg": "feat: optimize database connection pools settings & reduce timeout thresholds",
-                "files": [
-                    "apps/payments/src/config/database.ts",
-                    "apps/payments/package.json"
-                ]
-            }
-        ]
-        return raw_commits
+        # Fetch real git commits from local repo
+        try:
+            output = subprocess.check_output(
+                ["git", "log", "-n", "5", "--name-status", "--pretty=format:COMMIT|%H|%an|%s"],
+                cwd=repo_path or ".",
+                text=True,
+                encoding="utf-8"
+            )
+            raw_commits = []
+            current_commit = None
+            for line in output.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith("COMMIT|"):
+                    parts = line.split("|", 3)
+                    if len(parts) >= 4:
+                        current_commit = {
+                            "commit_hash": parts[1],
+                            "committer": parts[2],
+                            "msg": parts[3],
+                            "files": []
+                        }
+                        raw_commits.append(current_commit)
+                elif current_commit is not None:
+                    # files lines look like "M\tpath/to/file" or just "path/to/file"
+                    parts = line.split(maxsplit=1)
+                    if len(parts) == 2:
+                        current_commit["files"].append(parts[1])
+                    else:
+                        current_commit["files"].append(line)
+            return raw_commits
+        except Exception as e:
+            print(f"Error fetching git changes: {e}")
+            return []
 
     def normalize(self, raw_commits: List[Dict[str, Any]]) -> Dict[str, Any]:
         normalized = []

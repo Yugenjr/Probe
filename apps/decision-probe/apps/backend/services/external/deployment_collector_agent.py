@@ -1,4 +1,5 @@
-import time
+import subprocess
+from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 class DeploymentCollectorAgent:
@@ -6,18 +7,28 @@ class DeploymentCollectorAgent:
         pass
 
     async def fetch(self, time_range: str) -> List[Dict[str, Any]]:
-        # Simulated deployment events fetch (e.g. ArgoCD/Jenkins rollout events)
-        time_str = "2026-07-24T10:40:00Z"
-        raw_events = [
-            {
-                "svc": "payments",
-                "tag": "v1.1.0",
-                "ts": time_str,
-                "user": "alex.engineer@company.com",
-                "desc": "Release tag v1.1.0 including connection pooling reconfiguration update"
-            }
-        ]
-        return raw_events
+        # Fetch real local deployment events by checking the latest git tag or commit
+        try:
+            output = subprocess.check_output(
+                ["git", "log", "-n", "1", "--pretty=format:%H|%an|%s|%cd", "--date=iso-strict"],
+                text=True,
+                encoding="utf-8"
+            )
+            raw_events = []
+            if output:
+                parts = output.strip().split("|", 3)
+                if len(parts) >= 4:
+                    raw_events.append({
+                        "svc": "local-backend",
+                        "tag": parts[0][:7],
+                        "ts": parts[3],
+                        "user": parts[1],
+                        "desc": f"Latest update: {parts[2]}"
+                    })
+            return raw_events
+        except Exception as e:
+            print(f"Error fetching deployment changes: {e}")
+            return []
 
     def normalize(self, raw_events: List[Dict[str, Any]]) -> Dict[str, Any]:
         normalized = []

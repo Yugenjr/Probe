@@ -5,4 +5,4 @@ pydantic-settings
 sqlmodel
 pypdf
 groq
-
+psutil

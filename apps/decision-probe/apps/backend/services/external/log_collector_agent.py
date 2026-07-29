@@ -1,4 +1,4 @@
-import time
+import os
 from typing import Dict, Any, List
 
 class LogCollectorAgent:
@@ -6,23 +6,34 @@ class LogCollectorAgent:
         pass
 
     async def fetch(self, service_name: str, time_range: str, keywords: List[str] = None) -> List[Dict[str, Any]]:
-        # Simulated log fetch from external systems (e.g. ElasticSearch/Loki)
-        # Returns raw log lines
-        time_str = "2026-07-24T10:41:12Z"
-        raw_data = [
-            {
-                "time": time_str,
-                "app": service_name,
-                "severity": "ERROR",
-                "msg": f"Connection pool exhausted. active_connections=98 max_connections=100"
-            },
-            {
-                "time": time_str,
-                "app": service_name,
-                "severity": "WARN",
-                "msg": "Slow query detected: SELECT * FROM payments WHERE status = 'pending' (duration=1500ms)"
-            }
-        ]
+        # Fetch real logs from backend.log
+        log_file = "backend.log"
+        raw_data = []
+        if os.path.exists(log_file):
+            try:
+                with open(log_file, "r", encoding="utf-8") as f:
+                    # Get the last 100 lines
+                    lines = f.readlines()[-100:]
+                    for line in lines:
+                        if not line.strip():
+                            continue
+                        parts = line.split(" - ", 3)
+                        if len(parts) >= 4:
+                            raw_data.append({
+                                "time": parts[0],
+                                "app": parts[1] or service_name,
+                                "severity": parts[2],
+                                "msg": parts[3].strip()
+                            })
+                        else:
+                            raw_data.append({
+                                "time": "",
+                                "app": service_name,
+                                "severity": "INFO",
+                                "msg": line.strip()
+                            })
+            except Exception as e:
+                print(f"Error reading logs: {e}")
         return raw_data
 
     def normalize(self, raw_logs: List[Dict[str, Any]]) -> Dict[str, Any]:

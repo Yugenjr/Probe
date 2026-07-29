@@ -1,0 +1,120 @@
+/* =========================================
+   AIOps Premium Design System Tokens
+   Inspired by modern developer dashboards 
+   ========================================= */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Premium Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  /* Theme Mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-overlay: var(--overlay);
+  --color-card: var(--panel);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--overlay);
+  --color-popover-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--raised);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--raised);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--foreground);
+  
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  /* Semantic Status Colors */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  
+  --color-fg-strong: var(--fg-strong);
+  --color-fg-muted: var(--muted-foreground);
+
+  /* Severity specific */
+  --color-sev-critical: var(--danger);
+  --color-sev-high: var(--warning);
+  --color-sev-medium: var(--accent);
+  --color-sev-low: var(--muted-foreground);
+
+  /* Micro-animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-pulse-subtle: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-slide-in-right: slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-in-up: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  /* LIGHT THEME (Clean, Vercel/Linear-inspired) */
+  --background: oklch(0.99 0.002 255);
+  --panel: oklch(0.995 0.001 255);
+  --raised: oklch(0.97 0.003 255);
+  --overlay: oklch(1 0 0);
+  
+  --foreground: oklch(0.2 0.01 255);
+  --fg-strong: oklch(0.1 0.01 255);
+  --muted-foreground: oklch(0.5 0.01 255);
+
+  --border-subtle: oklch(0.93 0.005 255);
+  --border: oklch(0.89 0.005 255);
+
+  --primary: oklch(0.2 0.01 255);
+  --primary-foreground: oklch(0.99 0 0);
+
+  --accent: oklch(0.52 0.2 260);
+  --accent-foreground: oklch(0.99 0 0);
+
+  /* Semantic UI Colors */
+  --success: oklch(0.6 0.18 142);
+  --warning: oklch(0.7 0.18 78);
+  --danger: oklch(0.55 0.22 25);
+  --info: oklch(0.6 0.15 215);
+}
+
+.dark, [data-theme="dark"] {
+  /* DARK THEME (Premium, GitHub/Linear-inspired deep dark) */
+  --background: oklch(0.15 0.01 255);
+  --panel: oklch(0.18 0.012 255);
+  --raised: oklch(0.22 0.015 255);
+  --overlay: oklch(0.25 0.018 255);
+
+  --foreground: oklch(0.88 0.005 255);
+  --fg-strong: oklch(0.98 0.005 255);
+  --muted-foreground: oklch(0.65 0.01 255);
+
+  --border-subtle: oklch(0.25 0.015 255);
+  --border: oklch(0.3 0.018 255);
+
+  --primary: oklch(0.88 0.005 255);
+  --primary-foreground: oklch(0.15 0.01 255);
+
+  --accent: oklch(0.66 0.20 260);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --success: oklch(0.74 0.16 142);
+  --warning: oklch(0.79 0.14 78);
+  --danger: oklch(0.62 0.19 25);
+  --info: oklch(0.72 0.12 215);
+}

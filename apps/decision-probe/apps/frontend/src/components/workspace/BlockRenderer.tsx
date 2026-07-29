@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, type ReactNode } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { ChartBlock } from './ChartBlock';
 import { EvidenceBlock } from './EvidenceBlock';
 import { DecisionBlock } from './DecisionBlock';
@@ -12,6 +13,14 @@ import { PlanBlock } from './PlanBlock';
 import { HypothesisBlock } from './HypothesisBlock';
 import { CriticBlock } from './CriticBlock';
 import { ValidationBlock } from './ValidationBlock';
+import { RiskScoreBlock } from './RiskScoreBlock';
+import { PredictionBlock } from './PredictionBlock';
+import { AnomalyBlock } from './AnomalyBlock';
+import { ReliabilityBlock } from './ReliabilityBlock';
+import { DeploymentRiskBlock } from './DeploymentRiskBlock';
+import { DependencyGraphBlock } from './DependencyGraphBlock';
+import { PreventiveRecommendationBlock } from './PreventiveRecommendationBlock';
+import { EvidenceGraphEnhanced } from './EvidenceGraphEnhanced';
 import { RemediationBlock } from './RemediationBlock';
 import { EvidenceGapBlock } from './EvidenceGapBlock';
 import { EvidenceRequestBlock } from './EvidenceRequestBlock';
@@ -60,7 +69,14 @@ const BlockRegistry: Record<string, React.FC<{ block: Block }>> = {
   incident_knowledge: KnowledgeBlock as any,
   incident_similarity: SimilarIncidentBlock as any,
   learning_recommendations: LearningRecommendationBlock as any,
-  failure_patterns: FailurePatternBlock as any
+  failure_patterns: FailurePatternBlock as any,
+  risk_score: RiskScoreBlock as any,
+  prediction: PredictionBlock as any,
+  anomaly: AnomalyBlock as any,
+  reliability: ReliabilityBlock as any,
+  deployment_risk: DeploymentRiskBlock as any,
+  dependency_graph: DependencyGraphBlock as any,
+  preventive_recommendation: PreventiveRecommendationBlock as any
 };
 
 export function BlockRenderer({ block }: { block: Block }) {
@@ -68,20 +84,7 @@ export function BlockRenderer({ block }: { block: Block }) {
   if (Component) return <Component block={block} />;
   
   if (block.type === 'graph') {
-    return (
-      <Section title="Graph Topology" defaultOpen={false}>
-        <div className="bg-raised/20 border border-border-subtle rounded-md p-4 text-[12.5px] text-fg-muted">
-          <p className="font-semibold text-foreground">Graph topology data successfully generated and persisted on backend.</p>
-          <p className="mt-1 text-[11px]">Nodes and relationships are available via the <code className="mono bg-background px-1.5 py-0.5 rounded text-fg-strong">/api/v1/workspaces/{"{"}workspace_id{"}"}/graph</code> API.</p>
-          <details className="mt-3">
-            <summary className="cursor-pointer hover:text-foreground transition-colors font-medium text-[11.5px]">View Raw Graph JSON</summary>
-            <pre className="mt-2 text-[11.5px] mono whitespace-pre-wrap max-h-60 overflow-y-auto bg-background p-2.5 rounded border border-border-subtle/40">
-              {JSON.stringify(block.content, null, 2)}
-            </pre>
-          </details>
-        </div>
-      </Section>
-    );
+    return <EvidenceGraphEnhanced block={block} />;
   }
 
   return (
@@ -93,7 +96,7 @@ export function BlockRenderer({ block }: { block: Block }) {
   );
 }
 
-/** Shared collapsible section — matches lovable-frontend's Section component exactly */
+/** Shared collapsible section — refactored to use Card design */
 export function Section({
   title, count, defaultOpen = true, action, children,
 }: {
@@ -101,20 +104,37 @@ export function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="mb-8">
-      <header className="sticky top-0 z-10 flex h-8 items-center bg-background">
-        <button
-          onClick={() => setOpen(v => !v)}
-          className="group flex flex-1 items-center gap-2 pr-2 text-left"
-        >
-          <span className="mono w-3 text-[11px] text-fg-muted transition-transform" style={{ transform: open ? 'rotate(90deg)' : 'none' }}>›</span>
-          <span className="text-micro">{title}</span>
-          {count !== undefined && <span className="mono text-[10.5px] text-fg-muted">· {count}</span>}
-        </button>
-        {action && open && <div className="pr-4">{action}</div>}
-      </header>
-      {open && <div className="fade-in pt-1 pb-4">{children}</div>}
-    </section>
+    <Card className="w-full mb-4">
+      <CardHeader 
+        className="cursor-pointer hover:bg-raised/30 transition-colors select-none py-3 px-4" 
+        onClick={() => setOpen(v => !v)}
+      >
+        <div className="flex flex-1 items-center gap-2">
+          <span 
+            className="mono w-3 text-[14px] text-fg-muted transition-transform duration-200" 
+            style={{ transform: open ? 'rotate(90deg)' : 'none' }}
+          >
+            ›
+          </span>
+          <CardTitle className="text-[13px]">{title}</CardTitle>
+          {count !== undefined && (
+            <span className="ml-2 inline-flex items-center rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent">
+              {count}
+            </span>
+          )}
+        </div>
+        {action && (
+          <div className="pr-1" onClick={e => e.stopPropagation()}>
+            {action}
+          </div>
+        )}
+      </CardHeader>
+      {open && (
+        <CardContent className="pt-2 pb-4 px-1 fade-in">
+          {children}
+        </CardContent>
+      )}
+    </Card>
   );
 }
 
