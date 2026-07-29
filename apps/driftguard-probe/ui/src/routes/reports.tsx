@@ -44,6 +44,29 @@ function ReportsPage() {
     loadData();
   }, []);
 
+  const handleExport = async (id: string, model: string) => {
+    try {
+      const { fetchReport } = await import("@/lib/api-client");
+      const reportData = await fetchReport(id);
+      if (reportData && reportData.markdown_content) {
+        const blob = new Blob([reportData.markdown_content], { type: "text/markdown" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `driftguard-forensic-report-${model}-${id}.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        alert("No report content available for export.");
+      }
+    } catch (err) {
+      console.error("Export report failed:", err);
+      alert("Failed to export report. Verify backend is active.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
@@ -120,7 +143,10 @@ function ReportsPage() {
                   <FileText className="size-3" />
                   Full report
                 </span>
-                <button className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] font-medium text-foreground hover:border-border-strong">
+                <button
+                  onClick={() => handleExport(r.id, r.model)}
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] font-medium text-foreground hover:border-border-strong"
+                >
                   <Download className="size-3" />
                   Export
                 </button>
@@ -128,6 +154,7 @@ function ReportsPage() {
             </article>
           ))}
         </div>
+
       ) : (
         <div className="mt-6 rounded-lg border border-dashed border-border bg-surface p-12 text-center">
           <FileText className="mx-auto size-8 text-muted-foreground" />

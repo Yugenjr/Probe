@@ -112,13 +112,16 @@ class ReporterAgent(BaseAgent):
         evidence_section = "## Evidence\n"
         if state.universal_evidence:
             for ev in state.universal_evidence:
+                dist = getattr(ev, "observed_distance", "N/A")
+                thresh = getattr(ev, "alarm_threshold", "N/A")
                 evidence_section += (
                     f"- **{ev.evidence_id}** ({ev.source_provider}): {ev.summary} "
-                    f"(observed distance: {ev.observed_distance}, alarm threshold: {ev.alarm_threshold})\n"
+                    f"(observed distance: {dist}, alarm threshold: {thresh})\n"
                 )
         else:
             evidence_section += "- No universal evidence collected.\n"
         evidence_section += "\n"
+
 
         hypotheses_section = "## Hypotheses\n"
         if state.hypotheses:

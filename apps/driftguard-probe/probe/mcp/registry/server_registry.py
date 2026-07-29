@@ -88,19 +88,46 @@ class ServerRegistry:
     async def list_tools(self) -> List[ToolDefinition]:
         """All tool definitions across every registered server.
 
-        Inspects local servers and queries remote transports dynamically.
+        Inspects local servers synchronously and queries remote transports
+        concurrently with individual timeouts so one slow server never
+        blocks the rest.
         """
+        import asyncio
+
         definitions: List[ToolDefinition] = []
-        for name, transport in self._transports.items():
+
+        # Collect local tools synchronously (in-process, always fast)
+        remote_names = []
+        for name in self._transports:
+            if name in self._servers:
+                definitions.extend(self._servers[name].get_tools())
+            else:
+                remote_names.append(name)
+
+        if not remote_names:
+            return definitions
+
+        # Query all remote transports concurrently, each capped at 30 s
+        async def _fetch(name: str) -> List[ToolDefinition]:
+            transport = self._transports[name]
+            if not hasattr(transport, "list_tools"):
+                return []
             try:
-                if name in self._servers:
-                    definitions.extend(self._servers[name].get_tools())
-                elif hasattr(transport, "list_tools"):
-                    # Remote HTTP/Process tool discovery
-                    tools = await transport.list_tools()
-                    definitions.extend(tools)
+                return await asyncio.wait_for(transport.list_tools(), timeout=180.0)
+            except asyncio.TimeoutError:
+                logger.warning("[ServerRegistry] list_tools timed out for '%s'", name)
+                return []
+            except asyncio.CancelledError:
+                logger.warning("[ServerRegistry] list_tools cancelled for '%s'", name)
+                return []
             except Exception as e:
                 logger.error("[ServerRegistry] Failed listing tools for %s: %s", name, e)
+                return []
+
+        results = await asyncio.gather(*[_fetch(n) for n in remote_names])
+        for tools in results:
+            definitions.extend(tools)
+
         return definitions
 
     # ------------------------------------------------------------------

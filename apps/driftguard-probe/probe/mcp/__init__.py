@@ -14,6 +14,7 @@ from .types import ToolResult, ToolDefinition, ToolRequest
 from .server import BaseMCPServer
 from .registry.server_registry import ServerRegistry
 from .gateway.tool_gateway import ToolGateway
+from .capability import CapabilityRegistry, CapabilityRequest, EvidencePlan
 from .servers.knowledge.server import KnowledgeServer
 from .bootstrap import bootstrap_mcp_registry
 
@@ -24,12 +25,14 @@ __all__ = [
     "ToolRequest",
     # Abstractions
     "BaseMCPServer",
-    # Infrastructure
+    "ToolResult",
     "ServerRegistry",
     "ToolGateway",
+    "CapabilityRegistry",
+    "CapabilityRequest",
+    "EvidencePlan",
     # Servers
     "KnowledgeServer",
     # Boostrap
     "bootstrap_mcp_registry",
 ]
-

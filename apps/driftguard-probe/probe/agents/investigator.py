@@ -9,8 +9,10 @@ from pydantic import BaseModel, Field
 from .base import BaseAgent
 from ..engine.state import InvestigationSession
 from ..core.di import get_container
+from ..domain.evidence import DriftEvidence
 
 logger = logging.getLogger(__name__)
+
 
 
 class EvidenceCollection(BaseModel):
@@ -47,10 +49,11 @@ class InvestigatorAgent(BaseAgent):
             "Investigator Agent evaluating quantitative drift telemetry for session %s",
             state.session_id,
         )
-        from ..domain.evidence import DriftEvidence
+        model_id = state.incident.model_id if state.incident else "unknown"
 
         # 1. Resolve drift score from session context
         drift_score = 0.25
+
         if state.investigation_context and state.investigation_context.predictions:
             first_pred = state.investigation_context.predictions[0]
             if isinstance(first_pred, dict) and first_pred.get("drift_score") is not None:

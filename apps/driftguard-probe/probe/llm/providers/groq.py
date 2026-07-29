@@ -3,6 +3,8 @@ import json
 import logging
 from typing import Any, Optional, Type, TypeVar
 import httpx
+import asyncio
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from pydantic import BaseModel
 from .base import BaseLLMProvider
 from ..parser import parse_structured_output
@@ -14,13 +16,14 @@ T = TypeVar("T", bound=BaseModel)
 class GroqProvider(BaseLLMProvider):
     """Provider adapter communicating with Groq REST OpenAI-compatible inference endpoints."""
 
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "llama-3.3-70b-versatile"):
+    def __init__(self, api_key: Optional[str] = None, model_name: str = "llama-3.1-8b-instant"):
         from ...core.config import get_settings
         settings = get_settings()
         self.api_key = api_key or settings.groq_api_key
         self.model_name = model_name
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
 
+    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10), retry=retry_if_exception_type(httpx.HTTPStatusError))
     async def generate_text(
         self,
         system_prompt: str,
@@ -54,6 +57,7 @@ class GroqProvider(BaseLLMProvider):
             data = resp.json()
             return data["choices"][0]["message"]["content"]
 
+    @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10), retry=retry_if_exception_type(httpx.HTTPStatusError))
     async def generate_structured(
         self,
         response_model: Type[T],

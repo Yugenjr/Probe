@@ -155,6 +155,68 @@ class ProcessTransport:
         self._connected = False
         self._lock = asyncio.Lock()
 
+    async def _read_mcp_message(self, timeout: float = 30.0) -> Optional[Dict]:
+        """Read one MCP message from stdout.
+
+        Handles two wire formats:
+        1. Content-Length framed (used by @modelcontextprotocol/server-github):
+              Content-Length: <N>\\r\\n\\r\\n<JSON body of N bytes>
+        2. Plain newline-delimited JSON (used by simpler servers like MLflow).
+        
+        Skips any extraneous non-JSON lines (e.g. from npx or warnings).
+        """
+        if not self._process or not self._process.stdout:
+            return None
+
+        async def _read() -> Optional[Dict]:
+            while True:
+                # Read line by line until we find a valid message
+                first_line = await self._process.stdout.readline()
+                if not first_line:
+                    return None
+                first_line_str = first_line.decode("utf-8", errors="replace").strip()
+
+                if not first_line_str:
+                    continue
+
+                logger.debug("[ProcessTransport][%s] Read line: %s", self._server_name, repr(first_line_str[:500]))
+
+                # --- Content-Length framing ---
+                if first_line_str.lower().startswith("content-length:"):
+                    try:
+                        length = int(first_line_str.split(":", 1)[1].strip())
+                    except ValueError:
+                        continue
+                    # Consume blank separator line(s) (\r\n)
+                    while True:
+                        sep = await self._process.stdout.readline()
+                        if not sep or sep.strip() == b"":
+                            break
+                    # Read exact body
+                    body = await self._process.stdout.readexactly(length)
+                    try:
+                        return json.loads(body.decode("utf-8"))
+                    except json.JSONDecodeError:
+                        continue
+
+                # --- Plain newline JSON ---
+                if first_line_str.startswith("{"):
+                    try:
+                        return json.loads(first_line_str)
+                    except json.JSONDecodeError:
+                        pass
+                
+                # If we get here, it was a non-JSON log line. Keep looping.
+
+        try:
+            return await asyncio.wait_for(_read(), timeout=timeout)
+        except asyncio.TimeoutError:
+            logger.warning("[ProcessTransport] _read_mcp_message timed out for '%s'", self._server_name)
+            return None
+        except Exception as e:
+            logger.warning("[ProcessTransport] _read_mcp_message failed for '%s': %s", self._server_name, e)
+            return None
+
     @property
     def server_name(self) -> str:
         return self._server_name
@@ -177,8 +239,37 @@ class ProcessTransport:
                 self._server_name, self._command, self._args
             )
             # Find command in path if on Windows
+            import os
+            import sys
             import shutil
-            executable = shutil.which(self._command) or self._command
+
+            # Search order:
+            # 1. System PATH (shutil.which)
+            # 2. Scripts/ dir of the currently-running Python interpreter's venv
+            # 3. Fall back to bare command name and let the OS raise a clear error
+            executable = shutil.which(self._command)
+            if executable is None:
+                venv_scripts = os.path.join(
+                    os.path.dirname(sys.executable), ""
+                )
+                candidate = os.path.join(venv_scripts, self._command)
+                # On Windows, also try with .exe / .cmd suffixes
+                for suffix in ("", ".exe", ".cmd", ".bat"):
+                    if os.path.isfile(candidate + suffix):
+                        executable = candidate + suffix
+                        break
+                else:
+                    executable = self._command  # let OS error surface naturally
+
+            logger.info(
+                "[ProcessTransport] Resolved command '%s' -> '%s'",
+                self._command, executable
+            )
+
+            # Merge parent os.environ with YAML-supplied env vars so that
+            # subprocess inherits PATH, APPDATA, NODE_PATH etc. and the
+            # custom vars (e.g. GITHUB_PERSONAL_ACCESS_TOKEN) still override.
+            merged_env = {**os.environ, **self._env}
 
             self._process = await asyncio.create_subprocess_exec(
                 executable,
@@ -186,8 +277,32 @@ class ProcessTransport:
                 stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.DEVNULL,
-                env=self._env
+                env=merged_env,
+                limit=10485760  # 10MB limit for giant MCP tool payloads
             )
+
+            # ── MCP initialize handshake ──────────────────────────────────
+            # Step 1: send initialize request
+            init_req = JSONRPCRequest(
+                method="initialize",
+                params={
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "driftguard-probe", "version": "0.1.0"}
+                },
+                id=0
+            )
+            self._process.stdin.write((json.dumps(init_req.model_dump()) + "\n").encode())
+            await self._process.stdin.drain()
+
+            # Step 2: read initialize response via format-aware reader (180s for first npx/uv download)
+            await self._read_mcp_message(timeout=180.0)
+
+            # Step 3: send notifications/initialized (required by MCP spec before tools/list)
+            notif = {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+            self._process.stdin.write((json.dumps(notif) + "\n").encode())
+            await self._process.stdin.drain()
+
             self._connected = True
         except Exception as e:
             logger.error("[ProcessTransport] Process start failed: %s", e)
@@ -204,26 +319,37 @@ class ProcessTransport:
                     return []
 
                 req = JSONRPCRequest(method="tools/list", id=1)
-                payload = json.dumps(req.model_dump()) + "\n"
-                self._process.stdin.write(payload.encode("utf-8"))
+                self._process.stdin.write((json.dumps(req.model_dump()) + "\n").encode())
                 await self._process.stdin.drain()
 
-                line = await self._process.stdout.readline()
+                # Skip any notifications (no "id") — GitHub MCP sends log
+                # notifications before the actual tools/list response.
+                # Allow 180s: GitHub MCP validates PAT via API on first call.
+                data = None
+                deadline = time.perf_counter() + 180.0
+                while time.perf_counter() < deadline:
+                    remaining = deadline - time.perf_counter()
+                    msg = await self._read_mcp_message(timeout=max(remaining, 1.0))
+                    if msg is None:
+                        break
+                    # Notifications have no "id" field — skip them
+                    if "id" in msg:
+                        data = msg
+                        break
+
                 self._last_latency_ms = int((time.perf_counter() - start) * 1000)
-                if line:
-                    data = json.loads(line.decode("utf-8").strip())
+                if data:
                     res_body = JSONRPCResponse.model_validate(data)
                     if res_body.result and "tools" in res_body.result:
-                        tools = []
-                        for t in res_body.result["tools"]:
-                            tools.append(
-                                ToolDefinition(
-                                    name=t["name"],
-                                    description=t.get("description", ""),
-                                    parameters=t.get("inputSchema", {}),
-                                    server=self._server_name
-                                )
+                        tools = [
+                            ToolDefinition(
+                                name=t["name"],
+                                description=t.get("description", ""),
+                                parameters=t.get("inputSchema", {}),
+                                server=self._server_name
                             )
+                            for t in res_body.result["tools"]
+                        ]
                         self._tools_cache = tools
                         return tools
             except Exception as e:
@@ -247,15 +373,13 @@ class ProcessTransport:
                     params={"name": tool_name, "arguments": arguments},
                     id=2
                 )
-                payload = json.dumps(req.model_dump()) + "\n"
-                self._process.stdin.write(payload.encode("utf-8"))
+                self._process.stdin.write((json.dumps(req.model_dump()) + "\n").encode())
                 await self._process.stdin.drain()
 
-                line = await self._process.stdout.readline()
+                data = await self._read_mcp_message(timeout=30.0)
                 elapsed = int((time.perf_counter() - start) * 1000)
                 self._last_latency_ms = elapsed
-                if line:
-                    data = json.loads(line.decode("utf-8").strip())
+                if data:
                     res_body = JSONRPCResponse.model_validate(data)
                     if res_body.error:
                         return ToolResult(

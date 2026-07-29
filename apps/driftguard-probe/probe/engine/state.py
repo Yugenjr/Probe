@@ -17,6 +17,8 @@ from ..context.models import InvestigationContext
 # Backward-compatibility alias for legacy tests and workflows
 from ..models.evidence import EvidenceItem
 from ..models.recommendation import EvaluationResult
+from ..mcp.capability import EvidencePlan
+
 
 
 class InvestigationStatus(str, Enum):
@@ -69,7 +71,9 @@ class InvestigationSession(BaseModel):
     hypotheses: List[Hypothesis] = Field(default_factory=list)
     evaluation_result: Optional[EvaluationResult] = None
     remediation_plan: Optional[RemediationPlan] = None
+    evidence_plan: Optional[EvidencePlan] = None
     report: Optional[Any] = None
+
     agent_results: List[AgentResult] = Field(default_factory=list, description="Completed agent execution trace results")
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

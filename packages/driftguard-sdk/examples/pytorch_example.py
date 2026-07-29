@@ -100,6 +100,7 @@ def main():
             
     print(f"Shifted stream completed. Peak Drift Score: {max(drifted_scores):.4f}")
     print("====================================================")
+    time.sleep(2)
 
 if __name__ == "__main__":
     main()

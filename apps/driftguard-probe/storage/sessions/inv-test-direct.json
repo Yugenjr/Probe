@@ -10,7 +10,7 @@
     "trigger_type": "drift_detected",
     "severity": "MEDIUM",
     "status": "OPEN",
-    "detected_at": "2026-07-29T02:58:36.666614Z",
+    "detected_at": "2026-07-29T04:29:02.840432Z",
     "raw_payload": {},
     "metadata": {}
   },
@@ -18,26 +18,27 @@
   "active_workflow_name": null,
   "universal_evidence": [
     {
-      "evidence_id": "ev-1700e2",
-      "source_provider": "DriftGuard-Core-v3",
-      "retrieved_by_tool": "ContextExtractor",
-      "timestamp": "2026-07-29T02:58:39.586074Z",
-      "summary": "Covariate drift score of 0.25 observed on feature all_features.",
-      "confidence_weight": 0.8,
-      "evidence_type": "drift_stats",
-      "feature_name": "all_features",
-      "distance_algorithm": "adwin",
-      "observed_distance": 0.25,
-      "alarm_threshold": 0.15,
-      "is_anomalous": true
+      "evidence_id": "ev-kb-runbook",
+      "source_provider": "KnowledgeBase",
+      "retrieved_by_tool": "search_runbooks",
+      "timestamp": "2026-07-29T04:29:02.994737Z",
+      "summary": "Retrieved relevant playbooks and guidelines matching the current incident signature.",
+      "confidence_weight": 1.0,
+      "evidence_type": "runbook_reference",
+      "runbook_id": "adwin-response-protocol",
+      "section_title": "ADWIN Drift Response Protocol",
+      "recommended_actions": [
+        "Monitor feature drift",
+        "Trigger model retraining if accuracy drops"
+      ]
     },
     {
-      "evidence_id": "ev-e5c6b4",
+      "evidence_id": "ev-1e23b8",
       "source_provider": "DriftGuard-Core-v3",
       "retrieved_by_tool": "ContextExtractor",
-      "timestamp": "2026-07-29T02:58:39.586103Z",
-      "summary": "Covariate drift score of 0.25 observed on feature all_features.",
-      "confidence_weight": 0.8,
+      "timestamp": "2026-07-29T04:29:03.108634Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
       "evidence_type": "drift_stats",
       "feature_name": "all_features",
       "distance_algorithm": "adwin",
@@ -49,164 +50,98 @@
   "evidence_items": [],
   "hypotheses": [
     {
-      "hypothesis_id": "hyp-12345",
-      "title": "Covariate Drift Due to Changes in User Behavior",
-      "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+      "hypothesis_id": "hyp-inv-test",
+      "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+      "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
       "supporting_evidence_ids": [
-        "ev-1700e2",
-        "ev-e5c6b4"
+        "ev-kb-runbook",
+        "ev-1e23b8"
       ],
-      "likelihood_score": 0.7,
+      "likelihood_score": 0.92,
       "verified_by_simulation": false,
-      "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-      "confidence": 0.6,
+      "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+      "confidence": 0.92,
       "weaknesses": [
-        "Lack of information about user behavior",
-        "Insufficient data to confirm the hypothesis"
+        "No latency increase in local tests"
       ],
-      "created_at": "2026-07-29T02:58:39.586074Z"
-    },
-    {
-      "hypothesis_id": "hyp-67890",
-      "title": "Data Ingestion or Processing Pipeline Changes",
-      "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-      "supporting_evidence_ids": [
-        "ev-1700e2",
-        "ev-e5c6b4"
-      ],
-      "likelihood_score": 0.3,
-      "verified_by_simulation": false,
-      "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-      "confidence": 0.4,
-      "weaknesses": [
-        "Lack of information about the data ingestion and processing pipeline",
-        "Insufficient data to confirm the hypothesis"
-      ],
-      "created_at": "2026-07-29T02:58:39.586074Z"
-    },
-    {
-      "hypothesis_id": "hyp-34567",
-      "title": "Seasonal or Periodic Patterns",
-      "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-      "supporting_evidence_ids": [
-        "ev-1700e2",
-        "ev-e5c6b4"
-      ],
-      "likelihood_score": 0.2,
-      "verified_by_simulation": false,
-      "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-      "confidence": 0.3,
-      "weaknesses": [
-        "Lack of information about seasonal or periodic patterns",
-        "Insufficient data to confirm the hypothesis"
-      ],
-      "created_at": "2026-07-29T02:58:39.586074Z"
+      "created_at": "2026-07-29T04:29:03.111888Z"
     }
   ],
   "evaluation_result": {
     "best_hypothesis": {
-      "hypothesis_id": "hyp-12345",
-      "title": "Covariate Drift Due to Changes in User Behavior",
-      "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+      "hypothesis_id": "hyp-inv-test",
+      "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+      "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
       "supporting_evidence_ids": [
-        "ev-1700e2",
-        "ev-e5c6b4"
+        "ev-kb-runbook",
+        "ev-1e23b8"
       ],
-      "likelihood_score": 0.7,
+      "likelihood_score": 0.92,
       "verified_by_simulation": false,
-      "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-      "confidence": 0.6,
+      "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+      "confidence": 0.92,
       "weaknesses": [
-        "Lack of information about user behavior",
-        "Insufficient data to confirm the hypothesis"
+        "No latency increase in local tests"
       ],
-      "created_at": "2026-07-29T02:58:39.586074Z"
+      "created_at": "2026-07-29T04:29:03.111888Z"
     },
-    "alternatives": [
-      {
-        "hypothesis_id": "hyp-67890",
-        "title": "Data Ingestion or Processing Pipeline Changes",
-        "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-        "supporting_evidence_ids": [
-          "ev-1700e2",
-          "ev-e5c6b4"
-        ],
-        "likelihood_score": 0.3,
-        "verified_by_simulation": false,
-        "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-        "confidence": 0.4,
-        "weaknesses": [
-          "Lack of information about the data ingestion and processing pipeline",
-          "Insufficient data to confirm the hypothesis"
-        ],
-        "created_at": "2026-07-29T02:58:39.586074Z"
-      },
-      {
-        "hypothesis_id": "hyp-34567",
-        "title": "Seasonal or Periodic Patterns",
-        "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-        "supporting_evidence_ids": [
-          "ev-1700e2",
-          "ev-e5c6b4"
-        ],
-        "likelihood_score": 0.2,
-        "verified_by_simulation": false,
-        "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-        "confidence": 0.3,
-        "weaknesses": [
-          "Lack of information about seasonal or periodic patterns",
-          "Insufficient data to confirm the hypothesis"
-        ],
-        "created_at": "2026-07-29T02:58:39.586074Z"
-      }
-    ],
+    "alternatives": [],
     "recommended_actions": [
       {
-        "recommendation_id": "rec-48d42e",
-        "action_type": "RETRAIN_MODEL",
-        "title": "Retrain Recommendation",
-        "justification": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+        "recommendation_id": "rec-084b17",
+        "action_type": "ROLLBACK_MODEL",
+        "title": "Rollback Recommendation",
+        "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
         "target_model_id": "demo-rollback-v2",
-        "target_version": "v2",
-        "requires_human_approval": true,
-        "action": "Retrain",
-        "reason": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
-        "priority": "P0",
-        "estimated_risk": "Low",
-        "estimated_time": "2 hours"
-      },
-      {
-        "recommendation_id": "rec-67890",
-        "action_type": "UPDATE_THRESHOLD",
-        "title": "Update the threshold for the model's predictions",
-        "justification": "The alternative hypothesis suggests that the covariate drift may be due to changes in the data ingestion or processing pipeline. Updating the threshold for the model's predictions can help mitigate the effects of the drift.",
-        "target_model_id": "model-12345",
         "target_version": null,
         "requires_human_approval": true,
-        "action": "Update Threshold",
-        "reason": "The cost of updating the threshold is lower compared to retraining the model, but it may not completely mitigate the effects of the drift.",
-        "priority": "P1",
-        "estimated_risk": "Medium",
-        "estimated_time": "30 minutes"
+        "action": "Rollback",
+        "reason": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
+        "priority": "P0",
+        "estimated_risk": "Low",
+        "estimated_time": "5 min"
       }
     ],
-    "confidence": 0.7
+    "confidence": 0.91
   },
   "remediation_plan": {
-    "remediation_id": "rem-10d858",
+    "remediation_id": "rem-e15e06",
     "target_model_id": "demo-rollback-v2",
-    "intervention_type": "AUTOMATED_RETRAINING",
-    "summary": "Retrain: The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+    "intervention_type": "CANARY_ROLLBACK",
+    "summary": "Rollback: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
     "execution_parameters": {},
-    "supporting_hypothesis_id": "hyp-12345",
-    "estimated_impact_percent": 70.0,
+    "supporting_hypothesis_id": "hyp-inv-test",
+    "estimated_impact_percent": 91.0,
     "requires_human_approval": true,
-    "created_at": "2026-07-29T02:58:44.181204Z"
+    "created_at": "2026-07-29T04:29:03.358523Z"
+  },
+  "evidence_plan": {
+    "goal": "Determine feature drift and performance root cause",
+    "capabilities": [
+      {
+        "capability": "runbooks",
+        "priority": 1,
+        "required": true,
+        "status": "completed"
+      },
+      {
+        "capability": "experiment_traces",
+        "priority": 2,
+        "required": true,
+        "status": "pending"
+      },
+      {
+        "capability": "code_history",
+        "priority": 3,
+        "required": false,
+        "status": "pending"
+      }
+    ]
   },
   "report": {
-    "report_id": "rep-370f6b",
+    "report_id": "rep-e79fa6",
     "investigation_id": "inv-test-direct",
-    "generated_at": "2026-07-29T02:58:44.802621Z",
+    "generated_at": "2026-07-29T04:29:03.501227Z",
     "incident_summary": {
       "incident_id": "inc-test-direct",
       "model_id": "demo-rollback-v2",
@@ -215,90 +150,53 @@
       "trigger_type": "drift_detected",
       "severity": "MEDIUM",
       "status": "OPEN",
-      "detected_at": "2026-07-29T02:58:36.666614Z",
+      "detected_at": "2026-07-29T04:29:02.840432Z",
       "raw_payload": {},
       "metadata": {}
     },
-    "primary_root_cause": "Covariate Drift Due to Changes in User Behavior",
+    "primary_root_cause": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
     "supporting_evidence": [],
     "tested_hypotheses": [
       {
-        "hypothesis_id": "hyp-12345",
-        "title": "Covariate Drift Due to Changes in User Behavior",
-        "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+        "hypothesis_id": "hyp-inv-test",
+        "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+        "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
         "supporting_evidence_ids": [
-          "ev-1700e2",
-          "ev-e5c6b4"
+          "ev-kb-runbook",
+          "ev-1e23b8"
         ],
-        "likelihood_score": 0.7,
+        "likelihood_score": 0.92,
         "verified_by_simulation": false,
-        "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-        "confidence": 0.6,
+        "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+        "confidence": 0.92,
         "weaknesses": [
-          "Lack of information about user behavior",
-          "Insufficient data to confirm the hypothesis"
+          "No latency increase in local tests"
         ],
-        "created_at": "2026-07-29T02:58:39.586074Z"
-      },
-      {
-        "hypothesis_id": "hyp-67890",
-        "title": "Data Ingestion or Processing Pipeline Changes",
-        "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-        "supporting_evidence_ids": [
-          "ev-1700e2",
-          "ev-e5c6b4"
-        ],
-        "likelihood_score": 0.3,
-        "verified_by_simulation": false,
-        "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-        "confidence": 0.4,
-        "weaknesses": [
-          "Lack of information about the data ingestion and processing pipeline",
-          "Insufficient data to confirm the hypothesis"
-        ],
-        "created_at": "2026-07-29T02:58:39.586074Z"
-      },
-      {
-        "hypothesis_id": "hyp-34567",
-        "title": "Seasonal or Periodic Patterns",
-        "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-        "supporting_evidence_ids": [
-          "ev-1700e2",
-          "ev-e5c6b4"
-        ],
-        "likelihood_score": 0.2,
-        "verified_by_simulation": false,
-        "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-        "confidence": 0.3,
-        "weaknesses": [
-          "Lack of information about seasonal or periodic patterns",
-          "Insufficient data to confirm the hypothesis"
-        ],
-        "created_at": "2026-07-29T02:58:39.586074Z"
+        "created_at": "2026-07-29T04:29:03.111888Z"
       }
     ],
     "experiments": [],
     "recommended_action": {
-      "recommendation_id": "rec-48d42e",
-      "action_type": "RETRAIN_MODEL",
-      "title": "Retrain Recommendation",
-      "justification": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+      "recommendation_id": "rec-084b17",
+      "action_type": "ROLLBACK_MODEL",
+      "title": "Rollback Recommendation",
+      "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
       "target_model_id": "demo-rollback-v2",
-      "target_version": "v2",
+      "target_version": null,
       "requires_human_approval": true,
-      "action": "Retrain",
-      "reason": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+      "action": "Rollback",
+      "reason": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
       "priority": "P0",
       "estimated_risk": "Low",
-      "estimated_time": "2 hours"
+      "estimated_time": "5 min"
     },
-    "markdown_content": "# Incident Investigation Report: inv-test-direct\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-direct` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 1.102s.\n- **Step 3**: Investigator executed successfully in 1.813s.\n- **Step 4**: Hypothesis executed successfully in 2.099s.\n- **Step 5**: Evaluator executed successfully in 2.493s.\n\n## Evidence\n- **ev-1700e2** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on feature all_features. (observed distance: 0.25, alarm threshold: 0.15)\n- **ev-e5c6b4** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on feature all_features. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-12345** — *Covariate Drift Due to Changes in User Behavior* (Likelihood: 70%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about user behavior, Insufficient data to confirm the hypothesis\n- **hyp-67890** — *Data Ingestion or Processing Pipeline Changes* (Likelihood: 30%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about the data ingestion and processing pipeline, Insufficient data to confirm the hypothesis\n- **hyp-34567** — *Seasonal or Periodic Patterns* (Likelihood: 20%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about seasonal or periodic patterns, Insufficient data to confirm the hypothesis\n\n## Evaluation\n- **Primary Hypothesis**: Covariate Drift Due to Changes in User Behavior\n- **Evaluator Confidence**: 70%\n- **Alternative Hypotheses Evaluated**: 2\n\n## Recommendations\n- **Retrain** (Priority: P0, Risk: Low, Time: 2 hours)\n  - *Justification*: The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.\n- **Update Threshold** (Priority: P1, Risk: Medium, Time: 30 minutes)\n  - *Justification*: The cost of updating the threshold is lower compared to retraining the model, but it may not completely mitigate the effects of the drift.\n\n## Confidence\nWe estimate a confidence level of **70%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-direct\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T02:58:44.802576+00:00\n"
+    "markdown_content": "# Incident Investigation Report: inv-test-direct\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-direct` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.141s.\n- **Step 3**: Investigator executed successfully in 0.115s.\n- **Step 4**: Hypothesis executed successfully in 0.130s.\n- **Step 5**: Evaluator executed successfully in 0.115s.\n\n## Evidence\n- **ev-kb-runbook** (KnowledgeBase): Retrieved relevant playbooks and guidelines matching the current incident signature. (observed distance: N/A, alarm threshold: N/A)\n- **ev-1e23b8** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-direct\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T04:29:03.501157+00:00\n"
   },
   "agent_results": [
     {
       "agent_name": "Supervisor",
-      "started_at": "2026-07-29T02:58:36.668079Z",
-      "finished_at": "2026-07-29T02:58:36.668207Z",
+      "started_at": "2026-07-29T04:29:02.848712Z",
+      "finished_at": "2026-07-29T04:29:02.848799Z",
       "success": true,
       "output": {
         "steps": [
@@ -327,165 +225,120 @@
       "metadata": {},
       "cost": 0.0,
       "tokens": 0,
-      "latency": 0.0001249000197276473,
+      "latency": 0.00008010002784430981,
       "retries": 0
     },
     {
       "agent_name": "Planner",
-      "started_at": "2026-07-29T02:58:36.669191Z",
-      "finished_at": "2026-07-29T02:58:37.771354Z",
+      "started_at": "2026-07-29T04:29:02.851439Z",
+      "finished_at": "2026-07-29T04:29:02.992816Z",
       "success": true,
       "output": {
+        "status": "PLAN_GENERATED",
         "objectives": [
-          "Identify the source of the detected drift",
-          "Assess the impact of the drift on the model's performance",
-          "Check for any downstream dependencies that may be affected",
-          "Determine the root cause of the drift"
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
         ],
         "questions": [
-          "Did user demographics or behavior change recently?",
-          "Was there a code release or update that could have caused the drift?",
-          "Have there been any changes to the data ingestion or processing pipeline?",
-          "Are there any seasonal or periodic patterns that could be contributing to the drift?"
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
         ],
-        "evidence_needed": [
-          "Model performance metrics (e.g. accuracy, precision, recall) over time",
-          "Data distribution and statistical summaries (e.g. mean, variance, histogram) for the input features",
-          "Code revision history and release notes",
-          "User interaction logs and feedback data",
-          "Data ingestion and processing pipeline logs and metrics",
-          "Model training and validation data snapshots"
-        ],
-        "status": "PLAN_GENERATED"
+        "evidence_plan": {
+          "goal": "Determine feature drift and performance root cause",
+          "capabilities": [
+            {
+              "capability": "runbooks",
+              "priority": 1,
+              "required": true,
+              "status": "pending"
+            },
+            {
+              "capability": "experiment_traces",
+              "priority": 2,
+              "required": true,
+              "status": "pending"
+            },
+            {
+              "capability": "code_history",
+              "priority": 3,
+              "required": false,
+              "status": "pending"
+            }
+          ]
+        }
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "planner",
           "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 1101.5911001013592,
+          "latency_ms": 140.84280002862215,
           "tokens_prompt": 245,
-          "tokens_completion": 226,
-          "total_tokens": 472,
+          "tokens_completion": 0,
+          "total_tokens": 245,
           "cost_estimate": 0.0,
-          "success": true
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 472,
-      "latency": 1.1021589000010863,
+      "tokens": 245,
+      "latency": 0.141369599965401,
       "retries": 0
     },
     {
       "agent_name": "Investigator",
-      "started_at": "2026-07-29T02:58:37.773465Z",
-      "finished_at": "2026-07-29T02:58:39.586128Z",
+      "started_at": "2026-07-29T04:29:02.993792Z",
+      "finished_at": "2026-07-29T04:29:03.108664Z",
       "success": true,
       "output": {
-        "observations": [
-          "Drift detected with a fallback drift score of 0.25, which is above the no-drift threshold of 0.10-0.20.",
-          "The incident was triggered by the DriftGuard platform with a medium severity level.",
-          "No predictions are available in the telemetry data."
-        ],
-        "anomalies": [
-          "The model version is null, which could indicate a potential issue with model deployment or versioning.",
-          "The raw payload and metadata are empty, which might limit the availability of additional context for the incident."
-        ],
-        "supporting_evidence": [
-          {
-            "drift_score": 0.25,
-            "threshold": "0.10-0.20",
-            "severity": "MEDIUM"
-          },
-          {
-            "model_id": "demo-rollback-v2",
-            "model_version": null
-          }
-        ],
-        "confidence": 0.8,
-        "reasoning": "Based on the provided telemetry data and knowledge base context, the drift pattern observed for the demo-rollback-v2 model has been seen before, with historical precedents indicating similar incidents. The ADWIN score of 0.25 suggests a potential covariate drift. Given the medium severity and the model's history, it is reasonable to consider remediation strategies outlined in relevant runbooks, such as the ADWIN drift response protocol and the retrain decision tree. The confidence level is set to 0.8 due to the availability of historical precedents and the match with known drift patterns, but it is tempered by the lack of detailed predictions and potentially incomplete model version information.",
         "status": "EVIDENCE_COLLECTED",
-        "mcp_kb_enriched": true
+        "evidence_id": "ev-1e23b8",
+        "mcp_kb_enriched": false
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "investigator",
           "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 1748.3245000476018,
-          "tokens_prompt": 1156,
-          "tokens_completion": 344,
-          "total_tokens": 1501,
+          "latency_ms": 113.51120006293058,
+          "tokens_prompt": 636,
+          "tokens_completion": 0,
+          "total_tokens": 636,
           "cost_estimate": 0.0,
-          "success": true
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 1501,
-      "latency": 1.8126588999293745,
+      "tokens": 636,
+      "latency": 0.11486859992146492,
       "retries": 0
     },
     {
       "agent_name": "Hypothesis",
-      "started_at": "2026-07-29T02:58:39.588443Z",
-      "finished_at": "2026-07-29T02:58:41.687207Z",
+      "started_at": "2026-07-29T04:29:03.111841Z",
+      "finished_at": "2026-07-29T04:29:03.241957Z",
       "success": true,
       "output": {
         "status": "HYPOTHESIS_FORMULATED",
         "hypotheses": [
           {
-            "hypothesis_id": "hyp-12345",
-            "title": "Covariate Drift Due to Changes in User Behavior",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+            "hypothesis_id": "hyp-inv-test",
+            "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+            "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
             "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
+              "ev-kb-runbook",
+              "ev-1e23b8"
             ],
-            "likelihood_score": 0.7,
+            "likelihood_score": 0.92,
             "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-            "confidence": 0.6,
+            "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+            "confidence": 0.92,
             "weaknesses": [
-              "Lack of information about user behavior",
-              "Insufficient data to confirm the hypothesis"
+              "No latency increase in local tests"
             ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          },
-          {
-            "hypothesis_id": "hyp-67890",
-            "title": "Data Ingestion or Processing Pipeline Changes",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.3,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-            "confidence": 0.4,
-            "weaknesses": [
-              "Lack of information about the data ingestion and processing pipeline",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          },
-          {
-            "hypothesis_id": "hyp-34567",
-            "title": "Seasonal or Periodic Patterns",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.2,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-            "confidence": 0.3,
-            "weaknesses": [
-              "Lack of information about seasonal or periodic patterns",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
+            "created_at": "2026-07-29T04:29:03.111888Z"
           }
         ]
       },
@@ -494,140 +347,90 @@
           "agent": "hypothesis",
           "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 2097.989499918185,
-          "tokens_prompt": 813,
-          "tokens_completion": 652,
-          "total_tokens": 1465,
+          "latency_ms": 129.64489997830242,
+          "tokens_prompt": 771,
+          "tokens_completion": 0,
+          "total_tokens": 771,
           "cost_estimate": 0.0,
-          "success": true
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 1465,
-      "latency": 2.0987599999643862,
+      "tokens": 771,
+      "latency": 0.13011310005094856,
       "retries": 0
     },
     {
       "agent_name": "Evaluator",
-      "started_at": "2026-07-29T02:58:41.688615Z",
-      "finished_at": "2026-07-29T02:58:44.181351Z",
+      "started_at": "2026-07-29T04:29:03.243170Z",
+      "finished_at": "2026-07-29T04:29:03.358579Z",
       "success": true,
       "output": {
         "best_hypothesis": {
-          "hypothesis_id": "hyp-12345",
-          "title": "Covariate Drift Due to Changes in User Behavior",
-          "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+          "hypothesis_id": "hyp-inv-test",
+          "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+          "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
           "supporting_evidence_ids": [
-            "ev-1700e2",
-            "ev-e5c6b4"
+            "ev-kb-runbook",
+            "ev-1e23b8"
           ],
-          "likelihood_score": 0.7,
+          "likelihood_score": 0.92,
           "verified_by_simulation": false,
-          "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-          "confidence": 0.6,
+          "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+          "confidence": 0.92,
           "weaknesses": [
-            "Lack of information about user behavior",
-            "Insufficient data to confirm the hypothesis"
+            "No latency increase in local tests"
           ],
-          "created_at": "2026-07-29T02:58:39.586074Z"
+          "created_at": "2026-07-29T04:29:03.111888Z"
         },
-        "alternatives": [
-          {
-            "hypothesis_id": "hyp-67890",
-            "title": "Data Ingestion or Processing Pipeline Changes",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.3,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-            "confidence": 0.4,
-            "weaknesses": [
-              "Lack of information about the data ingestion and processing pipeline",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          },
-          {
-            "hypothesis_id": "hyp-34567",
-            "title": "Seasonal or Periodic Patterns",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.2,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-            "confidence": 0.3,
-            "weaknesses": [
-              "Lack of information about seasonal or periodic patterns",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          }
-        ],
+        "alternatives": [],
         "recommended_actions": [
           {
-            "recommendation_id": "rec-48d42e",
-            "action_type": "RETRAIN_MODEL",
-            "title": "Retrain Recommendation",
-            "justification": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+            "recommendation_id": "rec-084b17",
+            "action_type": "ROLLBACK_MODEL",
+            "title": "Rollback Recommendation",
+            "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
             "target_model_id": "demo-rollback-v2",
-            "target_version": "v2",
-            "requires_human_approval": true,
-            "action": "Retrain",
-            "reason": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
-            "priority": "P0",
-            "estimated_risk": "Low",
-            "estimated_time": "2 hours"
-          },
-          {
-            "recommendation_id": "rec-67890",
-            "action_type": "UPDATE_THRESHOLD",
-            "title": "Update the threshold for the model's predictions",
-            "justification": "The alternative hypothesis suggests that the covariate drift may be due to changes in the data ingestion or processing pipeline. Updating the threshold for the model's predictions can help mitigate the effects of the drift.",
-            "target_model_id": "model-12345",
             "target_version": null,
             "requires_human_approval": true,
-            "action": "Update Threshold",
-            "reason": "The cost of updating the threshold is lower compared to retraining the model, but it may not completely mitigate the effects of the drift.",
-            "priority": "P1",
-            "estimated_risk": "Medium",
-            "estimated_time": "30 minutes"
+            "action": "Rollback",
+            "reason": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
+            "priority": "P0",
+            "estimated_risk": "Low",
+            "estimated_time": "5 min"
           }
         ],
-        "confidence": 0.7
+        "confidence": 0.91
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "evaluator",
           "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 2491.775900009088,
-          "tokens_prompt": 941,
-          "tokens_completion": 998,
-          "total_tokens": 1939,
+          "latency_ms": 114.86329999752343,
+          "tokens_prompt": 391,
+          "tokens_completion": 0,
+          "total_tokens": 391,
           "cost_estimate": 0.0,
-          "success": true
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 1939,
-      "latency": 2.49273199995514,
+      "tokens": 391,
+      "latency": 0.11540500004775822,
       "retries": 0
     },
     {
       "agent_name": "Reporter",
-      "started_at": "2026-07-29T02:58:44.185148Z",
-      "finished_at": "2026-07-29T02:58:44.802642Z",
+      "started_at": "2026-07-29T04:29:03.359967Z",
+      "finished_at": "2026-07-29T04:29:03.501261Z",
       "success": true,
       "output": {
-        "report_id": "rep-370f6b",
+        "report_id": "rep-e79fa6",
         "investigation_id": "inv-test-direct",
-        "generated_at": "2026-07-29T02:58:44.802621Z",
+        "generated_at": "2026-07-29T04:29:03.501227Z",
         "incident_summary": {
           "incident_id": "inc-test-direct",
           "model_id": "demo-rollback-v2",
@@ -636,129 +439,90 @@
           "trigger_type": "drift_detected",
           "severity": "MEDIUM",
           "status": "OPEN",
-          "detected_at": "2026-07-29T02:58:36.666614Z",
+          "detected_at": "2026-07-29T04:29:02.840432Z",
           "raw_payload": {},
           "metadata": {}
         },
-        "primary_root_cause": "Covariate Drift Due to Changes in User Behavior",
+        "primary_root_cause": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
         "supporting_evidence": [],
         "tested_hypotheses": [
           {
-            "hypothesis_id": "hyp-12345",
-            "title": "Covariate Drift Due to Changes in User Behavior",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.",
+            "hypothesis_id": "hyp-inv-test",
+            "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+            "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
             "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
+              "ev-kb-runbook",
+              "ev-1e23b8"
             ],
-            "likelihood_score": 0.7,
+            "likelihood_score": 0.92,
             "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift is not due to changes in the data ingestion or processing pipeline, but rather due to changes in the user behavior. This could be due to a variety of factors, such as a change in the user demographics or a shift in the way users interact with the system.",
-            "confidence": 0.6,
+            "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+            "confidence": 0.92,
             "weaknesses": [
-              "Lack of information about user behavior",
-              "Insufficient data to confirm the hypothesis"
+              "No latency increase in local tests"
             ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          },
-          {
-            "hypothesis_id": "hyp-67890",
-            "title": "Data Ingestion or Processing Pipeline Changes",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.3,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to changes in the data ingestion or processing pipeline, such as a change in the data source or a modification to the data processing algorithm.",
-            "confidence": 0.4,
-            "weaknesses": [
-              "Lack of information about the data ingestion and processing pipeline",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
-          },
-          {
-            "hypothesis_id": "hyp-34567",
-            "title": "Seasonal or Periodic Patterns",
-            "detailed_reasoning": "The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.",
-            "supporting_evidence_ids": [
-              "ev-1700e2",
-              "ev-e5c6b4"
-            ],
-            "likelihood_score": 0.2,
-            "verified_by_simulation": false,
-            "explanation": "The evidence suggests that the drift may be due to seasonal or periodic patterns in the data, such as a change in user behavior during holidays or a shift in the data distribution during certain times of the year.",
-            "confidence": 0.3,
-            "weaknesses": [
-              "Lack of information about seasonal or periodic patterns",
-              "Insufficient data to confirm the hypothesis"
-            ],
-            "created_at": "2026-07-29T02:58:39.586074Z"
+            "created_at": "2026-07-29T04:29:03.111888Z"
           }
         ],
         "experiments": [],
         "recommended_action": {
-          "recommendation_id": "rec-48d42e",
-          "action_type": "RETRAIN_MODEL",
-          "title": "Retrain Recommendation",
-          "justification": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+          "recommendation_id": "rec-084b17",
+          "action_type": "ROLLBACK_MODEL",
+          "title": "Rollback Recommendation",
+          "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
           "target_model_id": "demo-rollback-v2",
-          "target_version": "v2",
+          "target_version": null,
           "requires_human_approval": true,
-          "action": "Retrain",
-          "reason": "The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.",
+          "action": "Rollback",
+          "reason": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
           "priority": "P0",
           "estimated_risk": "Low",
-          "estimated_time": "2 hours"
+          "estimated_time": "5 min"
         },
-        "markdown_content": "# Incident Investigation Report: inv-test-direct\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-direct` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 1.102s.\n- **Step 3**: Investigator executed successfully in 1.813s.\n- **Step 4**: Hypothesis executed successfully in 2.099s.\n- **Step 5**: Evaluator executed successfully in 2.493s.\n\n## Evidence\n- **ev-1700e2** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on feature all_features. (observed distance: 0.25, alarm threshold: 0.15)\n- **ev-e5c6b4** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on feature all_features. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-12345** — *Covariate Drift Due to Changes in User Behavior* (Likelihood: 70%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to changes in user behavior, such as a shift in demographics or interaction patterns. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about user behavior, Insufficient data to confirm the hypothesis\n- **hyp-67890** — *Data Ingestion or Processing Pipeline Changes* (Likelihood: 30%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to changes in the data ingestion or processing pipeline. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about the data ingestion and processing pipeline, Insufficient data to confirm the hypothesis\n- **hyp-34567** — *Seasonal or Periodic Patterns* (Likelihood: 20%)\n  - *Reasoning*: The observed covariate drift score of 0.25 on feature all_features could be due to seasonal or periodic patterns in the data. This change may have occurred recently, causing the model's performance to degrade.\n  - *Weaknesses*: Lack of information about seasonal or periodic patterns, Insufficient data to confirm the hypothesis\n\n## Evaluation\n- **Primary Hypothesis**: Covariate Drift Due to Changes in User Behavior\n- **Evaluator Confidence**: 70%\n- **Alternative Hypotheses Evaluated**: 2\n\n## Recommendations\n- **Retrain** (Priority: P0, Risk: Low, Time: 2 hours)\n  - *Justification*: The cost of retraining is lower compared to other alternatives, and it can help improve the model's performance.\n- **Update Threshold** (Priority: P1, Risk: Medium, Time: 30 minutes)\n  - *Justification*: The cost of updating the threshold is lower compared to retraining the model, but it may not completely mitigate the effects of the drift.\n\n## Confidence\nWe estimate a confidence level of **70%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-direct\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T02:58:44.802576+00:00\n"
+        "markdown_content": "# Incident Investigation Report: inv-test-direct\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-direct` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.141s.\n- **Step 3**: Investigator executed successfully in 0.115s.\n- **Step 4**: Hypothesis executed successfully in 0.130s.\n- **Step 5**: Evaluator executed successfully in 0.115s.\n\n## Evidence\n- **ev-kb-runbook** (KnowledgeBase): Retrieved relevant playbooks and guidelines matching the current incident signature. (observed distance: N/A, alarm threshold: N/A)\n- **ev-1e23b8** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-direct\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T04:29:03.501157+00:00\n"
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "reporter",
           "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 606.3838999252766,
-          "tokens_prompt": 3001,
+          "latency_ms": 140.53550001699477,
+          "tokens_prompt": 1625,
           "tokens_completion": 0,
-          "total_tokens": 3001,
+          "total_tokens": 1625,
           "cost_estimate": 0.0,
           "success": false,
           "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 3001,
-      "latency": 0.6174897000892088,
+      "tokens": 1625,
+      "latency": 0.14129079994745553,
       "retries": 0
     }
   ],
-  "started_at": "2026-07-29T02:58:36.666633Z",
-  "updated_at": "2026-07-29T02:58:44.803495Z",
-  "completed_at": "2026-07-29T02:58:44.803495Z",
+  "started_at": "2026-07-29T04:29:02.840455Z",
+  "updated_at": "2026-07-29T04:29:03.502198Z",
+  "completed_at": "2026-07-29T04:29:03.502198Z",
   "execution_history": [
-    "[2026-07-29T02:58:36.667498+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[2026-07-29T04:29:02.842622+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
     "[Supervisor] Supervisor generated execution plan with 5 steps.",
     "[Agent Executor] Executed 'Supervisor' successfully in 0.000s (tries: 1).",
-    "[2026-07-29T02:58:36.668712+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
-    "[Planner] LLM Generated InvestigationPlan: objectives=['Identify the source of the detected drift', \"Assess the impact of the drift on the model's performance\", 'Check for any downstream dependencies that may be affected', 'Determine the root cause of the drift'], questions=['Did user demographics or behavior change recently?', 'Was there a code release or update that could have caused the drift?', 'Have there been any changes to the data ingestion or processing pipeline?', 'Are there any seasonal or periodic patterns that could be contributing to the drift?'], evidence_needed=['Model performance metrics (e.g. accuracy, precision, recall) over time', 'Data distribution and statistical summaries (e.g. mean, variance, histogram) for the input features', 'Code revision history and release notes', 'User interaction logs and feedback data', 'Data ingestion and processing pipeline logs and metrics', 'Model training and validation data snapshots']",
-    "[Agent Executor] Executed 'Planner' successfully in 1.102s (tries: 1).",
-    "[2026-07-29T02:58:37.772225+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
-    "[2026-07-29T02:58:39.586085+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
-    "[2026-07-29T02:58:39.586106+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
-    "[Agent Executor] Executed 'Investigator' successfully in 1.813s (tries: 1).",
-    "[2026-07-29T02:58:39.587148+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
-    "[2026-07-29T02:58:41.687161+00:00] [Hypothesis] Synthesized hyp-12345: Covariate Drift Due to Changes in User Behavior (Likelihood: 0.7).",
-    "[2026-07-29T02:58:41.687176+00:00] [Hypothesis] Synthesized hyp-67890: Data Ingestion or Processing Pipeline Changes (Likelihood: 0.3).",
-    "[2026-07-29T02:58:41.687179+00:00] [Hypothesis] Synthesized hyp-34567: Seasonal or Periodic Patterns (Likelihood: 0.2).",
-    "[Agent Executor] Executed 'Hypothesis' successfully in 2.099s (tries: 1).",
-    "[2026-07-29T02:58:41.688048+00:00] [EXPERIMENTAL_VALIDATION] Running step: Evaluate hypotheses and recommend optimal intervention",
-    "[2026-07-29T02:58:44.181221+00:00] [Remediation] Formulated intervention rem-10d858 (AUTOMATED_RETRAINING).",
-    "[Agent Executor] Executed 'Evaluator' successfully in 2.493s (tries: 1).",
-    "[2026-07-29T02:58:44.183523+00:00] [REMEDIATION_READY] Running step: Synthesize findings and compile forensic report",
-    "[Agent Executor] Executed 'Reporter' successfully in 0.617s (tries: 1).",
-    "[2026-07-29T02:58:44.803495+00:00] [COMPLETED] All workflow steps completed successfully. Session archived."
+    "[2026-07-29T04:29:02.850926+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[Planner] Generated InvestigationPlan (Fallback) with capabilities: ['runbooks', 'experiment_traces', 'code_history']",
+    "[Agent Executor] Executed 'Planner' successfully in 0.141s (tries: 1).",
+    "[2026-07-29T04:29:02.993390+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[2026-07-29T04:29:02.994743+00:00] [Evidence] Accrued runbook_reference evidence from KnowledgeBase.",
+    "[2026-07-29T04:29:03.108647+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.115s (tries: 1).",
+    "[2026-07-29T04:29:03.111356+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-29T04:29:03.241907+00:00] [Hypothesis] Synthesized hyp-inv-test: Unmonitored Demographic Covariate Shift Triggering Latency Surge (Likelihood: 0.92).",
+    "[Agent Executor] Executed 'Hypothesis' successfully in 0.130s (tries: 1).",
+    "[2026-07-29T04:29:03.242624+00:00] [EXPERIMENTAL_VALIDATION] Running step: Evaluate hypotheses and recommend optimal intervention",
+    "[2026-07-29T04:29:03.358533+00:00] [Remediation] Formulated intervention rem-e15e06 (CANARY_ROLLBACK).",
+    "[Agent Executor] Executed 'Evaluator' successfully in 0.115s (tries: 1).",
+    "[2026-07-29T04:29:03.359360+00:00] [REMEDIATION_READY] Running step: Synthesize findings and compile forensic report",
+    "[Agent Executor] Executed 'Reporter' successfully in 0.141s (tries: 1).",
+    "[2026-07-29T04:29:03.502198+00:00] [COMPLETED] All workflow steps completed successfully. Session archived."
   ]
 }

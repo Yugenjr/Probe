@@ -46,6 +46,7 @@ def main():
     dg = DriftGuard(
         model_id="fraud-detector-v1",
         api_url="http://localhost:8000",
+        api_key="dg-353460f1c15b79329e7b2023e3e7c19a",
         drift_threshold=0.15,
         auto_retrain=True
     )
@@ -75,10 +76,9 @@ def main():
     print(f"Stable predictions finished. Average Drift Score: {np.mean(stable_scores):.4f}\n")
 
     # ====================================================
-    # 4. Inject Concept Drift (Simulating distribution shifts)
+    # 4. Inject Concept Drift & Trigger Real-Time Notification
     # ====================================================
     print("Step 4: Simulating Concept Drift (Injecting shifted feature distributions)...")
-    # We will shift the feature values significantly by multiplying with an offset
     drifted_features = X_test[:50] * 3.5
     
     drifted_scores = []
@@ -91,11 +91,19 @@ def main():
         
         if drift_score > dg.drift_threshold and not drift_detected:
             drift_detected = True
-            print(f"\n🚨 DRIFT DETECTED AT SAMPLE {i+1}! Score: {drift_score:.4f} > Threshold: {dg.drift_threshold}")
-            print("DriftGuard SDK has automatically triggered the asynchronous background retraining flow!")
-
-    print(f"\nDrifting predictions finished. Peak Drift Score reached: {max(drifted_scores):.4f}")
-    print("====================================================")
+            print(f"\n[!] DRIFT DETECTED AT SAMPLE {i+1}! Score: {drift_score:.4f} > Threshold: {dg.drift_threshold}")
+            print("DriftGuard SDK autonomously triggered Retraining Protocol and notified Probe via Webhook!")
+            break
+            
+        time.sleep(0.05)
+        
+    print("\n====================================================")
+    print("DriftGuard Simulation Complete.")
+    print("Check your DriftGuard Probe Dashboard to observe the autonomous AI investigation in real-time.")
+    print("====================================================\n")
+    
+    # Wait for background daemon threads to fire the webhook before process exit
+    time.sleep(2)
 
 if __name__ == "__main__":
     main()

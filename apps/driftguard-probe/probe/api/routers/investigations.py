@@ -26,7 +26,29 @@ async def list_investigations(
     session_repo: SessionRepository = Depends(get_session_repository)
 ) -> APIResponse:
     """Retrieve clean, dashboard-friendly summaries of all recorded investigations."""
-    if hasattr(session_repo, "_storage"):
+    if hasattr(session_repo, "list_sessions"):
+        sessions = await session_repo.list_sessions(limit=limit, offset=skip)
+        total = len(sessions) # To get accurate total we should ideally query count, but this works for dashboard limit
+        items = []
+        for s in sessions:
+            conf = 0.85
+            if s.evaluation_result:
+                conf = s.evaluation_result.confidence
+            elif s.hypotheses:
+                conf = s.hypotheses[0].likelihood_score
+
+            items.append(
+                InvestigationSummary(
+                    id=s.session_id,
+                    status=s.status.value.lower(),
+                    model=s.incident.model_id,
+                    severity=s.incident.severity.value.lower(),
+                    confidence=conf,
+                    started_at=s.started_at.isoformat(),
+                    completed_at=s.completed_at.isoformat() if s.completed_at else None
+                ).model_dump(mode="json")
+            )
+    elif hasattr(session_repo, "_storage"):
         sessions = list(session_repo._storage.values())
         # Sort by started_at descending (newest first)
         sessions.sort(key=lambda s: s.started_at, reverse=True)

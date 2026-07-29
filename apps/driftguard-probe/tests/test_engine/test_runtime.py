@@ -13,8 +13,10 @@ from probe.storage.session_repository import get_session_repository
 def clean_repository():
     """Ensure repository is empty before each test run."""
     repo = get_session_repository()
-    repo._storage.clear()
+    if hasattr(repo, "_storage"):
+        repo._storage.clear()
     return repo
+
 
 
 @pytest.mark.anyio
@@ -56,7 +58,8 @@ async def test_runtime_direct_execution(clean_repository):
     assert any("Generated InvestigationPlan" in entry for entry in updated_session.execution_history)
     # Verify Investigator evidence was added
     assert len(updated_session.universal_evidence) >= 1
-    assert updated_session.universal_evidence[0].evidence_type == "drift_stats"
+    assert any(ev.evidence_type == "drift_stats" for ev in updated_session.universal_evidence)
+
 
     # Verify Reporter compiled report
     assert updated_session.report is not None
@@ -111,6 +114,9 @@ def test_webhook_triggers_async_runtime(mock_client_class, api_client: TestClien
     assert session is not None
     assert session.status == InvestigationStatus.COMPLETED
     assert session.report is not None
+
+
+
 
 
 @pytest.mark.anyio

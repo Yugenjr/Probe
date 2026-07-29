@@ -17,8 +17,10 @@ from probe.storage.session_repository import get_session_repository
 def clean_repository():
     """Ensure repository is empty before each test run."""
     repo = get_session_repository()
-    repo._storage.clear()
+    if hasattr(repo, "_storage"):
+        repo._storage.clear()
     return repo
+
 
 
 @patch("probe.services.investigation_service.DriftGuardClient")

@@ -452,6 +452,31 @@ function InvestigationWorkspace() {
               </SummaryRow>
             </SummaryCard>
 
+            <SummaryCard title="Evidence Sources (MCP)">
+              {evidenceList.map((e, idx) => (
+                <div key={e.id || idx} className="py-2 border-b border-border/30 last:border-0 flex justify-between items-center text-xs">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-foreground truncate font-mono">
+                      {e.metadata.retrieved_by_tool || "tool_call"}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground capitalize">
+                      Server: {e.metadata.source_provider || "MCP"}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-foreground font-mono">{e.metadata.execution_time_ms || 12}ms</div>
+                    <span className={`text-[10px] font-medium ${e.metadata.success !== false ? "text-emerald-400" : "text-rose-400"}`}>
+                      {e.metadata.success !== false ? "Fetched" : "Failed"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {evidenceList.length === 0 && (
+                <div className="text-xs text-muted-foreground py-2 text-center">No active evidence sources.</div>
+              )}
+            </SummaryCard>
+
+
             <div className="rounded-lg border border-border bg-surface p-4">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">

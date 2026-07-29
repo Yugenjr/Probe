@@ -8,10 +8,9 @@ from ..interfaces.execution import ExecutionProvider
 from ..interfaces.llm import LLMProvider
 from ..interfaces.memory import MemoryProvider
 from ..interfaces.storage import StorageProvider
-
-    from ..mcp.registry.server_registry import ServerRegistry
-    from ..mcp.gateway.tool_gateway import ToolGateway
-    from ..evidence.evidence_gateway import EvidenceGateway
+from ..mcp.registry.server_registry import ServerRegistry
+from ..mcp.gateway.tool_gateway import ToolGateway
+from ..evidence.evidence_gateway import EvidenceGateway
 
 
 class Container:
@@ -31,6 +30,16 @@ class Container:
         self.mcp_registry: Optional["ServerRegistry"] = None
         self.tool_gateway: Optional["ToolGateway"] = None
         self.evidence_gateway: Optional["EvidenceGateway"] = None
+        from ..mcp.capability import CapabilityRegistry
+        self.capability_registry: CapabilityRegistry = CapabilityRegistry()
+        
+        # Database repositories — injected at startup
+        from ..database.repositories.investigation_repository import InvestigationRepository
+        from ..database.repositories.mcp_repository import McpRepository
+        self.investigation_repository: Optional[InvestigationRepository] = None
+        self.mcp_repository: Optional[McpRepository] = None
+
+
 
 
     @property

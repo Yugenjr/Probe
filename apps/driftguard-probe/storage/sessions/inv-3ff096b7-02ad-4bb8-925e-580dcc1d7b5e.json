@@ -1,0 +1,192 @@
+{
+  "session_id": "inv-3ff096b7-02ad-4bb8-925e-580dcc1d7b5e",
+  "investigation_id": "inv-3ff096b7-02ad-4bb8-925e-580dcc1d7b5e",
+  "status": "PLANNING",
+  "incident": {
+    "incident_id": "inc-9f893a5e",
+    "model_id": "test_churn_model",
+    "model_version": "1.0.1",
+    "source_platform": "driftguard",
+    "trigger_type": "drift_detected",
+    "severity": "MEDIUM",
+    "status": "OPEN",
+    "detected_at": "2026-07-29T03:29:15.150172Z",
+    "raw_payload": {
+      "source_platform": "driftguard",
+      "event_type": "drift_detected",
+      "model_id": "test_churn_model",
+      "model_version": "1.0.1",
+      "drift_score": null,
+      "timestamp": "2026-07-29T03:29:15.149495Z",
+      "details": {
+        "score": 0.22
+      },
+      "webhook_secret": null,
+      "event_id": null,
+      "callback_url": null
+    },
+    "metadata": {}
+  },
+  "investigation_context": {
+    "investigation_id": "inv-3ff096b7-02ad-4bb8-925e-580dcc1d7b5e",
+    "tenant_id": "driftguard",
+    "timestamp_utc": "2026-07-29T03:29:15.150077+00:00",
+    "provider_name": "DriftGuard-Core-v3",
+    "incident": {},
+    "model": {
+      "model_id": "test-model",
+      "status": "active",
+      "version": "9.9.9",
+      "drift_threshold": 0.15,
+      "features": [],
+      "reference_data_path": "",
+      "created_at": "2026-07-28T12:00:00"
+    },
+    "model_version": "9.9.9",
+    "monitor": {
+      "drift_threshold": 0.15,
+      "features_tracked": []
+    },
+    "drift": {
+      "records": [
+        {
+          "timestamp": "2026-07-28T12:00:00Z",
+          "drift_score": 0.25,
+          "features": {},
+          "prediction": {}
+        }
+      ],
+      "overall_status": "active"
+    },
+    "validation": {},
+    "audit": [],
+    "retraining": [],
+    "telemetry": [
+      {
+        "metric_name": "driftguard_predictions_total",
+        "labels": {
+          "model_id": "test_churn_model"
+        },
+        "value": 826.0
+      },
+      {
+        "metric_name": "driftguard_db_commit_latency_seconds_p99",
+        "labels": {
+          "model_id": "test_churn_model"
+        },
+        "value": 0.035
+      }
+    ],
+    "predictions": [
+      {
+        "timestamp": "2026-07-28T12:00:00Z",
+        "features": {},
+        "prediction": {},
+        "drift_score": 0.25
+      }
+    ],
+    "reports": [],
+    "metadata": {
+      "reference_data": ""
+    },
+    "relationships": {
+      "model_to_versions": [
+        "9.9.9"
+      ],
+      "incident_to_model": []
+    }
+  },
+  "active_workflow_name": null,
+  "universal_evidence": [],
+  "evidence_items": [],
+  "hypotheses": [],
+  "evaluation_result": null,
+  "remediation_plan": null,
+  "report": null,
+  "agent_results": [
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-29T03:29:15.154564Z",
+      "finished_at": "2026-07-29T03:29:15.154963Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0003926999634131789,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-29T03:29:15.170187Z",
+      "finished_at": "2026-07-29T03:29:15.170324Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.00013459997717291117,
+      "retries": 0
+    }
+  ],
+  "started_at": "2026-07-29T03:29:15.150184Z",
+  "updated_at": "2026-07-29T03:29:15.170905Z",
+  "completed_at": null,
+  "execution_history": [
+    "[2026-07-29T03:29:15.150194+00:00] [COLLECTING_EVIDENCE] Investigation initialized via webhook from platform: driftguard.",
+    "[2026-07-29T03:29:15.151490+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.000s (tries: 1).",
+    "[2026-07-29T03:29:15.156099+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-29T03:29:15.169169+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.000s (tries: 1).",
+    "[2026-07-29T03:29:15.170905+00:00] [PLANNING] Running step: Establish investigation scope and objectives"
+  ]
+}

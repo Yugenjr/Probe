@@ -87,9 +87,21 @@ function Dashboard() {
 
   const latest = list.slice(0, 6);
 
+  const now = new Date();
+  const isToday = (d: Date) => d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  const isYesterday = (d: Date) => {
+    const y = new Date(now);
+    y.setDate(y.getDate() - 1);
+    return d.getDate() === y.getDate() && d.getMonth() === y.getMonth() && d.getFullYear() === y.getFullYear();
+  };
+
   // Compute stats dynamically
   const activeCount = list.filter((i) => i.status !== "completed" && i.status !== "failed").length;
-  const completedCount = list.filter((i) => i.status === "completed").length;
+  
+  const completedToday = list.filter((i) => i.status === "completed" && i.completed_at && isToday(new Date(i.completed_at))).length;
+  const completedYesterday = list.filter((i) => i.status === "completed" && i.completed_at && isYesterday(new Date(i.completed_at))).length;
+  const diffCompleted = completedToday - completedYesterday;
+  
   const failedCount = list.filter((i) => i.status === "failed").length;
   const criticalCount = list.filter((i) => i.severity === "critical").length;
   
@@ -109,7 +121,7 @@ function Dashboard() {
     {
       label: "Active investigations",
       value: String(activeCount),
-      delta: activeCount > 0 ? "+1 vs. 1h ago" : "0 change",
+      delta: activeCount > 0 ? `+${activeCount} active` : "0 change",
       tone: activeCount > 0 ? ("up" as const) : ("flat" as const),
       icon: Activity,
       iconClass: "text-info",
@@ -117,9 +129,9 @@ function Dashboard() {
     },
     {
       label: "Completed today",
-      value: String(completedCount),
-      delta: completedCount > 0 ? `+${completedCount} vs. yesterday` : "0 change",
-      tone: completedCount > 0 ? ("up" as const) : ("flat" as const),
+      value: String(completedToday),
+      delta: diffCompleted > 0 ? `+${diffCompleted} vs. yesterday` : (diffCompleted < 0 ? `${diffCompleted} vs. yesterday` : "0 change"),
+      tone: diffCompleted > 0 ? ("up" as const) : (diffCompleted < 0 ? ("down" as const) : ("flat" as const)),
       icon: CheckCircle2,
       iconClass: "text-success",
       hint: "100% closed within SLA",
@@ -144,14 +156,18 @@ function Dashboard() {
     },
   ];
 
-  // Dynamic Chart Series mapping
+  // Dynamic Chart Series mapping (7 days)
   const chartSeries = useMemo(() => {
     const points = [];
     const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+    // Use start of day for grouping
+    now.setHours(0, 0, 0, 0);
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
       points.push({
-        t: d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        t: d.toLocaleDateString([], { month: "short", day: "numeric" }),
+        timestamp: d.getTime(),
         incidents: 0,
         resolved: 0,
       });
@@ -159,10 +175,11 @@ function Dashboard() {
 
     list.forEach((item) => {
       const itemDate = new Date(item.started_at);
-      const diffMs = now.getTime() - itemDate.getTime();
-      const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
-      if (diffHours >= 0 && diffHours < 6) {
-        const pointIdx = 5 - diffHours;
+      itemDate.setHours(0, 0, 0, 0);
+      const diffDays = Math.round((now.getTime() - itemDate.getTime()) / (24 * 60 * 60 * 1000));
+      
+      if (diffDays >= 0 && diffDays <= 6) {
+        const pointIdx = 6 - diffDays;
         points[pointIdx].incidents += 1;
         if (item.status === "completed") {
           points[pointIdx].resolved += 1;

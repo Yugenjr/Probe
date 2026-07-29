@@ -10,7 +10,7 @@
     "trigger_type": "drift_detected",
     "severity": "HIGH",
     "status": "OPEN",
-    "detected_at": "2026-07-29T02:58:35.756432Z",
+    "detected_at": "2026-07-29T03:29:15.223772Z",
     "raw_payload": {},
     "metadata": {}
   },
@@ -21,7 +21,7 @@
       "evidence_id": "ev-api-01",
       "source_provider": "Evidently",
       "retrieved_by_tool": "DriftExtractor",
-      "timestamp": "2026-07-29T02:58:35.756455Z",
+      "timestamp": "2026-07-29T03:29:15.223796Z",
       "summary": "Drift detected on age",
       "confidence_weight": 0.9,
       "evidence_type": "drift_stats",
@@ -46,7 +46,7 @@
       "explanation": "Observed statistical feature distance drift.",
       "confidence": 0.9,
       "weaknesses": [],
-      "created_at": "2026-07-29T02:58:35.756485Z"
+      "created_at": "2026-07-29T03:29:15.223822Z"
     }
   ],
   "evaluation_result": {
@@ -62,12 +62,12 @@
       "explanation": "Observed statistical feature distance drift.",
       "confidence": 0.9,
       "weaknesses": [],
-      "created_at": "2026-07-29T02:58:35.756485Z"
+      "created_at": "2026-07-29T03:29:15.223822Z"
     },
     "alternatives": [],
     "recommended_actions": [
       {
-        "recommendation_id": "rec-9cd341",
+        "recommendation_id": "rec-012906",
         "action_type": "ROLLBACK_MODEL",
         "title": "",
         "justification": "",
@@ -87,7 +87,7 @@
   "report": {
     "report_id": "rep-api-01",
     "investigation_id": "session-api-01",
-    "generated_at": "2026-07-29T02:58:35.756531Z",
+    "generated_at": "2026-07-29T03:29:15.223866Z",
     "incident_summary": {
       "incident_id": "inc-api-test",
       "model_id": "api-model",
@@ -96,7 +96,7 @@
       "trigger_type": "drift_detected",
       "severity": "HIGH",
       "status": "OPEN",
-      "detected_at": "2026-07-29T02:58:35.756432Z",
+      "detected_at": "2026-07-29T03:29:15.223772Z",
       "raw_payload": {},
       "metadata": {}
     },
@@ -115,12 +115,12 @@
         "explanation": "Observed statistical feature distance drift.",
         "confidence": 0.9,
         "weaknesses": [],
-        "created_at": "2026-07-29T02:58:35.756485Z"
+        "created_at": "2026-07-29T03:29:15.223822Z"
       }
     ],
     "experiments": [],
     "recommended_action": {
-      "recommendation_id": "rec-9cd341",
+      "recommendation_id": "rec-012906",
       "action_type": "ROLLBACK_MODEL",
       "title": "",
       "justification": "",
@@ -136,11 +136,11 @@
     "markdown_content": "# Investigation Report\n\n- Feature Skew"
   },
   "agent_results": [],
-  "started_at": "2026-07-29T02:58:35.756446Z",
-  "updated_at": "2026-07-29T02:58:35.756488Z",
+  "started_at": "2026-07-29T03:29:15.223785Z",
+  "updated_at": "2026-07-29T03:29:15.223825Z",
   "completed_at": null,
   "execution_history": [
-    "[2026-07-29T02:58:35.756467+00:00] [Evidence] Accrued drift_stats evidence from Evidently.",
-    "[2026-07-29T02:58:35.756488+00:00] [Hypothesis] Synthesized hyp-api-01: Feature Skew (Likelihood: 0.9)."
+    "[2026-07-29T03:29:15.223804+00:00] [Evidence] Accrued drift_stats evidence from Evidently.",
+    "[2026-07-29T03:29:15.223825+00:00] [Hypothesis] Synthesized hyp-api-01: Feature Skew (Likelihood: 0.9)."
   ]
 }

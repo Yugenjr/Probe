@@ -107,3 +107,56 @@ def mock_driftguard_client_global():
             mock_instance.close = MagicMock()
             
         yield mock_service_client.return_value
+
+
+@pytest.fixture(autouse=True)
+def mock_mcp_infrastructure():
+    """Ensure every test runs with an isolated, clean local-only MCP infrastructure."""
+    from probe.core.di import get_container
+    from probe.mcp.registry.server_registry import ServerRegistry
+    from probe.mcp.gateway.tool_gateway import ToolGateway
+    from probe.evidence.evidence_gateway import EvidenceGateway
+    from probe.mcp.servers.knowledge.server import KnowledgeServer
+
+    container = get_container()
+    
+    # Save original providers
+    orig_registry = getattr(container, "mcp_registry", None)
+    orig_gateway = getattr(container, "tool_gateway", None)
+    orig_evidence = getattr(container, "evidence_gateway", None)
+
+    # Setup isolated local-only instance
+    registry = ServerRegistry()
+    registry.register(KnowledgeServer())
+    
+    gateway = ToolGateway(registry=registry)
+    evidence = EvidenceGateway(tool_gateway=gateway)
+
+    container.mcp_registry = registry
+    container.tool_gateway = gateway
+    container.evidence_gateway = evidence
+
+    yield
+
+    # Restore originals (if any)
+    container.mcp_registry = orig_registry
+    container.tool_gateway = orig_gateway
+    container.evidence_gateway = orig_evidence
+
+
+@pytest.fixture(autouse=True)
+async def clean_database():
+    """Clean all tables in PostgreSQL before running a test."""
+    from probe.database.connection import async_session_factory
+    from sqlalchemy import text
+    async with async_session_factory() as session:
+        try:
+            # Disable triggers and truncate all tables to clean state
+            await session.execute(text("TRUNCATE TABLE investigations CASCADE"))
+            await session.execute(text("TRUNCATE TABLE mcp_servers CASCADE"))
+            await session.execute(text("TRUNCATE TABLE audit_logs CASCADE"))
+            await session.commit()
+        except Exception:
+            await session.rollback()
+
+

@@ -76,16 +76,19 @@ def main():
     ] * 5 # 25 samples
 
     drifted_scores = []
-    for comment in drifted_comments:
+    for i, comment in enumerate(drifted_comments):
         res = model(comment)
         drift_score = dg.drift_detector.global_drift_score
         drifted_scores.append(drift_score)
         
         if drift_score > dg.drift_threshold:
-            print(f"Drift Detected! Text payload: '{comment[:40]}...' | Score: {drift_score:.4f}")
+            print(f"[{i+1}/20] Drift Detected! Score: {drift_score:.4f} > Limit: {dg.drift_threshold}")
 
-    print(f"\nShifted comments processed. Peak Drift Score: {max(drifted_scores):.4f}")
+    print(f"Shifted stream completed. Peak Drift Score: {max(drifted_scores):.4f}")
     print("====================================================")
+    
+    import time
+    time.sleep(2)
 
 if __name__ == "__main__":
     main()
