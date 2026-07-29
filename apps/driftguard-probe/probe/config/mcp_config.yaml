@@ -1,0 +1,20 @@
+servers:
+  knowledge:
+    type: local
+
+  github:
+    type: http
+    url: "https://api.githubcopilot.com/mcp/insiders"
+
+  mlflow:
+    type: process
+    command: "uv"
+    args:
+      - "run"
+      - "--with"
+      - "mlflow[mcp]>=3.5.1"
+      - "mlflow"
+      - "mcp"
+      - "run"
+    env:
+      MLFLOW_TRACKING_URI: "http://localhost:5000"

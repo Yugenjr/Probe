@@ -1,0 +1,1119 @@
+{
+  "session_id": "inv-91b7379a-8242-4999-abe6-7f89516657b5",
+  "investigation_id": "inv-91b7379a-8242-4999-abe6-7f89516657b5",
+  "status": "HYPOTHESIS_SYNTHESIS",
+  "incident": {
+    "incident_id": "inc-0b578f42",
+    "model_id": "demo-rollback-v2",
+    "model_version": "latest",
+    "source_platform": "driftguard",
+    "trigger_type": "drift_detected",
+    "severity": "MEDIUM",
+    "status": "OPEN",
+    "detected_at": "2026-07-28T19:10:05.853449Z",
+    "raw_payload": {
+      "source_platform": "driftguard",
+      "event_type": "drift_detected",
+      "model_id": "demo-rollback-v2",
+      "model_version": "latest",
+      "drift_score": null,
+      "timestamp": "2026-07-28T19:10:05.850878Z",
+      "details": {},
+      "webhook_secret": null,
+      "event_id": null,
+      "callback_url": null
+    },
+    "metadata": {}
+  },
+  "investigation_context": {
+    "investigation_id": "inv-91b7379a-8242-4999-abe6-7f89516657b5",
+    "tenant_id": "driftguard",
+    "timestamp_utc": "2026-07-28T19:10:05.852756+00:00",
+    "provider_name": "DriftGuard-Core-v3",
+    "incident": {},
+    "model": {
+      "model_id": "demo-rollback-v2",
+      "status": "degraded",
+      "version": "1.0.0",
+      "drift_threshold": 0.15,
+      "features": [],
+      "reference_data_path": ""
+    },
+    "model_version": "1.0.0",
+    "monitor": {
+      "drift_threshold": 0.15,
+      "features_tracked": []
+    },
+    "drift": {
+      "records": [],
+      "overall_status": "degraded"
+    },
+    "validation": {},
+    "audit": [],
+    "retraining": [],
+    "telemetry": [
+      {
+        "metric_name": "driftguard_predictions_total",
+        "labels": {
+          "model_id": "demo-rollback-v2"
+        },
+        "value": 826.0
+      },
+      {
+        "metric_name": "driftguard_db_commit_latency_seconds_p99",
+        "labels": {
+          "model_id": "demo-rollback-v2"
+        },
+        "value": 0.035
+      }
+    ],
+    "predictions": [],
+    "reports": [],
+    "metadata": {
+      "reference_data": ""
+    },
+    "relationships": {
+      "model_to_versions": [],
+      "incident_to_model": []
+    }
+  },
+  "active_workflow_name": null,
+  "universal_evidence": [
+    {
+      "evidence_id": "ev-b61ebb",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.383047Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-0c5676",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.415359Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-bcdbe5",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.495694Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-b896ef",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.533616Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-e09bc9",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.601601Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-03a4bf",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.635328Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-20cdf3",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.669931Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    },
+    {
+      "evidence_id": "ev-385b1c",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-28T19:10:08.733729Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    }
+  ],
+  "evidence_items": [],
+  "hypotheses": [],
+  "evaluation_result": null,
+  "remediation_plan": null,
+  "report": null,
+  "agent_results": [
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:05.876531Z",
+      "finished_at": "2026-07-28T19:10:05.878974Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0023231999948620796,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:05.968256Z",
+      "finished_at": "2026-07-28T19:10:05.968881Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0006122000049799681,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.058732Z",
+      "finished_at": "2026-07-28T19:10:06.066224Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.007443699985742569,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.159722Z",
+      "finished_at": "2026-07-28T19:10:06.165105Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.005219300044700503,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.236627Z",
+      "finished_at": "2026-07-28T19:10:06.238449Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0017897000070661306,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.335084Z",
+      "finished_at": "2026-07-28T19:10:06.337148Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.002015399979427457,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.450384Z",
+      "finished_at": "2026-07-28T19:10:06.453659Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0032328000525012612,
+      "retries": 0
+    },
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-28T19:10:06.558400Z",
+      "finished_at": "2026-07-28T19:10:06.559777Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.0013407000806182623,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.253212Z",
+      "finished_at": "2026-07-28T19:10:07.106461Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 790.1080999290571,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 0.8531684000045061,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.170314Z",
+      "finished_at": "2026-07-28T19:10:07.347719Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1168.8801000127569,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.177396799903363,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.352569Z",
+      "finished_at": "2026-07-28T19:10:07.467799Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1108.7623999919742,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.1151910999324173,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.078128Z",
+      "finished_at": "2026-07-28T19:10:07.589556Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1501.6893000574782,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.5113948999205604,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:05.984599Z",
+      "finished_at": "2026-07-28T19:10:07.692633Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1701.9112999550998,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.7080221999203786,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:05.894301Z",
+      "finished_at": "2026-07-28T19:10:07.802929Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1901.5273000113666,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.908605800010264,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.575969Z",
+      "finished_at": "2026-07-28T19:10:07.906955Z",
+      "success": true,
+      "output": {
+        "status": "PLAN_GENERATED",
+        "objectives": [
+          "Identify feature drift root cause",
+          "Verify model latency correlation"
+        ],
+        "questions": [
+          "Is feature drift causing latency surge?",
+          "Is demographic shift the root cause?"
+        ],
+        "evidence_needed": [
+          "Drift telemetry",
+          "Prometheus performance metrics"
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1320.4968000063673,
+          "tokens_prompt": 473,
+          "tokens_completion": 0,
+          "total_tokens": 473,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 473,
+      "latency": 1.3309265000279993,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-28T19:10:06.469488Z",
+      "finished_at": "2026-07-28T19:10:08.015842Z",
+      "success": true,
+      "output": {
+        "objectives": [
+          "Identify the source of model drift",
+          "Assess the impact of drift on model performance",
+          "Check for downstream dependencies affected by the drift",
+          "Determine the root cause of the model status degradation"
+        ],
+        "questions": [
+          "Did the distribution of input data change over time?",
+          "Were there any recent code releases or updates that could have caused the drift?",
+          "Have there been any changes in user demographics or behavior?",
+          "Are there any issues with data quality or ingestion that could be contributing to the drift?"
+        ],
+        "evidence_needed": [
+          "driftguard_predictions_total metric values over the last 24 hours",
+          "driftguard_db_commit_latency_seconds_p99 metric values over the last 24 hours",
+          "Model input data distribution metrics (e.g. mean, variance, histogram)",
+          "Code release notes and deployment history",
+          "User demographic data and behavior metrics",
+          "Data quality and ingestion logs"
+        ],
+        "status": "PLAN_GENERATED"
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1543.3257000986487,
+          "tokens_prompt": 473,
+          "tokens_completion": 223,
+          "total_tokens": 696,
+          "cost_estimate": 0.0,
+          "success": true
+        }
+      },
+      "cost": 0.0,
+      "tokens": 696,
+      "latency": 1.5463058999739587,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.696802Z",
+      "finished_at": "2026-07-28T19:10:08.383109Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-b61ebb",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 598.3607000671327,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.6863013999536633,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.592694Z",
+      "finished_at": "2026-07-28T19:10:08.415392Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-0c5676",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 747.8700999636203,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.8226927999639884,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.806060Z",
+      "finished_at": "2026-07-28T19:10:08.495809Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-bcdbe5",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 605.7265000417829,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.6897438999731094,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.124659Z",
+      "finished_at": "2026-07-28T19:10:08.533670Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-b896ef",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1221.4551999932155,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 1.4090031000087038,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.909231Z",
+      "finished_at": "2026-07-28T19:10:08.601659Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-e09bc9",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 623.0181999271736,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.6924230000004172,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.470703Z",
+      "finished_at": "2026-07-28T19:10:08.635399Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-03a4bf",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1092.2971999971196,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 1.1646911000134423,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:07.350730Z",
+      "finished_at": "2026-07-28T19:10:08.669982Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-20cdf3",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1239.932500058785,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 1.3192460000282153,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-28T19:10:08.019397Z",
+      "finished_at": "2026-07-28T19:10:08.733780Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-385b1c",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 631.379900034517,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.7143781000049785,
+      "retries": 0
+    }
+  ],
+  "started_at": "2026-07-28T19:10:05.853503Z",
+  "updated_at": "2026-07-28T19:10:08.735727Z",
+  "completed_at": null,
+  "execution_history": [
+    "[2026-07-28T19:10:05.853534+00:00] [COLLECTING_EVIDENCE] Investigation initialized via webhook from platform: driftguard.",
+    "[2026-07-28T19:10:05.868319+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.002s (tries: 1).",
+    "[2026-07-28T19:10:05.885319+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:05.957746+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.001s (tries: 1).",
+    "[2026-07-28T19:10:05.975859+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.051203+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.007s (tries: 1).",
+    "[2026-07-28T19:10:06.069012+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.150931+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.005s (tries: 1).",
+    "[2026-07-28T19:10:06.168759+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.233589+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.002s (tries: 1).",
+    "[2026-07-28T19:10:06.248878+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.322664+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.002s (tries: 1).",
+    "[2026-07-28T19:10:06.342195+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.439297+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.003s (tries: 1).",
+    "[2026-07-28T19:10:06.457997+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-28T19:10:06.551568+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.001s (tries: 1).",
+    "[2026-07-28T19:10:06.570911+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 0.853s (tries: 1).",
+    "[2026-07-28T19:10:07.115400+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.177s (tries: 1).",
+    "[2026-07-28T19:10:07.349348+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.115s (tries: 1).",
+    "[2026-07-28T19:10:07.469282+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.511s (tries: 1).",
+    "[2026-07-28T19:10:07.591141+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.708s (tries: 1).",
+    "[2026-07-28T19:10:07.695030+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.909s (tries: 1).",
+    "[2026-07-28T19:10:07.804566+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] Generated InvestigationPlan (Fallback): objectives=['Identify feature drift root cause', 'Verify model latency correlation'], questions=['Is feature drift causing latency surge?', 'Is demographic shift the root cause?'], evidence_needed=['Drift telemetry', 'Prometheus performance metrics']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.331s (tries: 1).",
+    "[2026-07-28T19:10:07.907940+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[Planner] LLM Generated InvestigationPlan: objectives=['Identify the source of model drift', 'Assess the impact of drift on model performance', 'Check for downstream dependencies affected by the drift', 'Determine the root cause of the model status degradation'], questions=['Did the distribution of input data change over time?', 'Were there any recent code releases or updates that could have caused the drift?', 'Have there been any changes in user demographics or behavior?', 'Are there any issues with data quality or ingestion that could be contributing to the drift?'], evidence_needed=['driftguard_predictions_total metric values over the last 24 hours', 'driftguard_db_commit_latency_seconds_p99 metric values over the last 24 hours', 'Model input data distribution metrics (e.g. mean, variance, histogram)', 'Code release notes and deployment history', 'User demographic data and behavior metrics', 'Data quality and ingestion logs']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.546s (tries: 1).",
+    "[2026-07-28T19:10:08.017784+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[2026-07-28T19:10:08.383074+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.686s (tries: 1).",
+    "[2026-07-28T19:10:08.384986+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.415373+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.823s (tries: 1).",
+    "[2026-07-28T19:10:08.416843+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.495747+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.690s (tries: 1).",
+    "[2026-07-28T19:10:08.498478+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.533638+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 1.409s (tries: 1).",
+    "[2026-07-28T19:10:08.535666+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.601622+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.692s (tries: 1).",
+    "[2026-07-28T19:10:08.603884+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.635362+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 1.165s (tries: 1).",
+    "[2026-07-28T19:10:08.637370+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.669950+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 1.319s (tries: 1).",
+    "[2026-07-28T19:10:08.671938+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-28T19:10:08.733749+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.714s (tries: 1).",
+    "[2026-07-28T19:10:08.735727+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence"
+  ]
+}

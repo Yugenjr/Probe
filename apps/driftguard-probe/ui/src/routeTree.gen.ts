@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
+import { Route as McpServersRouteImport } from './routes/mcp-servers'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as InvestigationsIndexRouteImport } from './routes/investigations.index'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
   id: '/knowledge-base',
   path: '/knowledge-base',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpServersRoute = McpServersRouteImport.update({
+  id: '/mcp-servers',
+  path: '/mcp-servers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsRoute = ReportsRouteImport.update({
@@ -50,6 +56,7 @@ const InvestigationsIdRoute = InvestigationsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/mcp-servers': typeof McpServersRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/investigations/$id': typeof InvestigationsIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/mcp-servers': typeof McpServersRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/investigations/$id': typeof InvestigationsIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
+  '/mcp-servers': typeof McpServersRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/investigations/$id': typeof InvestigationsIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/knowledge-base'
+    | '/mcp-servers'
     | '/reports'
     | '/settings'
     | '/investigations/$id'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/knowledge-base'
+    | '/mcp-servers'
     | '/reports'
     | '/settings'
     | '/investigations/$id'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/knowledge-base'
+    | '/mcp-servers'
     | '/reports'
     | '/settings'
     | '/investigations/$id'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
+  McpServersRoute: typeof McpServersRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   InvestigationsIdRoute: typeof InvestigationsIdRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge-base'
       fullPath: '/knowledge-base'
       preLoaderRoute: typeof KnowledgeBaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp-servers': {
+      id: '/mcp-servers'
+      path: '/mcp-servers'
+      fullPath: '/mcp-servers'
+      preLoaderRoute: typeof McpServersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   KnowledgeBaseRoute: KnowledgeBaseRoute,
+  McpServersRoute: McpServersRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   InvestigationsIdRoute: InvestigationsIdRoute,

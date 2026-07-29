@@ -1,0 +1,296 @@
+{
+  "session_id": "inv-397f317b-b958-46ef-b928-680211ca2670",
+  "investigation_id": "inv-397f317b-b958-46ef-b928-680211ca2670",
+  "status": "EXPERIMENTAL_VALIDATION",
+  "incident": {
+    "incident_id": "inc-8fdd54a2",
+    "model_id": "demo-rollback-v2",
+    "model_version": "latest",
+    "source_platform": "driftguard",
+    "trigger_type": "drift_detected",
+    "severity": "MEDIUM",
+    "status": "OPEN",
+    "detected_at": "2026-07-29T02:46:13.204600Z",
+    "raw_payload": {
+      "source_platform": "driftguard",
+      "event_type": "drift_detected",
+      "model_id": "demo-rollback-v2",
+      "model_version": "latest",
+      "drift_score": null,
+      "timestamp": "2026-07-29T02:46:13.203764Z",
+      "details": {},
+      "webhook_secret": null,
+      "event_id": null,
+      "callback_url": null
+    },
+    "metadata": {}
+  },
+  "investigation_context": {
+    "investigation_id": "inv-397f317b-b958-46ef-b928-680211ca2670",
+    "tenant_id": "driftguard",
+    "timestamp_utc": "2026-07-29T02:46:13.204484+00:00",
+    "provider_name": "DriftGuard-Core-v3",
+    "incident": {},
+    "model": {
+      "model_id": "demo-rollback-v2",
+      "status": "degraded",
+      "version": "1.0.0",
+      "drift_threshold": 0.15,
+      "features": [],
+      "reference_data_path": ""
+    },
+    "model_version": "1.0.0",
+    "monitor": {
+      "drift_threshold": 0.15,
+      "features_tracked": []
+    },
+    "drift": {
+      "records": [],
+      "overall_status": "degraded"
+    },
+    "validation": {},
+    "audit": [],
+    "retraining": [],
+    "telemetry": [
+      {
+        "metric_name": "driftguard_predictions_total",
+        "labels": {
+          "model_id": "demo-rollback-v2"
+        },
+        "value": 826.0
+      },
+      {
+        "metric_name": "driftguard_db_commit_latency_seconds_p99",
+        "labels": {
+          "model_id": "demo-rollback-v2"
+        },
+        "value": 0.035
+      }
+    ],
+    "predictions": [],
+    "reports": [],
+    "metadata": {
+      "reference_data": ""
+    },
+    "relationships": {
+      "model_to_versions": [],
+      "incident_to_model": []
+    }
+  },
+  "active_workflow_name": null,
+  "universal_evidence": [
+    {
+      "evidence_id": "ev-6c1f3a",
+      "source_provider": "DriftGuard-Core-v3",
+      "retrieved_by_tool": "ContextExtractor",
+      "timestamp": "2026-07-29T02:46:14.784752Z",
+      "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
+      "confidence_weight": 0.95,
+      "evidence_type": "drift_stats",
+      "feature_name": "all_features",
+      "distance_algorithm": "adwin",
+      "observed_distance": 0.25,
+      "alarm_threshold": 0.15,
+      "is_anomalous": true
+    }
+  ],
+  "evidence_items": [],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp-inv-397f",
+      "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+      "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+      "supporting_evidence_ids": [
+        "ev-6c1f3a"
+      ],
+      "likelihood_score": 0.92,
+      "verified_by_simulation": false,
+      "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+      "confidence": 0.92,
+      "weaknesses": [
+        "No latency increase in local tests"
+      ],
+      "created_at": "2026-07-29T02:46:14.789019Z"
+    }
+  ],
+  "evaluation_result": null,
+  "remediation_plan": null,
+  "report": null,
+  "agent_results": [
+    {
+      "agent_name": "Supervisor",
+      "started_at": "2026-07-29T02:46:13.206435Z",
+      "finished_at": "2026-07-29T02:46:13.206549Z",
+      "success": true,
+      "output": {
+        "steps": [
+          {
+            "agent_role": "Planner",
+            "description": "Establish investigation scope and objectives"
+          },
+          {
+            "agent_role": "Investigator",
+            "description": "Ingest and analyze telemetry data anomalies"
+          },
+          {
+            "agent_role": "Hypothesis",
+            "description": "Formulate causal root-cause theories from evidence"
+          },
+          {
+            "agent_role": "Evaluator",
+            "description": "Evaluate hypotheses and recommend optimal intervention"
+          },
+          {
+            "agent_role": "Reporter",
+            "description": "Synthesize findings and compile forensic report"
+          }
+        ]
+      },
+      "metadata": {},
+      "cost": 0.0,
+      "tokens": 0,
+      "latency": 0.00011160003487020731,
+      "retries": 0
+    },
+    {
+      "agent_name": "Planner",
+      "started_at": "2026-07-29T02:46:13.209750Z",
+      "finished_at": "2026-07-29T02:46:14.409955Z",
+      "success": true,
+      "output": {
+        "objectives": [
+          "Identify the source of model drift",
+          "Assess the impact of drift on model performance",
+          "Check for downstream dependencies affected by the drift",
+          "Determine the need for model retraining or update"
+        ],
+        "questions": [
+          "Did the distribution of input data change over time?",
+          "Were there any recent code releases or updates that could have caused the drift?",
+          "Have there been any changes in user demographics or behavior?",
+          "Are there any seasonal or periodic patterns in the data that could be contributing to the drift?"
+        ],
+        "evidence_needed": [
+          "driftguard_predictions_total metric values over the last 24 hours",
+          "driftguard_db_commit_latency_seconds_p99 metric values over the last 24 hours",
+          "Model input data distribution statistics",
+          "Code release notes and deployment history",
+          "User demographic and behavior data",
+          "Model performance metrics (e.g. accuracy, precision, recall) over time",
+          "Data quality metrics (e.g. missing values, outliers) over time"
+        ],
+        "status": "PLAN_GENERATED"
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "planner",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 1193.4263999573886,
+          "tokens_prompt": 473,
+          "tokens_completion": 239,
+          "total_tokens": 712,
+          "cost_estimate": 0.0,
+          "success": true
+        }
+      },
+      "cost": 0.0,
+      "tokens": 712,
+      "latency": 1.2001930000260472,
+      "retries": 0
+    },
+    {
+      "agent_name": "Investigator",
+      "started_at": "2026-07-29T02:46:14.413161Z",
+      "finished_at": "2026-07-29T02:46:14.784815Z",
+      "success": true,
+      "output": {
+        "status": "EVIDENCE_COLLECTED",
+        "evidence_id": "ev-6c1f3a",
+        "mcp_kb_enriched": false
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "investigator",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 229.3288999935612,
+          "tokens_prompt": 1239,
+          "tokens_completion": 0,
+          "total_tokens": 1239,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 1239,
+      "latency": 0.3716477000853047,
+      "retries": 0
+    },
+    {
+      "agent_name": "Hypothesis",
+      "started_at": "2026-07-29T02:46:14.788855Z",
+      "finished_at": "2026-07-29T02:46:14.989434Z",
+      "success": true,
+      "output": {
+        "status": "HYPOTHESIS_FORMULATED",
+        "hypotheses": [
+          {
+            "hypothesis_id": "hyp-inv-397f",
+            "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
+            "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+            "supporting_evidence_ids": [
+              "ev-6c1f3a"
+            ],
+            "likelihood_score": 0.92,
+            "verified_by_simulation": false,
+            "explanation": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
+            "confidence": 0.92,
+            "weaknesses": [
+              "No latency increase in local tests"
+            ],
+            "created_at": "2026-07-29T02:46:14.789019Z"
+          }
+        ]
+      },
+      "metadata": {
+        "reasoning_trace": {
+          "agent": "hypothesis",
+          "model_name": "llama-3.3-70b-versatile",
+          "prompt_version": "v1",
+          "latency_ms": 194.90080000832677,
+          "tokens_prompt": 991,
+          "tokens_completion": 0,
+          "total_tokens": 991,
+          "cost_estimate": 0.0,
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      },
+      "cost": 0.0,
+      "tokens": 991,
+      "latency": 0.200575300026685,
+      "retries": 0
+    }
+  ],
+  "started_at": "2026-07-29T02:46:13.204613Z",
+  "updated_at": "2026-07-29T02:46:14.990469Z",
+  "completed_at": null,
+  "execution_history": [
+    "[2026-07-29T02:46:13.204624+00:00] [COLLECTING_EVIDENCE] Investigation initialized via webhook from platform: driftguard.",
+    "[2026-07-29T02:46:13.205716+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[Supervisor] Supervisor generated execution plan with 5 steps.",
+    "[Agent Executor] Executed 'Supervisor' successfully in 0.000s (tries: 1).",
+    "[2026-07-29T02:46:13.208230+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[Planner] LLM Generated InvestigationPlan: objectives=['Identify the source of model drift', 'Assess the impact of drift on model performance', 'Check for downstream dependencies affected by the drift', 'Determine the need for model retraining or update'], questions=['Did the distribution of input data change over time?', 'Were there any recent code releases or updates that could have caused the drift?', 'Have there been any changes in user demographics or behavior?', 'Are there any seasonal or periodic patterns in the data that could be contributing to the drift?'], evidence_needed=['driftguard_predictions_total metric values over the last 24 hours', 'driftguard_db_commit_latency_seconds_p99 metric values over the last 24 hours', 'Model input data distribution statistics', 'Code release notes and deployment history', 'User demographic and behavior data', 'Model performance metrics (e.g. accuracy, precision, recall) over time', 'Data quality metrics (e.g. missing values, outliers) over time']",
+    "[Agent Executor] Executed 'Planner' successfully in 1.200s (tries: 1).",
+    "[2026-07-29T02:46:14.411759+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[2026-07-29T02:46:14.784780+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.372s (tries: 1).",
+    "[2026-07-29T02:46:14.786999+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-29T02:46:14.989391+00:00] [Hypothesis] Synthesized hyp-inv-397f: Unmonitored Demographic Covariate Shift Triggering Latency Surge (Likelihood: 0.92).",
+    "[Agent Executor] Executed 'Hypothesis' successfully in 0.201s (tries: 1).",
+    "[2026-07-29T02:46:14.990469+00:00] [EXPERIMENTAL_VALIDATION] Running step: Evaluate hypotheses and recommend optimal intervention"
+  ]
+}

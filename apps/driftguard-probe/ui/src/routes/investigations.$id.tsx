@@ -78,11 +78,11 @@ function InvestigationWorkspace() {
 
     Promise.all([
       fetchInvestigationDetails(id),
-      fetchTimeline(id),
-      fetchEvidence(id),
-      fetchHypotheses(id),
-      fetchEvaluation(id),
-      fetchReport(id)
+      fetchTimeline(id).catch(() => []),
+      fetchEvidence(id).catch(() => ({ universal_evidence: [] })),
+      fetchHypotheses(id).catch(() => []),
+      fetchEvaluation(id).catch(() => null),
+      fetchReport(id).catch(() => null)
     ])
       .then(([details, timelineData, evidenceData, hypothesesData, evaluationData, reportData]) => {
         const hasHypothesis = hypothesesData && hypothesesData.length > 0;
@@ -108,8 +108,8 @@ function InvestigationWorkspace() {
           rawSession: details
         });
 
-        setTimelineSteps(timelineData.map((t: any) => ({
-          key: t.agent,
+        setTimelineSteps(timelineData.map((t: any, i: number) => ({
+          key: `${t.agent}-${i}`,
           label: t.agent,
           status: t.status === "completed" ? "done" : (t.status === "failed" ? "failed" : (t.status === "running" ? "running" : "queued")),
           startedAt: new Date(t.started_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),

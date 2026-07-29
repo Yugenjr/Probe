@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BookOpen, ArrowUpRight, Search } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, ArrowUpRight, Search, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { fetchKBArticles, KBArticle } from "../lib/api-client";
 
 export const Route = createFileRoute("/knowledge-base")({
   head: () => ({
@@ -18,65 +19,25 @@ export const Route = createFileRoute("/knowledge-base")({
   component: KBPage,
 });
 
-const articles = [
-  {
-    id: "KB-101",
-    category: "Playbook",
-    title: "Diagnosing PSI drift on embedding features",
-    excerpt:
-      "How Probe correlates upstream deploy timestamps with per-dimension PSI to isolate normalization regressions.",
-    reads: 148,
-    updated: "2 days ago",
-  },
-  {
-    id: "KB-102",
-    category: "Pattern",
-    title: "Latency regressions after autoscaler events",
-    excerpt:
-      "Recurring pattern: cold-start on newly-provisioned replicas skews p99 for the first ~90s. Mitigation: min-replicas tuning.",
-    reads: 92,
-    updated: "5 days ago",
-  },
-  {
-    id: "KB-103",
-    category: "Playbook",
-    title: "Calibration drift: ECE > 0.15 response",
-    excerpt:
-      "Decision tree for choosing between Platt scaling, isotonic regression and full retrain.",
-    reads: 214,
-    updated: "1 week ago",
-  },
-  {
-    id: "KB-104",
-    category: "Runbook",
-    title: "Rolling back a feature pipeline safely",
-    excerpt:
-      "Preconditions, ordering constraints and backfill considerations when reverting an upstream feature job.",
-    reads: 76,
-    updated: "1 week ago",
-  },
-  {
-    id: "KB-105",
-    category: "Pattern",
-    title: "Null-rate spikes from upstream ETL failures",
-    excerpt:
-      "Symptoms, likely root causes and the exact telemetry Probe queries first.",
-    reads: 131,
-    updated: "2 weeks ago",
-  },
-  {
-    id: "KB-106",
-    category: "Reference",
-    title: "Confidence scoring model — Probe v0.4",
-    excerpt:
-      "How hypothesis confidence is computed from evidence weights, temporal coincidence and prior investigations.",
-    reads: 58,
-    updated: "3 weeks ago",
-  },
-];
-
 function KBPage() {
   const [q, setQ] = useState("");
+  const [articles, setArticles] = useState<KBArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchKBArticles()
+      .then((data) => {
+        setArticles(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load knowledge base articles.");
+        setLoading(false);
+      });
+  }, []);
+
   const rows = articles.filter(
     (a) =>
       q === "" ||
@@ -108,41 +69,52 @@ function KBPage() {
         />
       </div>
 
-      <div className="mt-6 divide-y divide-border rounded-lg border border-border bg-surface">
-        {rows.map((a) => (
-          <a
-            key={a.id}
-            href="#"
-            className="group flex items-start gap-4 px-4 py-4 transition-colors hover:bg-elevated/50"
-          >
-            <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground">
-              <BookOpen className="size-3.5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[10.5px] text-muted-foreground">
-                  {a.id}
-                </span>
-                <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  {a.category}
-                </span>
+      {loading ? (
+        <div className="mt-12 flex flex-col items-center justify-center gap-2 py-12">
+          <Loader2 className="size-6 animate-spin text-primary" />
+          <span className="text-[13px] text-muted-foreground">Loading organizational memory...</span>
+        </div>
+      ) : error ? (
+        <div className="mt-6 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-4 text-center text-[13px] text-red-400">
+          {error}
+        </div>
+      ) : (
+        <div className="mt-6 divide-y divide-border rounded-lg border border-border bg-surface">
+          {rows.map((a) => (
+            <a
+              key={a.id}
+              href="#"
+              className="group flex items-start gap-4 px-4 py-4 transition-colors hover:bg-elevated/50"
+            >
+              <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground">
+                <BookOpen className="size-3.5" />
               </div>
-              <h3 className="mt-1 text-[13.5px] font-medium text-foreground group-hover:text-primary">
-                {a.title}
-              </h3>
-              <p className="mt-1 text-[12px] text-muted-foreground line-clamp-2">
-                {a.excerpt}
-              </p>
-              <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
-                <span>{a.reads} reads</span>
-                <span className="text-border-strong">·</span>
-                <span>Updated {a.updated}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[10.5px] text-muted-foreground">
+                    {a.id}
+                  </span>
+                  <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {a.category}
+                  </span>
+                </div>
+                <h3 className="mt-1 text-[13.5px] font-medium text-foreground group-hover:text-primary">
+                  {a.title}
+                </h3>
+                <p className="mt-1 text-[12px] text-muted-foreground line-clamp-2">
+                  {a.excerpt}
+                </p>
+                <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
+                  <span>{a.reads} reads</span>
+                  <span className="text-border-strong">·</span>
+                  <span>Updated {a.updated}</span>
+                </div>
               </div>
-            </div>
-            <ArrowUpRight className="mt-1 size-4 text-muted-foreground group-hover:text-foreground" />
-          </a>
-        ))}
-      </div>
+              <ArrowUpRight className="mt-1 size-4 text-muted-foreground group-hover:text-foreground" />
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

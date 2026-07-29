@@ -8,13 +8,25 @@ from ..interfaces.tool import ToolProvider
 
 class BaseAgent(ABC):
     """Abstract base class for every autonomous reasoning agent in Probe.
-    
+
     Enforces a strict architectural rule: agents never make direct HTTP calls or import external
     repositories. They communicate purely via Pydantic v2 schemas and execute capabilities via Tools.
+
+    The optional ``tool_gateway`` parameter gives agents access to the full MCP tool ecosystem
+    (Knowledge, GitHub, Prometheus, etc.) without coupling them to any specific server or transport.
     """
-    def __init__(self, llm_provider: Optional[LLMProvider] = None, tools: Optional[List[ToolProvider]] = None):
+    def __init__(
+        self,
+        llm_provider: Optional[LLMProvider] = None,
+        tools: Optional[List[ToolProvider]] = None,
+        tool_gateway: Optional[Any] = None,  # ToolGateway
+        evidence_gateway: Optional[Any] = None,  # EvidenceGateway
+    ):
         self.llm_provider = llm_provider
         self.tools = {t.name: t for t in (tools or [])}
+        self.tool_gateway = tool_gateway  # Optional[ToolGateway]
+        self.evidence_gateway = evidence_gateway  # Optional[EvidenceGateway]
+
 
     @property
     @abstractmethod

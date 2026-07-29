@@ -1,4 +1,5 @@
-"""MCP tool handlers package initializer."""
-from .handlers import dispatch_tool_call
+"""MCP tools layer exports."""
+from .base_tool import BaseMCPTool
+from .tool_executor import ToolExecutor
 
-__all__ = ["dispatch_tool_call"]
+__all__ = ["BaseMCPTool", "ToolExecutor"]

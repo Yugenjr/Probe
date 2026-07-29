@@ -118,3 +118,53 @@ export async function fetchReport(id: string): Promise<ReportItem | null> {
   const json: APIResponse<{ report: ReportItem | null }> = await res.json();
   return json.data.report;
 }
+
+export interface KBArticle {
+  id: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  reads: number;
+  updated: string;
+}
+
+export async function fetchKBArticles(): Promise<KBArticle[]> {
+  const res = await fetch(`${API_BASE}/investigations/kb/articles`);
+  if (!res.ok) throw new Error("Backend unavailable");
+  const json: APIResponse<{ articles: KBArticle[] }> = await res.json();
+  return json.data.articles;
+}
+
+export interface MCPServer {
+  name: string;
+  status: 'active' | 'inactive';
+  type: 'local' | 'http' | 'process';
+  connected: boolean;
+  transport: string;
+  responseLatency: number;
+  numberOfTools: number;
+  lastHealthCheck: string;
+}
+
+export interface MCPTool {
+  name: string;
+  description: string;
+  parameters: any;
+  server: string;
+  transport: string;
+}
+
+export async function fetchMCPServers(): Promise<MCPServer[]> {
+  const res = await fetch(`${API_BASE}/mcp/servers`);
+  if (!res.ok) throw new Error("Backend unavailable");
+  const json: APIResponse<{ servers: MCPServer[] }> = await res.json();
+  return json.data.servers;
+}
+
+export async function fetchMCPTools(): Promise<MCPTool[]> {
+  const res = await fetch(`${API_BASE}/mcp/tools`);
+  if (!res.ok) throw new Error("Backend unavailable");
+  const json: APIResponse<{ tools: MCPTool[] }> = await res.json();
+  return json.data.tools;
+}
+

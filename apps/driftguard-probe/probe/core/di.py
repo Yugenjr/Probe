@@ -1,5 +1,5 @@
 """Dependency injection runtime container enforcing interface segregation."""
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from .config import Settings, get_settings
 from ..interfaces.adapter import PlatformProvider
 from ..interfaces.telemetry import TelemetryProvider
@@ -9,10 +9,14 @@ from ..interfaces.llm import LLMProvider
 from ..interfaces.memory import MemoryProvider
 from ..interfaces.storage import StorageProvider
 
+    from ..mcp.registry.server_registry import ServerRegistry
+    from ..mcp.gateway.tool_gateway import ToolGateway
+    from ..evidence.evidence_gateway import EvidenceGateway
+
 
 class Container:
     """Inversion of Control runtime container managing segregated providers and capabilities.
-    
+
     Ensures zero coupling between core reasoning workflows, analytical tools, and concrete vendors.
     """
     def __init__(self, settings: Optional[Settings] = None):
@@ -23,6 +27,11 @@ class Container:
         self.llm_provider: Optional[LLMProvider] = None
         self.memory_provider: Optional[MemoryProvider] = None
         self.storage_provider: Optional[StorageProvider] = None
+        # MCP infrastructure — injected at application startup
+        self.mcp_registry: Optional["ServerRegistry"] = None
+        self.tool_gateway: Optional["ToolGateway"] = None
+        self.evidence_gateway: Optional["EvidenceGateway"] = None
+
 
     @property
     def platform_provider(self) -> Optional[PlatformProvider]:

@@ -8,11 +8,12 @@ import {
   Github,
   BookMarked,
   Radar,
+  Cpu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
-  to: "/" | "/investigations" | "/reports" | "/knowledge-base" | "/settings";
+  to: "/" | "/investigations" | "/reports" | "/knowledge-base" | "/mcp-servers" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -23,8 +24,10 @@ const nav: NavItem[] = [
   { to: "/investigations", label: "Investigations", icon: Search },
   { to: "/reports", label: "Reports", icon: FileText },
   { to: "/knowledge-base", label: "Knowledge Base", icon: BookOpen },
+  { to: "/mcp-servers", label: "MCP Servers", icon: Cpu },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
+
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

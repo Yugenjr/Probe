@@ -1,0 +1,11 @@
+{
+  "id": "adwin-covariate-drift",
+  "title": "ADWIN Algorithm: Covariate Drift Detection and Response",
+  "category": "Technical Reference",
+  "tags": ["ADWIN", "covariate-drift", "drift-detection", "feature-drift", "concept-drift"],
+  "updated_at": "2026-07-22T08:30:00Z",
+  "content": "## ADWIN Overview\nADaptive WINdowing (ADWIN) is an online drift detection algorithm that maintains an adaptive sliding window over a data stream. It detects drift by comparing statistics across sub-windows and triggers an alarm when the difference exceeds a significance threshold.\n\n## Score Interpretation\n- ADWIN score 0.0–0.10: No drift detected. Window is stable.\n- ADWIN score 0.10–0.20: Early drift signal. Monitor closely. Do not act immediately.\n- ADWIN score 0.20–0.30: Confirmed covariate drift. Schedule investigation.\n- ADWIN score > 0.30: Severe drift. Immediate investigation required. Retrain likely.\n\n## Distinguishing Covariate vs Concept Drift\n- **Covariate drift**: Input distribution P(X) changes. Model may still generalize if decision boundary unchanged.\n- **Concept drift**: Joint distribution P(Y|X) changes. Model accuracy will degrade. Retrain required.\n\n## ADWIN Diagnostic Protocol\n1. Identify the feature(s) triggering ADWIN alarm.\n2. Check prediction accuracy metrics (AUC, F1) — did they drop alongside ADWIN?\n3. If accuracy is stable: likely covariate drift only. Monitor.\n4. If accuracy dropped: likely concept drift. Prepare retrain.\n\n## Correlation Analysis\n- Correlate ADWIN alarm timestamp with:\n  - Model version deploy time\n  - Data ingestion pipeline changes\n  - Upstream service API changes\n  - Business events (new product launch, market change)\n\n## Response Matrix\n| ADWIN Score | Accuracy Impact | Action |\n|-------------|-----------------|--------|\n| 0.15–0.20   | None            | Monitor |\n| 0.20–0.30   | Minor (<2%)     | Prepare retrain |\n| 0.20–0.30   | Major (>5%)     | Emergency retrain |\n| >0.30       | Any             | Rollback + retrain |",
+  "author": "DriftGuard Knowledge Team",
+  "severity_applicability": ["MEDIUM", "HIGH", "CRITICAL"],
+  "related_runbooks": ["retrain-decision-tree", "adwin-response-protocol"]
+}

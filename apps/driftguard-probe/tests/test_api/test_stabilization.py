@@ -177,6 +177,8 @@ def test_api_sub_resources() -> None:
     assert match["status"] == "received"
     assert match["confidence"] == 0.9
 
+
+
     # 2. Test GET /api/v1/investigations/{id}/timeline
     response = client.get("/api/v1/investigations/session-api-01/timeline")
     assert response.status_code == 200

@@ -1,0 +1,11 @@
+{
+  "id": "churn-model-drift-patterns",
+  "title": "Churn Prediction Model: Known Drift Patterns and Historical Incidents",
+  "category": "Model-Specific",
+  "tags": ["churn", "churn-model", "drift", "user-behavior", "feature-engineering", "historical"],
+  "updated_at": "2026-07-26T09:00:00Z",
+  "content": "## Churn Model Drift History\nThe churn prediction model (test_churn_model) has exhibited the following known drift patterns based on historical investigations:\n\n## Pattern 1: Post-Campaign User Behavior Shift\n**Frequency**: Every major marketing campaign (approx. quarterly)\n**Symptoms**:\n- ADWIN score spikes on `engagement_score`, `login_frequency`, `session_duration` features\n- PSI increases on `user_segment` categorical feature\n- Model accuracy typically drops 3–7% during campaign period\n\n**Resolution**: Monitor through campaign period (typically 2 weeks). No retrain required unless accuracy drop exceeds 8%.\n\n## Pattern 2: Feature Pipeline Regression\n**Frequency**: Rare, usually triggered by ETL changes\n**Symptoms**:\n- Sudden uniform spike across all features simultaneously\n- ADWIN alarm on features that historically don't drift (e.g., `account_age`)\n- Not correlated with business events\n\n**Resolution**: Rollback ETL change. Validate feature pipeline integrity. This is NOT a model issue.\n\n## Pattern 3: Seasonal Churn Peak\n**Frequency**: Annual — Q4 (November–December) and Q1 (January–February)\n**Symptoms**:\n- ADWIN drift on `days_since_last_purchase`, `cart_abandonment_rate`\n- PSI elevation on `geographic_region` (holiday travel patterns)\n- Confidence interval widens on churn probability outputs\n\n**Resolution**: Pre-train seasonal model variant. Deploy during peak period. Revert in off-peak.\n\n## Confidence Calibration\nHistorical confidence scores for churn model drift incidents:\n- Minor (ADWIN 0.10–0.20): avg confidence 0.72\n- Moderate (ADWIN 0.20–0.30): avg confidence 0.85\n- Severe (ADWIN > 0.30): avg confidence 0.91\n\n## Contact\nML Owner: ml-platform@company.com | Oncall: #mlops-incident-response",
+  "author": "DriftGuard Knowledge Team",
+  "severity_applicability": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+  "related_runbooks": ["retrain-decision-tree", "adwin-response-protocol"]
+}

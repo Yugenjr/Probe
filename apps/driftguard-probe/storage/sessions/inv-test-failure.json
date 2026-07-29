@@ -10,7 +10,7 @@
     "trigger_type": "drift_detected",
     "severity": "MEDIUM",
     "status": "OPEN",
-    "detected_at": "2026-07-28T15:18:22.794969Z",
+    "detected_at": "2026-07-29T02:58:44.819975Z",
     "raw_payload": {},
     "metadata": {}
   },
@@ -18,10 +18,10 @@
   "active_workflow_name": null,
   "universal_evidence": [
     {
-      "evidence_id": "ev-e1db1c",
+      "evidence_id": "ev-7eb15d",
       "source_provider": "DriftGuard-Core-v3",
       "retrieved_by_tool": "ContextExtractor",
-      "timestamp": "2026-07-28T15:18:23.108542Z",
+      "timestamp": "2026-07-29T02:58:45.606149Z",
       "summary": "Covariate drift score of 0.25 observed on target model demo-rollback-v2.",
       "confidence_weight": 0.95,
       "evidence_type": "drift_stats",
@@ -39,7 +39,7 @@
       "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
       "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
       "supporting_evidence_ids": [
-        "ev-e1db1c"
+        "ev-7eb15d"
       ],
       "likelihood_score": 0.92,
       "verified_by_simulation": false,
@@ -48,7 +48,7 @@
       "weaknesses": [
         "No latency increase in local tests"
       ],
-      "created_at": "2026-07-28T15:18:23.109575Z"
+      "created_at": "2026-07-29T02:58:45.607426Z"
     }
   ],
   "evaluation_result": {
@@ -57,7 +57,7 @@
       "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
       "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
       "supporting_evidence_ids": [
-        "ev-e1db1c"
+        "ev-7eb15d"
       ],
       "likelihood_score": 0.92,
       "verified_by_simulation": false,
@@ -66,12 +66,12 @@
       "weaknesses": [
         "No latency increase in local tests"
       ],
-      "created_at": "2026-07-28T15:18:23.109575Z"
+      "created_at": "2026-07-29T02:58:45.607426Z"
     },
     "alternatives": [],
     "recommended_actions": [
       {
-        "recommendation_id": "rec-b158c7",
+        "recommendation_id": "rec-fa1e80",
         "action_type": "ROLLBACK_MODEL",
         "title": "Rollback Recommendation",
         "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
@@ -88,7 +88,7 @@
     "confidence": 0.91
   },
   "remediation_plan": {
-    "remediation_id": "rem-681fed",
+    "remediation_id": "rem-49c67a",
     "target_model_id": "demo-rollback-v2",
     "intervention_type": "CANARY_ROLLBACK",
     "summary": "Rollback: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
@@ -96,12 +96,12 @@
     "supporting_hypothesis_id": "hyp-inv-test",
     "estimated_impact_percent": 91.0,
     "requires_human_approval": true,
-    "created_at": "2026-07-28T15:18:23.113267Z"
+    "created_at": "2026-07-29T02:58:46.522636Z"
   },
   "report": {
-    "report_id": "rep-f553ed",
+    "report_id": "rep-d23b89",
     "investigation_id": "inv-test-failure",
-    "generated_at": "2026-07-28T15:18:23.118900Z",
+    "generated_at": "2026-07-29T02:58:46.947964Z",
     "incident_summary": {
       "incident_id": "inc-test-failure-resilience",
       "model_id": "demo-rollback-v2",
@@ -110,7 +110,7 @@
       "trigger_type": "drift_detected",
       "severity": "MEDIUM",
       "status": "OPEN",
-      "detected_at": "2026-07-28T15:18:22.794969Z",
+      "detected_at": "2026-07-29T02:58:44.819975Z",
       "raw_payload": {},
       "metadata": {}
     },
@@ -122,7 +122,7 @@
         "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
         "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
         "supporting_evidence_ids": [
-          "ev-e1db1c"
+          "ev-7eb15d"
         ],
         "likelihood_score": 0.92,
         "verified_by_simulation": false,
@@ -131,12 +131,12 @@
         "weaknesses": [
           "No latency increase in local tests"
         ],
-        "created_at": "2026-07-28T15:18:23.109575Z"
+        "created_at": "2026-07-29T02:58:45.607426Z"
       }
     ],
     "experiments": [],
     "recommended_action": {
-      "recommendation_id": "rec-b158c7",
+      "recommendation_id": "rec-fa1e80",
       "action_type": "ROLLBACK_MODEL",
       "title": "Rollback Recommendation",
       "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
@@ -149,13 +149,13 @@
       "estimated_risk": "Low",
       "estimated_time": "5 min"
     },
-    "markdown_content": "# Incident Investigation Report: inv-test-failure\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-failure-resilience` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.000s.\n- **Step 3**: Investigator executed successfully in 0.003s.\n- **Step 4**: Hypothesis executed successfully in 0.000s.\n- **Step 5**: Evaluator executed successfully in 0.003s.\n\n## Evidence\n- **ev-e1db1c** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-failure\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-28T15:18:23.118859+00:00\n"
+    "markdown_content": "# Incident Investigation Report: inv-test-failure\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-failure-resilience` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.000s.\n- **Step 3**: Investigator executed successfully in 0.473s.\n- **Step 4**: Hypothesis executed successfully in 0.515s.\n- **Step 5**: Evaluator executed successfully in 0.398s.\n\n## Evidence\n- **ev-7eb15d** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-failure\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T02:58:46.947906+00:00\n"
   },
   "agent_results": [
     {
       "agent_name": "Supervisor",
-      "started_at": "2026-07-28T15:18:22.796278Z",
-      "finished_at": "2026-07-28T15:18:22.796459Z",
+      "started_at": "2026-07-29T02:58:44.821897Z",
+      "finished_at": "2026-07-29T02:58:44.822022Z",
       "success": true,
       "output": {
         "steps": [
@@ -184,13 +184,13 @@
       "metadata": {},
       "cost": 0.0,
       "tokens": 0,
-      "latency": 0.00017829996068030596,
+      "latency": 0.00012290000449866056,
       "retries": 0
     },
     {
       "agent_name": "Planner",
-      "started_at": "2026-07-28T15:18:22.797366Z",
-      "finished_at": "2026-07-28T15:18:23.104609Z",
+      "started_at": "2026-07-29T02:58:44.823085Z",
+      "finished_at": "2026-07-29T02:58:45.130872Z",
       "success": false,
       "output": null,
       "metadata": {
@@ -198,41 +198,42 @@
       },
       "cost": 0.0,
       "tokens": 0,
-      "latency": 0.00005819997750222683,
+      "latency": 0.0000439999857917428,
       "retries": 3
     },
     {
       "agent_name": "Investigator",
-      "started_at": "2026-07-28T15:18:23.105909Z",
-      "finished_at": "2026-07-28T15:18:23.108565Z",
+      "started_at": "2026-07-29T02:58:45.132880Z",
+      "finished_at": "2026-07-29T02:58:45.606178Z",
       "success": true,
       "output": {
         "status": "EVIDENCE_COLLECTED",
-        "evidence_id": "ev-e1db1c"
+        "evidence_id": "ev-7eb15d",
+        "mcp_kb_enriched": false
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "investigator",
-          "model_name": "gpt-4-turbo",
+          "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 0.10069995187222958,
-          "tokens_prompt": 249,
+          "latency_ms": 412.02739998698235,
+          "tokens_prompt": 1159,
           "tokens_completion": 0,
-          "total_tokens": 249,
+          "total_tokens": 1159,
           "cost_estimate": 0.0,
           "success": false,
-          "error_message": "4 validation errors for EvidenceCollection\nobservations\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nanomalies\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nconfidence\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nreasoning\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 249,
-      "latency": 0.0026542000705376267,
+      "tokens": 1159,
+      "latency": 0.4732950000325218,
       "retries": 0
     },
     {
       "agent_name": "Hypothesis",
-      "started_at": "2026-07-28T15:18:23.109506Z",
-      "finished_at": "2026-07-28T15:18:23.109892Z",
+      "started_at": "2026-07-29T02:58:45.607310Z",
+      "finished_at": "2026-07-29T02:58:46.122799Z",
       "success": true,
       "output": {
         "status": "HYPOTHESIS_FORMULATED",
@@ -242,7 +243,7 @@
             "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
             "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
             "supporting_evidence_ids": [
-              "ev-e1db1c"
+              "ev-7eb15d"
             ],
             "likelihood_score": 0.92,
             "verified_by_simulation": false,
@@ -251,32 +252,33 @@
             "weaknesses": [
               "No latency increase in local tests"
             ],
-            "created_at": "2026-07-28T15:18:23.109575Z"
+            "created_at": "2026-07-29T02:58:45.607426Z"
           }
         ]
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "hypothesis",
-          "model_name": "gpt-4-turbo",
+          "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 0.016300007700920105,
-          "tokens_prompt": 317,
-          "tokens_completion": 4,
-          "total_tokens": 321,
+          "latency_ms": 512.3630999587476,
+          "tokens_prompt": 438,
+          "tokens_completion": 0,
+          "total_tokens": 438,
           "cost_estimate": 0.0,
-          "success": true
+          "success": false,
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 321,
-      "latency": 0.00038350000977516174,
+      "tokens": 438,
+      "latency": 0.5154686999740079,
       "retries": 0
     },
     {
       "agent_name": "Evaluator",
-      "started_at": "2026-07-28T15:18:23.110798Z",
-      "finished_at": "2026-07-28T15:18:23.113312Z",
+      "started_at": "2026-07-29T02:58:46.124721Z",
+      "finished_at": "2026-07-29T02:58:46.522696Z",
       "success": true,
       "output": {
         "best_hypothesis": {
@@ -284,7 +286,7 @@
           "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
           "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
           "supporting_evidence_ids": [
-            "ev-e1db1c"
+            "ev-7eb15d"
           ],
           "likelihood_score": 0.92,
           "verified_by_simulation": false,
@@ -293,12 +295,12 @@
           "weaknesses": [
             "No latency increase in local tests"
           ],
-          "created_at": "2026-07-28T15:18:23.109575Z"
+          "created_at": "2026-07-29T02:58:45.607426Z"
         },
         "alternatives": [],
         "recommended_actions": [
           {
-            "recommendation_id": "rec-b158c7",
+            "recommendation_id": "rec-fa1e80",
             "action_type": "ROLLBACK_MODEL",
             "title": "Rollback Recommendation",
             "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
@@ -317,31 +319,31 @@
       "metadata": {
         "reasoning_trace": {
           "agent": "evaluator",
-          "model_name": "gpt-4-turbo",
+          "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 0.08809997234493494,
-          "tokens_prompt": 342,
+          "latency_ms": 393.95290007814765,
+          "tokens_prompt": 385,
           "tokens_completion": 0,
-          "total_tokens": 342,
+          "total_tokens": 385,
           "cost_estimate": 0.0,
           "success": false,
-          "error_message": "1 validation error for EvaluationResult\nbest_hypothesis\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 342,
-      "latency": 0.002511899918317795,
+      "tokens": 385,
+      "latency": 0.39797269995324314,
       "retries": 0
     },
     {
       "agent_name": "Reporter",
-      "started_at": "2026-07-28T15:18:23.114474Z",
-      "finished_at": "2026-07-28T15:18:23.118920Z",
+      "started_at": "2026-07-29T02:58:46.524413Z",
+      "finished_at": "2026-07-29T02:58:46.947995Z",
       "success": true,
       "output": {
-        "report_id": "rep-f553ed",
+        "report_id": "rep-d23b89",
         "investigation_id": "inv-test-failure",
-        "generated_at": "2026-07-28T15:18:23.118900Z",
+        "generated_at": "2026-07-29T02:58:46.947964Z",
         "incident_summary": {
           "incident_id": "inc-test-failure-resilience",
           "model_id": "demo-rollback-v2",
@@ -350,7 +352,7 @@
           "trigger_type": "drift_detected",
           "severity": "MEDIUM",
           "status": "OPEN",
-          "detected_at": "2026-07-28T15:18:22.794969Z",
+          "detected_at": "2026-07-29T02:58:44.819975Z",
           "raw_payload": {},
           "metadata": {}
         },
@@ -362,7 +364,7 @@
             "title": "Unmonitored Demographic Covariate Shift Triggering Latency Surge",
             "detailed_reasoning": "Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.",
             "supporting_evidence_ids": [
-              "ev-e1db1c"
+              "ev-7eb15d"
             ],
             "likelihood_score": 0.92,
             "verified_by_simulation": false,
@@ -371,12 +373,12 @@
             "weaknesses": [
               "No latency increase in local tests"
             ],
-            "created_at": "2026-07-28T15:18:23.109575Z"
+            "created_at": "2026-07-29T02:58:45.607426Z"
           }
         ],
         "experiments": [],
         "recommended_action": {
-          "recommendation_id": "rec-b158c7",
+          "recommendation_id": "rec-fa1e80",
           "action_type": "ROLLBACK_MODEL",
           "title": "Rollback Recommendation",
           "justification": "Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.",
@@ -389,48 +391,48 @@
           "estimated_risk": "Low",
           "estimated_time": "5 min"
         },
-        "markdown_content": "# Incident Investigation Report: inv-test-failure\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-failure-resilience` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.000s.\n- **Step 3**: Investigator executed successfully in 0.003s.\n- **Step 4**: Hypothesis executed successfully in 0.000s.\n- **Step 5**: Evaluator executed successfully in 0.003s.\n\n## Evidence\n- **ev-e1db1c** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-failure\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-28T15:18:23.118859+00:00\n"
+        "markdown_content": "# Incident Investigation Report: inv-test-failure\n\n**Model ID:** demo-rollback-v2 (None)\n\n## Summary\nThe autonomous investigation has analyzed incident alert `inc-test-failure-resilience` on model `demo-rollback-v2`. The primary suspected root cause is a feature-level drift leading to inference performance degradation.\n\n## Timeline\n- **Step 1**: Supervisor executed successfully in 0.000s.\n- **Step 2**: Planner executed successfully in 0.000s.\n- **Step 3**: Investigator executed successfully in 0.473s.\n- **Step 4**: Hypothesis executed successfully in 0.515s.\n- **Step 5**: Evaluator executed successfully in 0.398s.\n\n## Evidence\n- **ev-7eb15d** (DriftGuard-Core-v3): Covariate drift score of 0.25 observed on target model demo-rollback-v2. (observed distance: 0.25, alarm threshold: 0.15)\n\n## Hypotheses\n- **hyp-inv-test** — *Unmonitored Demographic Covariate Shift Triggering Latency Surge* (Likelihood: 92%)\n  - *Reasoning*: Observed Wasserstein feature distance surge on 'user_age' distribution directly preceded p99 inference latency spike.\n  - *Weaknesses*: No latency increase in local tests\n\n## Evaluation\n- **Primary Hypothesis**: Unmonitored Demographic Covariate Shift Triggering Latency Surge\n- **Evaluator Confidence**: 91%\n- **Alternative Hypotheses Evaluated**: 0\n\n## Recommendations\n- **Rollback** (Priority: P0, Risk: Low, Time: 5 min)\n  - *Justification*: Recent preprocessing change deployed in commit 2f7a91c altered feature scaling metrics.\n\n## Confidence\nWe estimate a confidence level of **91%** in this diagnostic output.\n\n## Appendix\n- **Investigation ID**: inv-test-failure\n- **Severity**: MEDIUM\n- **Trigger Type**: drift_detected\n- **System Time**: 2026-07-29T02:58:46.947906+00:00\n"
       },
       "metadata": {
         "reasoning_trace": {
           "agent": "reporter",
-          "model_name": "gpt-4-turbo",
+          "model_name": "llama-3.3-70b-versatile",
           "prompt_version": "v1",
-          "latency_ms": 0.3234000178053975,
-          "tokens_prompt": 321,
+          "latency_ms": 417.8475000662729,
+          "tokens_prompt": 1284,
           "tokens_completion": 0,
-          "total_tokens": 321,
+          "total_tokens": 1284,
           "cost_estimate": 0.0,
           "success": false,
-          "error_message": "5 validation errors for LLMReportOutput\ntitle\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nexecutive_summary\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nevidence_summary\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nsuggested_actions\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\nmarkdown_content\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+          "error_message": "Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
         }
       },
       "cost": 0.0,
-      "tokens": 321,
-      "latency": 0.004443600075319409,
+      "tokens": 1284,
+      "latency": 0.4235800999449566,
       "retries": 0
     }
   ],
-  "started_at": "2026-07-28T15:18:22.794984Z",
-  "updated_at": "2026-07-28T15:18:23.119658Z",
-  "completed_at": "2026-07-28T15:18:23.119658Z",
+  "started_at": "2026-07-29T02:58:44.819991Z",
+  "updated_at": "2026-07-29T02:58:46.949191Z",
+  "completed_at": "2026-07-29T02:58:46.949191Z",
   "execution_history": [
-    "[2026-07-28T15:18:22.795797+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
+    "[2026-07-29T02:58:44.821382+00:00] [COLLECTING_EVIDENCE] Activating Supervisor agent to coordinate planning.",
     "[Supervisor] Supervisor generated execution plan with 5 steps.",
     "[Agent Executor] Executed 'Supervisor' successfully in 0.000s (tries: 1).",
-    "[2026-07-28T15:18:22.796946+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
+    "[2026-07-29T02:58:44.822575+00:00] [PLANNING] Running step: Establish investigation scope and objectives",
     "[Agent Executor] Executed 'Planner' failed after 3 tries: Simulated Planner Agent failure",
-    "[2026-07-28T15:18:23.105437+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
-    "[2026-07-28T15:18:23.108551+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
-    "[Agent Executor] Executed 'Investigator' successfully in 0.003s (tries: 1).",
-    "[2026-07-28T15:18:23.109074+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
-    "[2026-07-28T15:18:23.109869+00:00] [Hypothesis] Synthesized hyp-inv-test: Unmonitored Demographic Covariate Shift Triggering Latency Surge (Likelihood: 0.92).",
-    "[Agent Executor] Executed 'Hypothesis' successfully in 0.000s (tries: 1).",
-    "[2026-07-28T15:18:23.110344+00:00] [EXPERIMENTAL_VALIDATION] Running step: Evaluate hypotheses and recommend optimal intervention",
-    "[2026-07-28T15:18:23.113273+00:00] [Remediation] Formulated intervention rem-681fed (CANARY_ROLLBACK).",
-    "[Agent Executor] Executed 'Evaluator' successfully in 0.003s (tries: 1).",
-    "[2026-07-28T15:18:23.113901+00:00] [REMEDIATION_READY] Running step: Synthesize findings and compile forensic report",
-    "[Agent Executor] Executed 'Reporter' successfully in 0.004s (tries: 1).",
-    "[2026-07-28T15:18:23.119658+00:00] [COMPLETED] All workflow steps completed successfully. Session archived."
+    "[2026-07-29T02:58:45.132129+00:00] [COLLECTING_EVIDENCE] Running step: Ingest and analyze telemetry data anomalies",
+    "[2026-07-29T02:58:45.606162+00:00] [Evidence] Accrued drift_stats evidence from DriftGuard-Core-v3.",
+    "[Agent Executor] Executed 'Investigator' successfully in 0.473s (tries: 1).",
+    "[2026-07-29T02:58:45.606753+00:00] [HYPOTHESIS_SYNTHESIS] Running step: Formulate causal root-cause theories from evidence",
+    "[2026-07-29T02:58:46.122755+00:00] [Hypothesis] Synthesized hyp-inv-test: Unmonitored Demographic Covariate Shift Triggering Latency Surge (Likelihood: 0.92).",
+    "[Agent Executor] Executed 'Hypothesis' successfully in 0.515s (tries: 1).",
+    "[2026-07-29T02:58:46.123458+00:00] [EXPERIMENTAL_VALIDATION] Running step: Evaluate hypotheses and recommend optimal intervention",
+    "[2026-07-29T02:58:46.522643+00:00] [Remediation] Formulated intervention rem-49c67a (CANARY_ROLLBACK).",
+    "[Agent Executor] Executed 'Evaluator' successfully in 0.398s (tries: 1).",
+    "[2026-07-29T02:58:46.523525+00:00] [REMEDIATION_READY] Running step: Synthesize findings and compile forensic report",
+    "[Agent Executor] Executed 'Reporter' successfully in 0.424s (tries: 1).",
+    "[2026-07-29T02:58:46.949191+00:00] [COMPLETED] All workflow steps completed successfully. Session archived."
   ]
 }

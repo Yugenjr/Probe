@@ -34,11 +34,16 @@ class AgentExecutor:
         # 1. Resolve agent class from registry
         agent_class = self.registry.get(role_name)
         
-        # 2. Instantiate agent injecting LLM service from DI/factory
+        # 2. Instantiate agent injecting LLM service and ToolGateway from DI container
         container = get_container()
         if not container.llm_provider:
             container.llm_provider = get_llm_service()
-        agent = agent_class(llm_provider=container.llm_provider)
+        agent = agent_class(
+            llm_provider=container.llm_provider,
+            tool_gateway=getattr(container, "tool_gateway", None),
+            evidence_gateway=getattr(container, "evidence_gateway", None),
+        )
+
 
         # 3. Publish AGENT_ACTIVATED lifecycle event
         await self.publisher.emit(

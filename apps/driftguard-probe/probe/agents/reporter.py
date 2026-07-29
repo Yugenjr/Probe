@@ -42,16 +42,20 @@ class ReporterAgent(BaseAgent):
         # 2. Gather Evidence
         evidence_list = [ev.model_dump(mode="json") for ev in state.universal_evidence]
 
-        # 3. Gather EvaluationResult
+        # 3. Gather Hypotheses
+        hypotheses_list = [h.model_dump(mode="json") for h in state.hypotheses]
+
+        # 4. Gather EvaluationResult
         eval_res = state.evaluation_result
         eval_json = eval_res.model_dump_json(indent=2) if eval_res else "{}"
 
-        # 4. Generate structured report via LLM
+        # 5. Generate structured report via LLM
         if self.llm_provider and hasattr(self.llm_provider, "generate_step_structured"):
             context = {
                 "incident_json": state.incident.model_dump_json(indent=2),
                 "plan_json": json.dumps(planner_plan, indent=2),
                 "evidence_json": json.dumps(evidence_list, indent=2),
+                "hypotheses_json": json.dumps(hypotheses_list, indent=2),
                 "evaluation_json": eval_json
             }
             try:
@@ -60,7 +64,7 @@ class ReporterAgent(BaseAgent):
                     prompt_version="v1",
                     response_model=LLMReportOutput,
                     context=context,
-                    temperature=0.1
+                    temperature=0.2
                 )
                 logger.info("Reporter Agent successfully compiled report via LLM.")
 

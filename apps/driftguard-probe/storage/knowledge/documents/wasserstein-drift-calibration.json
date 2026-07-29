@@ -1,0 +1,11 @@
+{
+  "id": "wasserstein-drift-calibration",
+  "title": "Wasserstein Distance Drift: Calibration and Alarm Thresholds",
+  "category": "Technical Reference",
+  "tags": ["wasserstein", "drift", "earth-mover", "calibration", "threshold", "feature-distribution"],
+  "updated_at": "2026-07-18T15:00:00Z",
+  "content": "## What is Wasserstein Distance?\nWasserstein distance (also called Earth Mover's Distance) measures the minimum cost of transforming one probability distribution into another. Unlike KL-divergence, it is symmetric and well-defined even when distributions have non-overlapping support.\n\n## Probe Alarm Thresholds\nProbe uses the following calibrated thresholds for continuous features:\n\n| Feature Type      | Low      | Medium   | High     | Critical |\n|-------------------|----------|----------|----------|----------|\n| Continuous (norm) | < 0.05   | 0.05–0.15| 0.15–0.30| > 0.30   |\n| Continuous (skew) | < 0.10   | 0.10–0.25| 0.25–0.45| > 0.45   |\n| Embedding (dense) | < 0.08   | 0.08–0.20| 0.20–0.35| > 0.35   |\n\n## How Probe Computes Wasserstein\n1. Reference window: last N samples before model training cutoff\n2. Production window: last M samples from live serving\n3. Wasserstein-1 computed per feature dimension\n4. Aggregate score: weighted mean by feature importance from training\n\n## Interpretation Guide\n- Score near 0: Production distribution matches training closely.\n- Score 0.15–0.25: Moderate shift. Check if it correlates with known business events.\n- Score > 0.30: Significant transformation. Validate model assumptions are still valid.\n- Score > 0.50: Distribution has fundamentally changed. Model likely invalid.\n\n## Wasserstein vs PSI vs ADWIN\n| Metric      | Strength | Weakness |\n|-------------|----------|----------|\n| Wasserstein | Sensitive to magnitude | Computationally intensive |\n| PSI         | Simple to interpret | Insensitive to tail changes |\n| ADWIN       | Online, real-time | Can be noisy on small windows |\n\nBest practice: Use all three. ADWIN for real-time alerting, PSI for daily reports, Wasserstein for deep investigation.",
+  "author": "DriftGuard Knowledge Team",
+  "severity_applicability": ["MEDIUM", "HIGH", "CRITICAL"],
+  "related_runbooks": ["adwin-response-protocol"]
+}

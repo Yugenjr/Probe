@@ -14,7 +14,7 @@ T = TypeVar("T", bound=BaseModel)
 class GroqProvider(BaseLLMProvider):
     """Provider adapter communicating with Groq REST OpenAI-compatible inference endpoints."""
 
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "llama-3.1-70b-versatile"):
+    def __init__(self, api_key: Optional[str] = None, model_name: str = "llama-3.3-70b-versatile"):
         from ...core.config import get_settings
         settings = get_settings()
         self.api_key = api_key or settings.groq_api_key
@@ -48,6 +48,8 @@ class GroqProvider(BaseLLMProvider):
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(self.base_url, headers=headers, json=payload)
+            if resp.status_code != 200:
+                logger.error("Groq API error response status %s: %s", resp.status_code, resp.text)
             resp.raise_for_status()
             data = resp.json()
             return data["choices"][0]["message"]["content"]
@@ -79,11 +81,14 @@ class GroqProvider(BaseLLMProvider):
                 {"role": "user", "content": user_prompt}
             ],
             "temperature": temperature,
+            "max_tokens": 4096,
             "response_format": {"type": "json_object"}
         }
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(self.base_url, headers=headers, json=payload)
+            if resp.status_code != 200:
+                logger.error("Groq API error response status %s: %s", resp.status_code, resp.text)
             resp.raise_for_status()
             data = resp.json()
             raw_content = data["choices"][0]["message"]["content"]

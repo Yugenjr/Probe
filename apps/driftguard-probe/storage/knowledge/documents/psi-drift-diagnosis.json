@@ -1,0 +1,11 @@
+{
+  "id": "psi-drift-diagnosis",
+  "title": "Diagnosing PSI Drift on Embedding and Categorical Features",
+  "category": "Playbook",
+  "tags": ["PSI", "drift", "embedding", "categorical", "feature-distribution"],
+  "updated_at": "2026-07-20T10:00:00Z",
+  "content": "## Overview\nPopulation Stability Index (PSI) measures how much a feature distribution has shifted between a reference window and the current production window.\n\n## Threshold Interpretation\n- PSI < 0.1: No significant shift. Monitor normally.\n- PSI 0.1–0.2: Moderate shift. Investigate feature pipeline upstream.\n- PSI > 0.2: Major shift. Escalate. Retrain candidate should be prepared.\n- PSI > 0.35: Critical shift. Trigger emergency rollback assessment.\n\n## Common Root Causes\n1. **Upstream data pipeline change**: Schema change, new ETL job, or ingestion delay.\n2. **Seasonal behavior**: User behavior shifts (holiday, campaign, regulatory).\n3. **Feature encoding regression**: Embedding model updated, vocabulary changed.\n4. **Population shift**: New customer segment onboarded; training data no longer representative.\n\n## Diagnostic Steps\n1. Identify which features have the highest per-dimension PSI.\n2. Correlate PSI spike timing with deploy timestamps from the CI/CD audit log.\n3. Compare current feature statistics (mean, std, percentiles) against training baseline.\n4. Check if drift is uniform across all features or isolated to specific dimensions.\n\n## Resolution\n- Isolated feature drift → Fix upstream pipeline, no retrain required.\n- Broad feature drift → Prepare retrain with recent data window.\n- Embedding drift → Update embedding model, reindex features.",
+  "author": "DriftGuard Knowledge Team",
+  "severity_applicability": ["HIGH", "CRITICAL"],
+  "related_runbooks": ["retrain-decision-tree", "rollback-production-model"]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "model-rollback-protocol",
+  "title": "Model Rollback Protocol: When and How to Roll Back Production Models",
+  "category": "Playbook",
+  "tags": ["rollback", "production", "model-deployment", "incident-response", "recovery"],
+  "updated_at": "2026-07-25T12:00:00Z",
+  "content": "## When to Roll Back\nRollback is appropriate when ALL of the following apply:\n1. Drift score exceeds critical threshold (PSI > 0.35, ADWIN > 0.30)\n2. Model accuracy has dropped more than 5% from baseline\n3. Retrain is not available within the next 2 hours\n4. Business impact is confirmed (e.g., prediction volume indicates active serving)\n\n## Rollback Decision Tree\n```\nDrift detected?\n  ├─ Accuracy stable → Monitor, no rollback needed\n  └─ Accuracy degraded\n       ├─ Previous version available?\n       │    ├─ Yes → Assess previous version drift score\n       │    │         ├─ Previous version also drifted → No rollback (retrain only)\n       │    │         └─ Previous version stable → ROLLBACK\n       │    └─ No → Emergency retrain required\n       └─ Only one version exists → Emergency retrain\n```\n\n## Rollback Execution Steps\n1. Confirm target version: `GET /api/models/{model_id}/versions`\n2. Shadow-deploy previous version alongside current version for 5 minutes\n3. Validate accuracy parity on recent labeled samples\n4. Switch traffic routing: 100% to previous version\n5. Disable current version\n6. Open retrain ticket immediately\n\n## Post-Rollback Monitoring\n- Monitor ADWIN score on rolled-back version for next 60 minutes\n- If rolled-back version also drifts: root cause is data pipeline, not model\n- Alert ML platform team and initiate root cause analysis\n\n## Rollback SLA\n- Detection → Decision: ≤ 15 minutes\n- Decision → Execution: ≤ 10 minutes\n- Total TTR (Time to Rollback): ≤ 25 minutes",
+  "author": "DriftGuard Knowledge Team",
+  "severity_applicability": ["HIGH", "CRITICAL"],
+  "related_runbooks": ["rollback-production-model", "retrain-decision-tree"]
+}
