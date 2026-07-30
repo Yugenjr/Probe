@@ -61,7 +61,7 @@ function Dashboard() {
       })
       .catch((err) => {
         console.error("Dashboard load failed:", err);
-        setError("Backend services unavailable. Confirm DriftGuard backend API is active on port 8005.");
+        setError("Backend services unavailable. Confirm DriftGuard backend API is active on port 8006.");
         setLoading(false);
       });
   };
@@ -74,7 +74,7 @@ function Dashboard() {
     if (list.length > 0) {
       const recent = list[0];
       setActiveId(recent.id);
-      fetch(`http://localhost:8005/api/v1/investigations/${recent.id}/timeline`)
+      fetch(`http://localhost:8006/api/v1/investigations/${recent.id}/timeline`)
         .then((r) => r.json())
         .then((res) => {
           if (res.status === "success" && res.data?.timeline) {
@@ -419,6 +419,7 @@ function Dashboard() {
                 <tr className="text-left text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
                   <th className="px-4 py-2 font-medium">Status</th>
                   <th className="px-2 py-2 font-medium">Severity</th>
+                  <th className="px-2 py-2 font-medium">Incident</th>
                   <th className="px-2 py-2 font-medium">Model</th>
                   <th className="px-2 py-2 font-medium">Started</th>
                   <th className="px-2 py-2 font-medium">Confidence</th>

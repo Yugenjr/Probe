@@ -23,6 +23,7 @@ from typing import Any
 from ...domain.remediation import RemediationPlan
 from ...context.models import InvestigationContext
 from ...models.recommendation import EvaluationResult
+from ...domain.hypothesis import CausalHypothesis
 
 logger = logging.getLogger(__name__)
 
@@ -126,12 +127,12 @@ class InvestigationRepository(BaseRepository):
             db_h = h_res.scalar_one_or_none()
 
             h_data = {
-                "title": h.title,
-                "detailed_reasoning": h.detailed_reasoning,
-                "supporting_evidence_ids": h.supporting_evidence_ids,
-                "likelihood_score": h.likelihood_score,
-                "verified_by_simulation": h.verified_by_simulation,
-                "weaknesses": getattr(h, "weaknesses", []),
+                "title": getattr(h, "title", getattr(h, "primary_root_cause", "Hypothesis")),
+                "detailed_reasoning": getattr(h, "detailed_reasoning", "\n".join(getattr(h, "causal_chain", []))),
+                "supporting_evidence_ids": getattr(h, "supporting_evidence_ids", getattr(h, "supporting_evidence", [])),
+                "likelihood_score": getattr(h, "likelihood_score", getattr(h, "confidence", 0.5)),
+                "verified_by_simulation": getattr(h, "verified_by_simulation", False),
+                "weaknesses": getattr(h, "weaknesses", getattr(h, "contradicting_evidence", [])),
                 "ranking": i + 1,
             }
 
@@ -298,14 +299,14 @@ class InvestigationRepository(BaseRepository):
         h_res = await self.session.execute(h_query)
         for row in h_res.scalars():
             session.hypotheses.append(
-                Hypothesis(
+                CausalHypothesis(
                     hypothesis_id=row.hypothesis_id,
-                    title=row.title,
-                    detailed_reasoning=row.detailed_reasoning,
-                    supporting_evidence_ids=row.supporting_evidence_ids or [],
-                    likelihood_score=row.likelihood_score,
-                    verified_by_simulation=row.verified_by_simulation,
-                    weaknesses=row.weaknesses or []
+                    primary_root_cause=row.title or "Unknown root cause",
+                    contributing_factors=[],
+                    causal_chain=row.detailed_reasoning.split("\n") if row.detailed_reasoning else [],
+                    supporting_evidence=row.supporting_evidence_ids or [],
+                    contradicting_evidence=row.weaknesses or [],
+                    confidence=row.likelihood_score or 0.5
                 )
             )
 

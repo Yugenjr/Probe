@@ -185,4 +185,24 @@ class ReporterAgent(BaseAgent):
             markdown_content=markdown,
         )
         state.report = report
+
+        if self.tool_gateway:
+            try:
+                await self.tool_gateway.execute(
+                    server="knowledge",
+                    tool="write_document",
+                    arguments={
+                        "title": f"Incident Report: {state.incident.incident_id}",
+                        "content": report.markdown_content,
+                        "metadata": {
+                            "incident_id": state.incident.incident_id,
+                            "model_id": state.incident.model_id,
+                            "session_id": state.session_id
+                        }
+                    }
+                )
+                logger.info("Reporter Agent successfully saved report to Knowledge Base via MCP.")
+            except Exception as e:
+                logger.warning("Failed to save report to Knowledge Base: %s", e)
+
         return report

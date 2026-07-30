@@ -28,6 +28,31 @@ class RemediationAgent(BaseAgent):
         impact = await impact_tool.invoke(model_id=state.incident.model_id)
         
         hyp_id = state.hypotheses[0].hypothesis_id if state.hypotheses else None
+        
+        if self.llm_provider and hasattr(self.llm_provider, "generate_step_structured"):
+            try:
+                import json
+                context = {
+                    "incident_json": state.incident.model_dump_json(indent=2),
+                    "impact": json.dumps(impact)
+                }
+                res = await self.llm_provider.generate_step_structured(
+                    prompt_name=self.role_name, 
+                    prompt_version="v1",
+                    response_model=RemediationPlan, 
+                    context=context, 
+                    temperature=0.2
+                )
+                res.remediation_id = f"rem-{state.session_id[:8]}"
+                res.target_model_id = state.incident.model_id
+                res.supporting_hypothesis_id = hyp_id
+                res.estimated_impact_percent = float(impact.get("simulated_accuracy_recovery_percent", 14.8))
+                
+                state.attach_remediation(res)
+                return {"status": "REMEDIATION_PROPOSED", "remediation_id": res.remediation_id, "impact_simulation": impact}
+            except Exception as e:
+                logger.warning("LLM generation failed in Remediation Agent: %s", e)
+
         plan = RemediationPlan(
             remediation_id=f"rem-{state.session_id[:8]}",
             target_model_id=state.incident.model_id,

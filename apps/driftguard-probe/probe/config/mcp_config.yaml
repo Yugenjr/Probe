@@ -4,16 +4,16 @@ servers:
 
   github:
     type: process
-    command: "node"
+    command: "npx"
     args:
-      - "C:\\nvm4w\\nodejs\\node_modules\\@modelcontextprotocol\\server-github\\dist\\index.js"
+      - "-y"
+      - "@modelcontextprotocol/server-github"
     env:
       GITHUB_PERSONAL_ACCESS_TOKEN: "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"
 
-
   mlflow:
     type: process
-    command: "C:\\Users\\Yugendra\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\driftguard-probe-igDHpR6t-py3.13\\Scripts\\python.exe"
+    command: "python"
     args:
       - "-m"
       - "mlflow"

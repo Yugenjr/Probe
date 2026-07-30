@@ -15,7 +15,7 @@ from probe.schemas.webhooks import WebhookPayload
 from probe.storage.session_repository import get_session_repository
 from probe.events.publisher import EventPublisher
 from probe.events.models import EventType
-from .driftguard_client import DriftGuardClient
+from .driftguard_client import DriftGuardClient, DriftGuardAuthenticationError, DriftGuardConnectionError, DriftGuardNotFoundError
 
 logger = logging.getLogger(__name__)
 

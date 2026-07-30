@@ -52,7 +52,7 @@ function MCPServersPage() {
         }
         
         // Fetch activity
-        return fetch("http://localhost:8005/api/v1/mcp/activity").then((res) => res.json());
+        return fetch("http://localhost:8006/api/v1/mcp/activity").then((res) => res.json());
       })
       .then((activityRes) => {
         if (activityRes && activityRes.data) {

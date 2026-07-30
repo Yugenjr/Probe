@@ -118,7 +118,7 @@ function SettingsPage() {
                 { name: "DriftGuard", status: "Connected", note: "workspace/prod" },
                 { name: "Datadog", status: "Connected", note: "org 41291" },
                 { name: "Slack", status: "Connected", note: "#ml-incidents" },
-                { name: "GitHub", status: "Connected", note: "org/ml" },
+                { name: "GitHub", status: "Connected", note: "org/ml", hasStats: true },
                 { name: "PagerDuty", status: "Not connected" },
                 { name: "Notion", status: "Not connected" },
               ].map((i) => (
@@ -147,9 +147,29 @@ function SettingsPage() {
                       {i.note}
                     </div>
                   )}
-                  <button className="mt-3 h-7 rounded-md border border-border bg-background px-2 text-[11.5px] font-medium text-foreground hover:border-border-strong">
-                    {i.status === "Connected" ? "Configure" : "Connect"}
-                  </button>
+                  {i.hasStats ? (
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const res = await fetch("http://localhost:8006/api/v1/github/stats");
+                          if(res.ok) {
+                            const data = await res.json();
+                            alert(`GitHub Stats Fetched!\nStars: ${data.stars}\nIssues: ${data.open_issues}\nLatest: ${data.latest_commit}`);
+                          } else {
+                            alert("Failed to fetch stats.");
+                          }
+                        } catch(e) {
+                          alert("Error fetching GitHub stats.");
+                        }
+                      }}
+                      className="mt-3 h-7 rounded-md border border-border bg-background px-2 text-[11.5px] font-medium text-foreground hover:border-border-strong">
+                      Fetch Repository Stats
+                    </button>
+                  ) : (
+                    <button className="mt-3 h-7 rounded-md border border-border bg-background px-2 text-[11.5px] font-medium text-foreground hover:border-border-strong">
+                      {i.status === "Connected" ? "Configure" : "Connect"}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

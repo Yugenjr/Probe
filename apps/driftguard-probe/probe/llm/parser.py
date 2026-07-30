@@ -18,6 +18,13 @@ def parse_structured_output(raw_text: str, schema_class: Type[T]) -> T:
 
     try:
         data = json.loads(cleaned_text)
+        
+        # If the LLM returned a list, but we expect an object, try to infer the first list field
+        if isinstance(data, list) and issubclass(schema_class, BaseModel):
+            list_fields = [k for k, v in schema_class.model_fields.items() if "List[" in str(v.annotation) or "list" in str(v.annotation).lower()]
+            if list_fields:
+                data = {list_fields[0]: data}
+                
         return schema_class.model_validate(data)
     except (json.JSONDecodeError, ValidationError) as exc:
         logger.error("Failed to validate structured output for schema %s: %s", schema_class.__name__, str(exc))

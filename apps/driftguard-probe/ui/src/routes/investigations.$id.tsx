@@ -578,7 +578,12 @@ function EvidenceCard({ evidence }: { evidence: any }) {
       {open && (
         <div className="border-t border-border px-4 py-4 space-y-4">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            {evidence.explanation}
+            {evidence.explanation?.split(/(\*\*.*?\*\*)/g).map((part: string, i: number) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={i} className="text-foreground font-semibold">{part.slice(2, -2)}</strong>;
+              }
+              return part;
+            })}
           </p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {evidence.metrics.map((m: any) => (

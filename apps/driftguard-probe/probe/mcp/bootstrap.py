@@ -58,7 +58,12 @@ def bootstrap_mcp_registry(config_path: Optional[str] = None) -> ServerRegistry:
                 if not command:
                     logger.error("[MCP Bootstrap] Server %s has type process but missing command config.", name)
                     continue
-                transport = ProcessTransport(server_name=name, command=command, args=args, env=env)
+                transport = ProcessTransport(
+                    server_name=name,
+                    command=command,
+                    args=args,
+                    env=env
+                )
                 registry.register(server_or_name=name, transport=transport, server_type="process")
             else:
                 logger.error("[MCP Bootstrap] Unknown server type '%s' for %s", stype, name)

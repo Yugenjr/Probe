@@ -247,7 +247,12 @@ class ProcessTransport:
             # 1. System PATH (shutil.which)
             # 2. Scripts/ dir of the currently-running Python interpreter's venv
             # 3. Fall back to bare command name and let the OS raise a clear error
-            executable = shutil.which(self._command)
+            executable = None
+            if self._command == "python" or self._command == "python3":
+                executable = sys.executable
+            else:
+                executable = shutil.which(self._command)
+                
             if executable is None:
                 venv_scripts = os.path.join(
                     os.path.dirname(sys.executable), ""
@@ -266,46 +271,33 @@ class ProcessTransport:
                 self._command, executable
             )
 
-            # Merge parent os.environ with YAML-supplied env vars so that
             # subprocess inherits PATH, APPDATA, NODE_PATH etc. and the
             # custom vars (e.g. GITHUB_PERSONAL_ACCESS_TOKEN) still override.
             merged_env = {**os.environ, **self._env}
 
-            if executable.lower().endswith(".cmd") or executable.lower().endswith(".bat"):
-                # Use create_subprocess_shell for .cmd files to ensure stdio piping works
-                import subprocess
-                cmd_line = f'"{executable}" ' + ' '.join(f'"{a}"' for a in self._args)
-                self._process = await asyncio.create_subprocess_shell(
-                    cmd_line,
-                    stdin=asyncio.subprocess.PIPE,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                    env=merged_env,
-                    limit=10485760
-                )
-            else:
-                self._process = await asyncio.create_subprocess_exec(
-                    executable,
-                    *self._args,
-                    stdin=asyncio.subprocess.PIPE,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                    env=merged_env,
-                    limit=10485760
-                )
+            self._process = await asyncio.create_subprocess_exec(
+                executable,
+                *self._args,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                env=merged_env,
+                limit=10485760
+            )
 
             # ── MCP initialize handshake ──────────────────────────────────
-            # Step 1: send initialize request
             init_req = JSONRPCRequest(
                 method="initialize",
+                id=0,
                 params={
                     "protocolVersion": "2024-11-05",
                     "capabilities": {},
-                    "clientInfo": {"name": "driftguard-probe", "version": "0.1.0"}
-                },
-                id=0
+                    "clientInfo": {"name": "driftguard-probe", "version": "1.0.0"}
+                }
             )
-            self._process.stdin.write((json.dumps(init_req.model_dump()) + "\r\n").encode())
+            body = json.dumps(init_req.model_dump(exclude_none=True)).encode("utf-8")
+            msg = body + b"\n"
+            self._process.stdin.write(msg)
             await self._process.stdin.drain()
 
             # Step 2: read initialize response via format-aware reader (180s for first npx/uv download)
@@ -313,7 +305,9 @@ class ProcessTransport:
 
             # Step 3: send notifications/initialized (required by MCP spec before tools/list)
             notif = {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
-            self._process.stdin.write((json.dumps(notif) + "\r\n").encode())
+            n_body = json.dumps(notif).encode("utf-8")
+            n_msg = n_body + b"\n"
+            self._process.stdin.write(n_msg)
             await self._process.stdin.drain()
 
             self._connected = True
@@ -332,7 +326,9 @@ class ProcessTransport:
                     return []
 
                 req = JSONRPCRequest(method="tools/list", id=1)
-                self._process.stdin.write((json.dumps(req.model_dump()) + "\r\n").encode())
+                req_body = json.dumps(req.model_dump(exclude_none=True)).encode("utf-8")
+                req_msg = req_body + b"\n"
+                self._process.stdin.write(req_msg)
                 await self._process.stdin.drain()
 
                 # Skip any notifications (no "id") — GitHub MCP sends log
@@ -381,12 +377,10 @@ class ProcessTransport:
                         success=False, content="", error="Process stdio channel closed."
                     )
 
-                req = JSONRPCRequest(
-                    method="tools/call",
-                    params={"name": tool_name, "arguments": arguments},
-                    id=2
-                )
-                self._process.stdin.write((json.dumps(req.model_dump()) + "\r\n").encode())
+                req = JSONRPCRequest(method="tools/call", id=2, params={"name": tool_name, "arguments": arguments})
+                req_body = json.dumps(req.model_dump(exclude_none=True)).encode("utf-8")
+                req_msg = req_body + b"\n"
+                self._process.stdin.write(req_msg)
                 await self._process.stdin.drain()
 
                 data = await self._read_mcp_message(timeout=30.0)

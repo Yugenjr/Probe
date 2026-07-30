@@ -74,17 +74,27 @@ class InvestigationRuntime:
                     session.transition_to(InvestigationStatus.PLANNING, f"Running step: {step.description}")
                 elif role == "Investigator":
                     session.transition_to(InvestigationStatus.COLLECTING_EVIDENCE, f"Running step: {step.description}")
-                elif role == "Hypothesis":
+                elif role == "CausalSynthesis":
                     session.transition_to(InvestigationStatus.HYPOTHESIS_SYNTHESIS, f"Running step: {step.description}")
-                elif role == "Evaluator":
+                elif role == "AdversarialCritic":
                     session.transition_to(InvestigationStatus.EXPERIMENTAL_VALIDATION, f"Running step: {step.description}")
-                elif role == "Reporter":
+                elif role == "InterventionArchitect":
                     session.transition_to(InvestigationStatus.REMEDIATION_READY, f"Running step: {step.description}")
+                elif role == "Reporter":
+                    session.transition_to(InvestigationStatus.REPORTING, f"Running step: {step.description}")
 
                 await self.session_repo.save(session)
 
                 # Run agent using the executor
                 try:
+                    post_investigator_roles = ["CausalSynthesis", "AdversarialCritic", "InterventionArchitect", "Compliance", "Reporter"]
+                    if role in post_investigator_roles:
+                        from probe.core.di import get_container
+                        container = get_container()
+                        if container.llm_provider and hasattr(container.llm_provider, '_api_keys'):
+                            logger.info("Switching API key for post-investigator stage: %s", role)
+                            container.llm_provider._api_keys = ["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"]
+                    
                     await self.executor.execute(role, session)
                 except Exception as e:
                     logger.error("Agent execution failed for role '%s': %s", role, e)

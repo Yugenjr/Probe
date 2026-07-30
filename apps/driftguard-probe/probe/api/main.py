@@ -68,11 +68,12 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    from .routers import health_router, webhooks_router, investigations_router, mcp_router
+    from .routers import health_router, webhooks_router, investigations_router, mcp_router, github_router
     application.include_router(health_router)
     application.include_router(webhooks_router)
     application.include_router(investigations_router)
     application.include_router(mcp_router)
+    application.include_router(github_router)
 
     return application
 

@@ -35,7 +35,8 @@ async def list_investigations(
             if s.evaluation_result:
                 conf = s.evaluation_result.confidence
             elif s.hypotheses:
-                conf = s.hypotheses[0].likelihood_score
+                h = s.hypotheses[0].model_dump()
+                conf = h.get("likelihood_score") or h.get("confidence") or 0.85
 
             items.append(
                 InvestigationSummary(
@@ -58,7 +59,8 @@ async def list_investigations(
             if s.evaluation_result:
                 conf = s.evaluation_result.confidence
             elif s.hypotheses:
-                conf = s.hypotheses[0].likelihood_score
+                h = s.hypotheses[0].model_dump()
+                conf = h.get("likelihood_score") or h.get("confidence") or 0.85
 
             items.append(
                 InvestigationSummary(

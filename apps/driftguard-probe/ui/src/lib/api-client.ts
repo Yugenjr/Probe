@@ -68,7 +68,7 @@ export interface APIResponse<T> {
   message?: string;
 }
 
-const API_BASE = "http://localhost:8005/api/v1";
+const API_BASE = "http://localhost:8006/api/v1";
 
 export async function fetchInvestigations(): Promise<InvestigationSummary[]> {
   const res = await fetch(`${API_BASE}/investigations`);

@@ -47,6 +47,8 @@ class PlannerAgent(BaseAgent):
                 context_data["incident"] = state.incident.model_dump(mode="json")
 
             context_json = json.dumps(context_data, indent=2)
+            if len(context_json) > 12000:
+                context_json = context_json[:12000] + "\n...[TRUNCATED]"
 
             try:
                 # 2. Call structured step generation

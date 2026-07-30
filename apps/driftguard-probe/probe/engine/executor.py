@@ -57,7 +57,7 @@ class AgentExecutor:
         import asyncio
         
         max_retries = kwargs.get("max_retries", 3)
-        timeout_seconds = kwargs.get("timeout_seconds", 30.0)
+        timeout_seconds = kwargs.get("timeout_seconds", 120.0)
         
         retry_count = 0
         last_error = None
