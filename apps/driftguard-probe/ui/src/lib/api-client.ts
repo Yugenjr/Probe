@@ -68,7 +68,7 @@ export interface APIResponse<T> {
   message?: string;
 }
 
-const API_BASE = "http://localhost:8002/api/v1";
+const API_BASE = "http://localhost:8005/api/v1";
 
 export async function fetchInvestigations(): Promise<InvestigationSummary[]> {
   const res = await fetch(`${API_BASE}/investigations`);
@@ -133,6 +133,17 @@ export async function fetchKBArticles(): Promise<KBArticle[]> {
   if (!res.ok) throw new Error("Backend unavailable");
   const json: APIResponse<{ articles: KBArticle[] }> = await res.json();
   return json.data.articles;
+}
+
+export async function createKBArticle(data: { category: string, title: string, excerpt: string }): Promise<KBArticle> {
+  const res = await fetch(`${API_BASE}/investigations/kb/articles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error("Failed to create KB article");
+  const json: APIResponse<{ article: KBArticle }> = await res.json();
+  return json.data.article;
 }
 
 export interface MCPServer {

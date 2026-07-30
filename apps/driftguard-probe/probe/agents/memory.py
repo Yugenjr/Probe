@@ -1,43 +1,66 @@
-"""Memory Agent orchestrating immutable snapshot archiving and vector index compaction."""
+"""Memory Agents orchestrating bidirectional learning (Recall and Learn)."""
 import logging
 from typing import Any, Dict, Optional
 from .base import BaseAgent
-from ..core.state import InvestigationState
-from ..memory.retriever import KnowledgeRetriever
-from ..memory.store import VectorStore
+from ..engine.state import InvestigationSession, InvestigationStatus
+from ..domain.memory import HistoricalPatternAnalysis, InvestigationRecord, OutcomeFeedback
+from ..services.memory import MemoryRetrievalService, MemoryStorageService
 
 logger = logging.getLogger(__name__)
 
 
-class MemoryAgent(BaseAgent):
-    """Vector Store & Semantic Indexing Orchestrator Agent.
-    
-    Adhering to strict system architecture: Memory infrastructure resides in `probe/memory/`.
-    The MemoryAgent acts as an authoritative orchestrator that takes immutable snapshots
-    of completed investigations and indexes them into vector embedding collections for long-term lineage tracking.
-    """
-    def __init__(self, retriever: Optional[KnowledgeRetriever] = None, store: Optional[VectorStore] = None, **kwargs: Any):
+class MemoryRecallAgent(BaseAgent):
+    """Proactively retrieves historical context before evidence gathering."""
+    def __init__(self, retrieval_service: Optional[MemoryRetrievalService] = None, **kwargs: Any):
         super().__init__(**kwargs)
-        self.retriever = retriever or KnowledgeRetriever()
-        self.store = store or VectorStore()
+        self.retrieval_service = retrieval_service or MemoryRetrievalService()
 
     @property
     def role_name(self) -> str:
-        return "Memory"
+        return "MemoryRecall"
 
-    async def execute(self, state: InvestigationState, **kwargs: Any) -> Dict[str, Any]:
-        """Index an immutable snapshot of a completed investigation into vector repositories."""
-        logger.info("Memory Agent creating immutable archive snapshot for %s", state.investigation_id)
-        snapshot = state.create_snapshot()
-        content = snapshot.report.markdown_content if snapshot.report else f"Incident on {snapshot.incident.model_id}: {snapshot.status.value}"
+    async def execute(self, session: InvestigationSession, **kwargs: Any) -> HistoricalPatternAnalysis:
+        """Fetch historical patterns for the incident."""
+        logger.info("Memory Recall Agent fetching context for incident %s", session.incident.incident_id)
         
-        await self.store.store_document(
-            collection="incidents",
-            doc_id=snapshot.investigation_id,
-            content=content,
-            metadata={"model_id": snapshot.incident.model_id, "status": snapshot.status.value},
+        goal = session.investigation_goal or ""
+        analysis = await self.retrieval_service.recall(session.incident, goal)
+        return analysis
+
+
+class MemoryLearnAgent(BaseAgent):
+    """Archives the completed investigation into the knowledge base."""
+    def __init__(self, storage_service: Optional[MemoryStorageService] = None, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.storage_service = storage_service or MemoryStorageService()
+
+    @property
+    def role_name(self) -> str:
+        return "MemoryLearn"
+
+    async def execute(
+        self, 
+        session: InvestigationSession, 
+        actual_outcome: Optional[OutcomeFeedback] = None,
+        **kwargs: Any
+    ) -> None:
+        """Package and store the InvestigationRecord."""
+        logger.info("Memory Learn Agent archiving investigation %s", session.session_id)
+        
+        if not session.investigation_result:
+            logger.warning("No InvestigationResult found to archive.")
+            return
+
+        # Ensure all evidence properties are retrieved from session safely
+        # Note: Depending on orchestrator logic, some objects might be directly inside investigation_result.
+        record = InvestigationRecord(
+            investigation_id=session.session_id,
+            investigation_result=session.investigation_result,
+            evidence_bundle=session.investigation_result.evidence_bundle,
+            evidence_graph=session.investigation_result.evidence_graph,
+            supervisor_decisions=session.supervisor_decisions,
+            memory_analysis=session.historical_pattern_analysis,
+            actual_outcome=actual_outcome
         )
-        state.execution_history.append(
-            f"[{state.updated_at.isoformat()}] [Memory] Immutable snapshot archived into vector store under 'incidents' collection."
-        )
-        return {"archived_id": snapshot.investigation_id, "collection": "incidents", "snapshot_immutable": True}
+        
+        await self.storage_service.store(record)

@@ -1,7 +1,8 @@
 """Forensic tool executing simulation replay verification checks over causal root-cause hypotheses."""
 from typing import Any, Dict, Optional
 from ..base import BaseTool
-from ...domain.hypothesis import Hypothesis
+from typing import Any
+Hypothesis = Any
 from ...domain.evidence import ValidationRunEvidence
 
 

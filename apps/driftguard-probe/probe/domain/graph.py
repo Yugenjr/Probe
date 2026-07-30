@@ -36,6 +36,7 @@ class EvidenceEdge(BaseModel):
 
 class EvidenceGraph(BaseModel):
     """Topologic evidence network superseding flat arrays to enable deep root cause tracing."""
+    schema_version: str = Field(default="1.0.0", description="Semantic version of the EvidenceGraph contract")
     graph_id: str
     nodes: Dict[str, EvidenceNode] = Field(default_factory=dict)
     edges: List[EvidenceEdge] = Field(default_factory=list)

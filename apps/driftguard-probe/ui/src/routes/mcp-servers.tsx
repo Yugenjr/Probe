@@ -17,10 +17,19 @@ export const Route = createFileRoute("/mcp-servers")({
 });
 
 function MCPServersPage() {
-  const [servers, setServers] = useState<MCPServer[]>([]);
-  const [tools, setTools] = useState<MCPTool[]>([]);
+  // Initialize state from localStorage cache if available
+  const [servers, setServers] = useState<MCPServer[]>(() => {
+    const cached = localStorage.getItem("mcp_servers_cache");
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [tools, setTools] = useState<MCPTool[]>(() => {
+    const cached = localStorage.getItem("mcp_tools_cache");
+    return cached ? JSON.parse(cached) : [];
+  });
   const [activity, setActivity] = useState<any[]>([]);
-  const [selectedServer, setSelectedServer] = useState<string | null>(null);
+  const [selectedServer, setSelectedServer] = useState<string | null>(() => {
+    return localStorage.getItem("mcp_selected_server_cache") || null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,11 +40,19 @@ function MCPServersPage() {
       .then(([serversData, toolsData]) => {
         setServers(serversData);
         setTools(toolsData);
-        if (serversData.length > 0) {
+        localStorage.setItem("mcp_servers_cache", JSON.stringify(serversData));
+        localStorage.setItem("mcp_tools_cache", JSON.stringify(toolsData));
+        
+        if (serversData.length > 0 && !selectedServer) {
           setSelectedServer(serversData[0].name);
+          localStorage.setItem("mcp_selected_server_cache", serversData[0].name);
+        } else if (serversData.length > 0 && selectedServer) {
+           // update selected server cache
+           localStorage.setItem("mcp_selected_server_cache", selectedServer);
         }
+        
         // Fetch activity
-        return fetch("http://localhost:8002/api/v1/mcp/activity").then((res) => res.json());
+        return fetch("http://localhost:8005/api/v1/mcp/activity").then((res) => res.json());
       })
       .then((activityRes) => {
         if (activityRes && activityRes.data) {
@@ -45,10 +62,17 @@ function MCPServersPage() {
       })
       .catch((err) => {
         console.error("Failed to load MCP servers page:", err);
-        setError("Probe backend offline or MCP service unavailable.");
+        setError("Probe backend offline or MCP service unavailable. Showing cached data.");
         setLoading(false);
       });
   };
+
+  // Update selected server cache when it changes
+  useEffect(() => {
+    if (selectedServer) {
+      localStorage.setItem("mcp_selected_server_cache", selectedServer);
+    }
+  }, [selectedServer]);
 
   useEffect(() => {
     loadData();

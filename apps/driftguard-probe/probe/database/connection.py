@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # Fallback defaults for testing or if environment var not loaded
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql+asyncpg://postgres:postgres123@localhost:5432/driftguard_probe"
+    "sqlite+aiosqlite:///./probe.db"
 )
 
 # Replace sync postgres driver if user passes sync URL

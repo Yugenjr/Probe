@@ -160,27 +160,27 @@ class InvestigatorAgent(BaseAgent):
                 return result
 
             except Exception as e:
-                logger.warning(
-                    "LLM generation failed in InvestigatorAgent, falling back to static config: %s", e
-                )
+                logger.warning("LLM generation failed in InvestigatorAgent, falling back to static config: %s", e)
+                # Fallback to static baseline evidence, but inject the MCP tool evidence so it displays in the UI!
+                fallback_summary = f"Default fallback quantitative evaluation. Drift magnitude: {drift_score}"
+                if mcp_enriched and knowledge_context:
+                    fallback_summary += f"\n\nMCP Tool Evidence Collected:\n\n{knowledge_context[:5000]}..."
 
-        # 4. Static fallback (no LLM or LLM failure)
-        fallback_ev = DriftEvidence(
-            evidence_id=f"ev-{uuid.uuid4().hex[:6]}",
-            source_provider="DriftGuard-Core-v3",
-            retrieved_by_tool="ContextExtractor",
-            summary=f"Covariate drift score of {drift_score} observed on target model {model_id}.",
-            confidence_weight=0.95,
-            feature_name="all_features",
-            distance_algorithm="adwin",
-            observed_distance=drift_score,
-            alarm_threshold=0.15,
-            is_anomalous=True,
-        )
-        state.add_universal_evidence(fallback_ev)
+                fallback_ev = DriftEvidence(
+                    evidence_id=f"ev-{uuid.uuid4().hex[:6]}",
+                    source_provider="DriftGuard-Core-Fallback",
+                    retrieved_by_tool="StaticRuleEngine",
+                    summary=fallback_summary,
+                    confidence_weight=0.5,
+                    feature_name="aggregate",
+                    distance_algorithm="adwin",
+                    observed_distance=drift_score,
+                    alarm_threshold=0.15,
+                    is_anomalous=drift_score > 0.15,
+                )
+                state.add_universal_evidence(fallback_ev)
         return {
             "status": "EVIDENCE_COLLECTED",
             "evidence_id": fallback_ev.evidence_id,
             "mcp_kb_enriched": False,
         }
-

@@ -4,7 +4,8 @@ from typing import Any, Dict
 import uuid
 from .base import BaseAgent
 from ..engine.state import InvestigationSession
-from ..domain.hypothesis import Hypothesis
+from typing import Any
+Hypothesis = Any
 from ..models.recommendation import Recommendation, RecommendationAction, EvaluationResult
 from ..domain.remediation import RemediationPlan, InterventionType
 

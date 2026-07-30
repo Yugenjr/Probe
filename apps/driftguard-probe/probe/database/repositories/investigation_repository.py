@@ -19,7 +19,7 @@ from ..models.audit import AuditLog as DBAuditLog
 from ...engine.state import InvestigationSession, InvestigationStatus, AgentResult
 from ...domain.incident import Incident, IncidentSeverity
 from ...domain.evidence import DriftEvidence, RunbookReferenceEvidence, UniversalEvidence
-from ...domain.hypothesis import Hypothesis
+from typing import Any
 from ...domain.remediation import RemediationPlan
 from ...context.models import InvestigationContext
 from ...models.recommendation import EvaluationResult

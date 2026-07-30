@@ -21,6 +21,8 @@ from .tools import (
     ListDocumentsTool,
     SearchInvestigationsTool,
     SearchRunbooksTool,
+    WriteDocumentTool,
+    WriteRunbookTool,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,6 +54,8 @@ class KnowledgeServer(BaseMCPServer):
             "list_documents": ListDocumentsTool(self._repo),
             "search_investigations": SearchInvestigationsTool(self._repo),
             "search_runbooks": SearchRunbooksTool(self._repo),
+            "write_document": WriteDocumentTool(self._repo),
+            "write_runbook": WriteRunbookTool(self._repo),
         }
         logger.info(
             "[KnowledgeServer] Initialized with %d tools: %s",

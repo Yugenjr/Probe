@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 import uuid
-from ..domain.hypothesis import Hypothesis
+from typing import Any
 
 class RecommendationAction(str, Enum):
     """Actionable mitigation strategies for model remediation."""
@@ -38,8 +38,8 @@ class Recommendation(BaseModel):
 
 class EvaluationResult(BaseModel):
     """Evaluation result assessing experimental evidence and recommending interventions."""
-    best_hypothesis: Hypothesis
-    alternatives: List[Hypothesis] = Field(default_factory=list)
+    best_hypothesis: Any
+    alternatives: List[Any] = Field(default_factory=list)
     recommended_actions: List[Recommendation] = Field(default_factory=list)
     confidence: float = Field(default=0.5)
 

@@ -113,7 +113,7 @@ class ServerRegistry:
             if not hasattr(transport, "list_tools"):
                 return []
             try:
-                return await asyncio.wait_for(transport.list_tools(), timeout=180.0)
+                return await asyncio.wait_for(transport.list_tools(), timeout=120.0)
             except asyncio.TimeoutError:
                 logger.warning("[ServerRegistry] list_tools timed out for '%s'", name)
                 return []

@@ -3,7 +3,9 @@ import logging
 from typing import Any, Dict
 from .base import BaseAgent
 from ..engine.state import InvestigationSession
-from ..domain.hypothesis import Hypothesis, HypothesisCollection
+from typing import Any
+Hypothesis = Any
+HypothesisCollection = Any
 
 logger = logging.getLogger(__name__)
 

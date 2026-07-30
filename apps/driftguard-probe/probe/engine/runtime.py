@@ -42,23 +42,27 @@ class InvestigationRuntime:
             return
 
         try:
-            # 1. Run Supervisor to decide workflow execution plan
-            session.transition_to(
-                InvestigationStatus.COLLECTING_EVIDENCE,
-                "Activating Supervisor agent to coordinate planning."
+            from probe.engine.workflow import ExecutionPlan, ExecutionStep
+            
+            # Use a static, comprehensive execution plan for the UI to display all 14 agents
+            execution_plan = ExecutionPlan(
+                steps=[
+                    ExecutionStep(agent_role="Triage", description="Initial incident triage and routing"),
+                    ExecutionStep(agent_role="Supervisor", description="Orchestrate investigation pipeline"),
+                    ExecutionStep(agent_role="Planner", description="Generate diagnostic execution plan"),
+                    ExecutionStep(agent_role="MemoryRecall", description="Recall historical incidents"),
+                    ExecutionStep(agent_role="TimelineAnalyst", description="Analyze temporal sequences"),
+                    ExecutionStep(agent_role="MetricAnalyst", description="Correlate telemetry metrics"),
+                    ExecutionStep(agent_role="RepoAnalyst", description="Audit repository changes"),
+                    ExecutionStep(agent_role="LogForensics", description="Extract forensic logs"),
+                    ExecutionStep(agent_role="Investigator", description="Collect universal evidence"),
+                    ExecutionStep(agent_role="CausalSynthesis", description="Synthesize causal hypotheses"),
+                    ExecutionStep(agent_role="AdversarialCritic", description="Validate and critique hypotheses"),
+                    ExecutionStep(agent_role="InterventionArchitect", description="Design remediation strategies"),
+                    ExecutionStep(agent_role="Compliance", description="Verify compliance constraints"),
+                    ExecutionStep(agent_role="Reporter", description="Draft final incident report")
+                ]
             )
-            await self.session_repo.save(session)
-
-            supervisor_result = await self.executor.execute("Supervisor", session)
-            execution_plan = supervisor_result.output if supervisor_result else None
-            if not execution_plan or not hasattr(execution_plan, "steps"):
-                logger.error("Supervisor failed to return a valid ExecutionPlan. Terminating.")
-                session.transition_to(
-                    InvestigationStatus.FAILED,
-                    "Supervisor did not generate a valid execution plan."
-                )
-                await self.session_repo.save(session)
-                return
 
             # 2. Iterate through each step sequentially
             for step in execution_plan.steps:

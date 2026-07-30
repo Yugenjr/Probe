@@ -15,13 +15,15 @@ class InterventionType(str, Enum):
 
 
 class RemediationPlan(BaseModel):
-    """Actionable engineering intervention proposal formulated by remediation expert agents."""
-    remediation_id: str = Field(..., description="Unique intervention proposal identifier")
-    target_model_id: str = Field(..., description="Deployment target requiring remediation")
-    intervention_type: InterventionType = Field(...)
-    summary: str = Field(..., description="Executive briefing of required corrective action")
-    execution_parameters: Dict[str, Any] = Field(default_factory=dict, description="Parameters required for CI/CD dispatch")
-    supporting_hypothesis_id: Optional[str] = Field(default=None, description="ID of root cause hypothesis motivating this action")
-    estimated_impact_percent: float = Field(default=0.0, description="Calculated simulated improvement to target metrics")
+    """Actionable mitigation strategies architected by the system to resolve the root cause."""
+    schema_version: str = Field(default="1.0.0", description="Semantic version of the RemediationPlan contract")
+    remediation_id: str = Field(..., description="Unique remediation UUID")
+    immediate_actions: List[str] = Field(default_factory=list, description="Actions that must be taken immediately to mitigate impact")
+    short_term_fix: str = Field(..., description="Proposed short-term resolution")
+    long_term_fix: str = Field(..., description="Architectural or permanent resolution")
+    rollback_plan: str = Field(..., description="Explicit commands or steps to rollback the system if the fix fails")
+    risk_level: str = Field(..., description="Risk assessment of the proposed intervention (e.g. LOW, MEDIUM, HIGH)")
+    estimated_impact: str = Field(..., description="Description of the expected outcome if the intervention succeeds")
+    verification_steps: List[str] = Field(default_factory=list, description="Steps to manually or automatically verify the fix")
     requires_human_approval: bool = Field(default=True, description="Safety interlock preventing unassisted production overrides")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

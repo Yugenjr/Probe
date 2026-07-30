@@ -1,0 +1,12 @@
+{
+  "id": "doc-post-mortem-analysis-churn-model",
+  "title": "Post-Mortem Analysis - Churn Model",
+  "category": "Post-Mortem",
+  "tags": [
+    "churn",
+    "outage",
+    "post-mortem"
+  ],
+  "content": "The churn model failed due to an upstream data outage in the customer demographic pipeline.",
+  "updated_at": "2026-07-30T03:43:50.230711+00:00"
+}

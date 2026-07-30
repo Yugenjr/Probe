@@ -111,6 +111,25 @@ class KnowledgeRepository:
                 continue
         return results
 
+    def write_document(self, title: str, content: str, category: str = "General", tags: List[str] = None) -> Dict[str, Any]:
+        """Save a new knowledge document as JSON."""
+        safe_title = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        doc_id = f"doc-{safe_title}"
+        fpath = self._documents_dir / f"{doc_id}.json"
+        
+        from datetime import datetime, timezone
+        data = {
+            "id": doc_id,
+            "title": title,
+            "category": category,
+            "tags": tags or [],
+            "content": content,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        fpath.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        logger.info("Saved new document: %s", doc_id)
+        return {"id": doc_id, "status": "saved"}
+
     # ------------------------------------------------------------------
     # Investigation history
     # ------------------------------------------------------------------
@@ -215,3 +234,18 @@ class KnowledgeRepository:
                 continue
 
         return results[:limit]
+
+    def write_runbook(self, title: str, content: str) -> Dict[str, Any]:
+        """Save a new operational runbook as Markdown."""
+        safe_title = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        runbook_id = f"{safe_title}"
+        fpath = self._runbooks_dir / f"{runbook_id}.md"
+        
+        # Ensure title is in content
+        full_content = content
+        if not full_content.lstrip().startswith("# "):
+            full_content = f"# {title}\n\n{full_content}"
+            
+        fpath.write_text(full_content, encoding="utf-8")
+        logger.info("Saved new runbook: %s", runbook_id)
+        return {"id": runbook_id, "status": "saved"}

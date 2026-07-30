@@ -53,7 +53,7 @@ def main():
     dg = DriftGuard(
         model_id="zen-nlp-model-v3", 
         api_url="http://localhost:8000",
-        api_key="dg-6e679a28560cb4e9487ef4bd04f7e806",
+        api_key="dg-353460f1c15b79329e7b2023e3e7c19a",
         drift_threshold=0.10, # Lower threshold to guarantee trigger
         auto_retrain=True 
     )

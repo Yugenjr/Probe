@@ -61,7 +61,7 @@ function Dashboard() {
       })
       .catch((err) => {
         console.error("Dashboard load failed:", err);
-        setError("Backend services unavailable. Confirm DriftGuard backend API is active on port 8002.");
+        setError("Backend services unavailable. Confirm DriftGuard backend API is active on port 8005.");
         setLoading(false);
       });
   };
@@ -74,7 +74,7 @@ function Dashboard() {
     if (list.length > 0) {
       const recent = list[0];
       setActiveId(recent.id);
-      fetch(`http://localhost:8002/api/v1/investigations/${recent.id}/timeline`)
+      fetch(`http://localhost:8005/api/v1/investigations/${recent.id}/timeline`)
         .then((r) => r.json())
         .then((res) => {
           if (res.status === "success" && res.data?.timeline) {

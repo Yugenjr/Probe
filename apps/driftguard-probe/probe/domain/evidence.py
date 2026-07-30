@@ -12,6 +12,7 @@ class BaseEvidence(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     summary: str = Field(..., description="Natural language digest structured for agent semantic comprehension")
     confidence_weight: float = Field(default=1.0, ge=0.0, le=1.0, description="Estimated empirical reliability weight")
+    relevance_score: float = Field(default=0.0, description="Score indicating relevance to the current investigation")
     evidence_type: str
 
 
@@ -52,10 +53,71 @@ class RunbookReferenceEvidence(BaseEvidence):
     recommended_actions: List[str] = Field(default_factory=list)
 
 
+class LogTraceEvidence(BaseEvidence):
+    evidence_type: Literal["log_trace"] = "log_trace"
+    log_level: str
+    message: str
+    stack_trace: Optional[str] = None
+    correlation_id: Optional[str] = None
+
+class CodeChangeEvidence(BaseEvidence):
+    evidence_type: Literal["code_change"] = "code_change"
+    change_type: Literal["commit", "pr", "release", "config", "feature_flag", "deployment"]
+    author: str
+    description: str
+    diff_summary: str
+
+class HistoricalIncidentEvidence(BaseEvidence):
+    evidence_type: Literal["historical_incident"] = "historical_incident"
+    past_incident_id: str
+    similarity_score: float
+    resolution_status: str
+    root_cause: str
+
+class KnownFailurePattern(BaseEvidence):
+    evidence_type: Literal["known_failure_pattern"] = "known_failure_pattern"
+    pattern_name: str
+    description: str
+    symptoms: List[str] = Field(default_factory=list)
+
+class ChronologicalTimeline(BaseModel):
+    events: List[Dict[str, Any]] = Field(default_factory=list)
+    probable_trigger: Optional[str] = None
+    causal_chain: List[str] = Field(default_factory=list)
+    concurrent_events: List[str] = Field(default_factory=list)
+    missing_time_ranges: List[str] = Field(default_factory=list)
+    confidence: float = Field(default=0.0)
+
+class EvidenceSummary(BaseModel):
+    metric_count: int = 0
+    log_count: int = 0
+    repo_count: int = 0
+    runbook_matches: int = 0
+    collection_duration: float = 0.0
+    coverage_score: float = 0.0
+
 # Discriminated Union type for compile-time structural guarantees and automatic JSON schema verification
 UniversalEvidence = Union[
     DriftEvidence,
     PerformanceCurveEvidence,
     ValidationRunEvidence,
     RunbookReferenceEvidence,
+    LogTraceEvidence,
+    CodeChangeEvidence,
+    HistoricalIncidentEvidence,
+    KnownFailurePattern,
 ]
+
+class EvidenceBundle(BaseModel):
+    status: Literal["COMPLETE", "PARTIAL", "FAILED"] = "COMPLETE"
+    metrics: List[Union[DriftEvidence, PerformanceCurveEvidence, ValidationRunEvidence]] = Field(default_factory=list)
+    logs: List[LogTraceEvidence] = Field(default_factory=list)
+    repo: List[CodeChangeEvidence] = Field(default_factory=list)
+    research: List[Union[RunbookReferenceEvidence, HistoricalIncidentEvidence, KnownFailurePattern]] = Field(default_factory=list)
+    timeline: Optional[ChronologicalTimeline] = None
+    summary: Optional[EvidenceSummary] = None
+    collection_started_at: Optional[datetime] = None
+    collection_finished_at: Optional[datetime] = None
+    total_duration: float = 0.0
+    failed_agents: List[str] = Field(default_factory=list)
+    successful_agents: List[str] = Field(default_factory=list)

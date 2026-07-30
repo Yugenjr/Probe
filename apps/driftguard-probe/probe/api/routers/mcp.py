@@ -56,6 +56,12 @@ async def list_mcp_servers() -> APIResponse:
                 num_tools = len(server_obj.get_tools())
         else:
             connected = getattr(transport, "connected", False)
+            if not connected and hasattr(transport, "list_tools"):
+                try:
+                    await transport.list_tools()
+                    connected = getattr(transport, "connected", False)
+                except Exception:
+                    pass
             latency = getattr(transport, "last_latency_ms", 0)
             if hasattr(transport, "_tools_cache"):
                 num_tools = len(transport._tools_cache)

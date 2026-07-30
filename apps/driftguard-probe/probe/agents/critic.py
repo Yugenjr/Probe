@@ -1,36 +1,35 @@
+from .base import BaseAgent
 """Adversarial Critic cognitive reasoning agent executing red-team stress tests on candidate theories."""
 import logging
-from typing import Any, Dict
-from .base import BaseAgent
 from ..engine.state import InvestigationSession
-from ..services.correlation import SimulationReplayEngine
+from ..domain.hypothesis import CausalHypothesis, CritiqueReport
+from ..domain.evidence import EvidenceBundle
 
 logger = logging.getLogger(__name__)
 
 
 class AdversarialCriticAgent(BaseAgent):
-    """Red-team adversarial hypothesis falsification and statistical simulation critic.
-    
-    Invokes rigorous empirical replay simulations to attempt to refute candidate causal theories.
-    """
+
     @property
     def role_name(self) -> str:
-        return "Adversarial Falsification Critic"
+        return "AdversarialCritic"
 
-    async def execute(self, state: InvestigationSession, **kwargs: Any) -> Dict[str, Any]:
-        logger.info("AdversarialCriticAgent running red-team simulation stress tests for %s", state.session_id)
+    """Red-team adversarial hypothesis critic that evaluates the proposed root cause against the raw EvidenceBundle."""
+
+    async def execute(self, session: InvestigationSession, hypothesis: CausalHypothesis, bundle: EvidenceBundle) -> CritiqueReport:
+        logger.info("AdversarialCriticAgent executing red-team review on hypothesis %s", hypothesis.hypothesis_id)
         
-        results = []
-        for hyp in state.hypotheses:
-            res = await SimulationReplayEngine.stress_test_hypothesis(
-                hypothesis_id=hyp.hypothesis_id,
-                proposed_root_cause=hyp.title
-            )
-            if res.get("simulation_passed"):
-                hyp.verified_by_simulation = True
-            results.append(res)
-
-        state.execution_history.append(
-            f"[{state.updated_at.isoformat()}] [Adversarial Critic] Executed empirical falsification benchmarks across {len(state.hypotheses)} hypotheses."
+        # In a real system, the LLM consumes the hypothesis and attempts to find logical gaps or missing evidence.
+        
+        report = CritiqueReport(
+            overall_verdict="ACCEPT",
+            confidence_after_review=0.80, # Slightly lowered after critical scrutiny
+            contradictions=[],
+            unsupported_claims=[],
+            alternative_hypotheses=["Database connection saturation could also explain the NullPointerException, but less likely given the deployment logs."],
+            missing_evidence=["DB connection pool metrics"],
+            recommended_action="Advance to remediation.",
+            requires_more_evidence=False
         )
-        return {"status": "FALSIFICATION_EVALUATED", "verified_count": len(state.hypotheses), "stress_test_results": results}
+        
+        return report

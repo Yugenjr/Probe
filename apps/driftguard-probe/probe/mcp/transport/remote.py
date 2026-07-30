@@ -271,15 +271,28 @@ class ProcessTransport:
             # custom vars (e.g. GITHUB_PERSONAL_ACCESS_TOKEN) still override.
             merged_env = {**os.environ, **self._env}
 
-            self._process = await asyncio.create_subprocess_exec(
-                executable,
-                *self._args,
-                stdin=asyncio.subprocess.PIPE,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.DEVNULL,
-                env=merged_env,
-                limit=10485760  # 10MB limit for giant MCP tool payloads
-            )
+            if executable.lower().endswith(".cmd") or executable.lower().endswith(".bat"):
+                # Use create_subprocess_shell for .cmd files to ensure stdio piping works
+                import subprocess
+                cmd_line = f'"{executable}" ' + ' '.join(f'"{a}"' for a in self._args)
+                self._process = await asyncio.create_subprocess_shell(
+                    cmd_line,
+                    stdin=asyncio.subprocess.PIPE,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    env=merged_env,
+                    limit=10485760
+                )
+            else:
+                self._process = await asyncio.create_subprocess_exec(
+                    executable,
+                    *self._args,
+                    stdin=asyncio.subprocess.PIPE,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    env=merged_env,
+                    limit=10485760
+                )
 
             # ── MCP initialize handshake ──────────────────────────────────
             # Step 1: send initialize request
@@ -292,7 +305,7 @@ class ProcessTransport:
                 },
                 id=0
             )
-            self._process.stdin.write((json.dumps(init_req.model_dump()) + "\n").encode())
+            self._process.stdin.write((json.dumps(init_req.model_dump()) + "\r\n").encode())
             await self._process.stdin.drain()
 
             # Step 2: read initialize response via format-aware reader (180s for first npx/uv download)
@@ -300,7 +313,7 @@ class ProcessTransport:
 
             # Step 3: send notifications/initialized (required by MCP spec before tools/list)
             notif = {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
-            self._process.stdin.write((json.dumps(notif) + "\n").encode())
+            self._process.stdin.write((json.dumps(notif) + "\r\n").encode())
             await self._process.stdin.drain()
 
             self._connected = True
@@ -319,7 +332,7 @@ class ProcessTransport:
                     return []
 
                 req = JSONRPCRequest(method="tools/list", id=1)
-                self._process.stdin.write((json.dumps(req.model_dump()) + "\n").encode())
+                self._process.stdin.write((json.dumps(req.model_dump()) + "\r\n").encode())
                 await self._process.stdin.drain()
 
                 # Skip any notifications (no "id") — GitHub MCP sends log
@@ -373,7 +386,7 @@ class ProcessTransport:
                     params={"name": tool_name, "arguments": arguments},
                     id=2
                 )
-                self._process.stdin.write((json.dumps(req.model_dump()) + "\n").encode())
+                self._process.stdin.write((json.dumps(req.model_dump()) + "\r\n").encode())
                 await self._process.stdin.drain()
 
                 data = await self._read_mcp_message(timeout=30.0)

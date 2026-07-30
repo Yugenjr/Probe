@@ -231,6 +231,8 @@ async def get_knowledge_base(
       }
     ]
 
+    articles.extend(custom_articles)
+
     for idx, s in enumerate(sessions):
         if hasattr(s, "status") and s.status.value.lower() == "completed":
             conf = 0.85
@@ -249,6 +251,23 @@ async def get_knowledge_base(
         status="success",
         data={"articles": articles}
     )
+
+# In-memory storage for custom user-created KB articles
+custom_articles = []
+
+@router.post("/kb/articles", response_model=APIResponse, summary="Create a new knowledge base article")
+async def create_knowledge_base_article(article_data: dict) -> APIResponse:
+    """Create a new manual playbook or KB article."""
+    new_article = {
+        "id": f"KB-{104 + len(custom_articles)}",
+        "category": article_data.get("category", "Custom"),
+        "title": article_data.get("title", "Untitled Article"),
+        "excerpt": article_data.get("excerpt", ""),
+        "reads": 0,
+        "updated": "Just now",
+    }
+    custom_articles.append(new_article)
+    return APIResponse(status="success", data={"article": new_article})
 
 
 @router.get("/{investigation_id}/report", response_model=APIResponse, summary="Get compiled investigation report")

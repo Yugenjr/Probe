@@ -4,10 +4,9 @@ servers:
 
   github:
     type: process
-    command: "npx"
+    command: "node"
     args:
-      - "-y"
-      - "@modelcontextprotocol/server-github"
+      - "C:\\nvm4w\\nodejs\\node_modules\\@modelcontextprotocol\\server-github\\dist\\index.js"
     env:
       GITHUB_PERSONAL_ACCESS_TOKEN: "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"
 

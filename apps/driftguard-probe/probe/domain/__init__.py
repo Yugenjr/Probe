@@ -6,10 +6,12 @@ from .evidence import (
     RunbookReferenceEvidence,
     UniversalEvidence,
 )
-from .hypothesis import Hypothesis
+from .hypothesis import CausalHypothesis, CritiqueReport
 from .incident import Incident, IncidentSeverity, IncidentStatus
 from .remediation import RemediationPlan, InterventionType
 from .graph import EvidenceNode, EvidenceEdge, EdgeType, EvidenceGraph
+
+from .memory import HistoricalPatternAnalysis, OutcomeFeedback, InvestigationRecord
 
 __all__ = [
     "DriftEvidence",
@@ -17,7 +19,8 @@ __all__ = [
     "ValidationRunEvidence",
     "RunbookReferenceEvidence",
     "UniversalEvidence",
-    "Hypothesis",
+    "CausalHypothesis",
+    "CritiqueReport",
     "Incident",
     "IncidentSeverity",
     "IncidentStatus",
@@ -27,4 +30,7 @@ __all__ = [
     "EvidenceEdge",
     "EdgeType",
     "EvidenceGraph",
+    "HistoricalPatternAnalysis",
+    "OutcomeFeedback",
+    "InvestigationRecord",
 ]

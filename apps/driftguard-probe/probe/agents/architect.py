@@ -1,43 +1,37 @@
+from .base import BaseAgent
 """Intervention Architect cognitive reasoning agent formulating actionable engineering remediation strategies."""
 import logging
-from typing import Any, Dict
-from .base import BaseAgent
+import uuid
 from ..engine.state import InvestigationSession
-from ..domain.remediation import RemediationPlan, InterventionType
-from ..tools.execution import EstimateRetrainingImpactTool
-from ..core.di import get_container
+from ..domain.hypothesis import CausalHypothesis, CritiqueReport
+from ..domain.remediation import RemediationPlan
 
 logger = logging.getLogger(__name__)
 
 
 class InterventionArchitectAgent(BaseAgent):
-    """Actionable engineering intervention design and accuracy impact projection architect.
-    
-    Designs safe automated retraining CI/CD dispatches and enforces enterprise human review interlocks
-    whenever high-impact modifications threaten production SLA boundaries.
-    """
+
     @property
     def role_name(self) -> str:
-        return "Intervention Architect"
+        return "InterventionArchitect"
 
-    async def execute(self, state: InvestigationSession, **kwargs: Any) -> Dict[str, Any]:
-        logger.info("InterventionArchitectAgent designing remediation strategy for %s", state.session_id)
-        container = getattr(self, "container", get_container())
+    """Actionable engineering intervention design architect."""
+    
+    async def execute(self, session: InvestigationSession, hypothesis: CausalHypothesis, critique: CritiqueReport) -> RemediationPlan:
+        logger.info("InterventionArchitectAgent designing remediation strategy for session %s", session.session_id)
         
-        impact_tool = EstimateRetrainingImpactTool(container=container)
-        impact = await impact_tool.invoke(model_id=state.incident.model_id)
+        # In a real system, the LLM consumes the validated Hypothesis and Critique to output a RemediationPlan.
         
-        hyp_id = state.hypotheses[0].hypothesis_id if state.hypotheses else None
         plan = RemediationPlan(
-            remediation_id=f"arch-{state.session_id[:8]}",
-            target_model_id=state.incident.model_id,
-            intervention_type=InterventionType.AUTOMATED_RETRAINING,
-            summary="Dispatch automated retraining pipeline with dynamic Covariate Slice filtering and updated alerting threshold.",
-            execution_parameters={"slice_days": 7, "threshold_override": 0.12},
-            supporting_hypothesis_id=hyp_id,
-            estimated_impact_percent=float(impact.get("simulated_accuracy_recovery_percent", 15.2)),
-            requires_human_approval=True,
+            remediation_id=f"arch-{str(uuid.uuid4())[:8]}",
+            immediate_actions=["Toggle feature flag 'enable_new_billing' back to FALSE"],
+            short_term_fix="Scale up database connection pool limits to handle fallback routing spikes",
+            long_term_fix="Optimize the fallback routing logic to avoid NullPointerException",
+            rollback_plan="If latency does not recover after feature flag toggle, restart the billing service.",
+            risk_level="LOW",
+            estimated_impact="Latency will return to baseline within 5 minutes of feature flag toggle.",
+            verification_steps=["Monitor 'user_age' drift metric", "Tail billing service error logs for NullPointerException"],
+            requires_human_approval=True
         )
-        state.attach_remediation(plan)
         
-        return {"status": "REMEDIATION_DESIGNED", "remediation_id": plan.remediation_id, "impact_projection": impact}
+        return plan

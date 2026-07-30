@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from .incident import Incident
 from .evidence import EvidenceItem
-from ..domain.hypothesis import Hypothesis
+from typing import Any
 from .recommendation import Recommendation
 from .experiment import Experiment
 
@@ -17,7 +17,7 @@ class InvestigationReport(BaseModel):
     incident_summary: Incident
     primary_root_cause: str = Field(..., description="High-confidence consensus explanation of degradation")
     supporting_evidence: List[EvidenceItem] = Field(default_factory=list)
-    tested_hypotheses: List[Hypothesis] = Field(default_factory=list)
+    tested_hypotheses: List[Any] = Field(default_factory=list)
     experiments: List[Experiment] = Field(default_factory=list)
     recommended_action: Optional[Recommendation] = None
     markdown_content: str = Field(default="", description="Rendered human-readable report format")

@@ -282,3 +282,65 @@ class SearchRunbooksTool(BaseMCPTool):
             artifacts=runbooks,
             metadata={"count": len(runbooks)},
         )
+
+class WriteDocumentTool(BaseMCPTool):
+    """Save a new knowledge base document to disk."""
+    
+    def __init__(self, repo: KnowledgeRepository) -> None:
+        self._repo = repo
+        
+    @property
+    def definition(self) -> ToolDefinition:
+        return ToolDefinition(
+            name="write_document",
+            description="Save a new JSON knowledge base document.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Title of the document"},
+                    "content": {"type": "string", "description": "Full document content"},
+                    "category": {"type": "string", "description": "Document category", "default": "General"},
+                    "tags": {"type": "array", "items": {"type": "string"}, "description": "List of tags"}
+                },
+                "required": ["title", "content"]
+            },
+            server="knowledge"
+        )
+        
+    async def execute(self, title: str = "", content: str = "", category: str = "General", tags: list = None, **kwargs: Any) -> ToolResult:
+        result = self._repo.write_document(title, content, category, tags)
+        return ToolResult(
+            success=True,
+            content=f"Successfully saved document: {result['id']}",
+            artifacts=[result]
+        )
+
+class WriteRunbookTool(BaseMCPTool):
+    """Save a new operational runbook to disk."""
+    
+    def __init__(self, repo: KnowledgeRepository) -> None:
+        self._repo = repo
+        
+    @property
+    def definition(self) -> ToolDefinition:
+        return ToolDefinition(
+            name="write_runbook",
+            description="Save a new Markdown operational runbook.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Title of the runbook"},
+                    "content": {"type": "string", "description": "Full markdown content of the runbook"}
+                },
+                "required": ["title", "content"]
+            },
+            server="knowledge"
+        )
+        
+    async def execute(self, title: str = "", content: str = "", **kwargs: Any) -> ToolResult:
+        result = self._repo.write_runbook(title, content)
+        return ToolResult(
+            success=True,
+            content=f"Successfully saved runbook: {result['id']}",
+            artifacts=[result]
+        )
