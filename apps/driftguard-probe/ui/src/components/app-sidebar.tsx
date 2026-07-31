@@ -95,7 +95,7 @@ export function AppSidebar() {
 
       <div className="border-t border-sidebar-border p-2">
         <a
-          href="https://github.com"
+          href="https://github.com/Yugenjr/Probe"
           target="_blank"
           rel="noreferrer"
           className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[12px] text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-foreground"

@@ -273,7 +273,13 @@ class ProcessTransport:
 
             # subprocess inherits PATH, APPDATA, NODE_PATH etc. and the
             # custom vars (e.g. GITHUB_PERSONAL_ACCESS_TOKEN) still override.
-            merged_env = {**os.environ, **self._env}
+            merged_env = os.environ.copy()
+            for k, v in self._env.items():
+                merged_env[k] = str(v)
+
+            if os.name == "nt" and executable.lower().endswith((".cmd", ".bat")):
+                self._args = ["/c", executable] + self._args
+                executable = "cmd.exe"
 
             self._process = await asyncio.create_subprocess_exec(
                 executable,
@@ -312,7 +318,7 @@ class ProcessTransport:
 
             self._connected = True
         except Exception as e:
-            logger.error("[ProcessTransport] Process start failed: %s", e)
+            logger.error("[ProcessTransport] Process start failed: %r", e)
             self._connected = False
             raise e
 

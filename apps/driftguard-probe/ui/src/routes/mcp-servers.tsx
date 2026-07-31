@@ -17,18 +17,26 @@ export const Route = createFileRoute("/mcp-servers")({
 });
 
 function MCPServersPage() {
-  // Initialize state from localStorage cache if available
   const [servers, setServers] = useState<MCPServer[]>(() => {
-    const cached = localStorage.getItem("mcp_servers_cache");
-    return cached ? JSON.parse(cached) : [];
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("mcp_servers_cache");
+      return cached ? JSON.parse(cached) : [];
+    }
+    return [];
   });
   const [tools, setTools] = useState<MCPTool[]>(() => {
-    const cached = localStorage.getItem("mcp_tools_cache");
-    return cached ? JSON.parse(cached) : [];
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("mcp_tools_cache");
+      return cached ? JSON.parse(cached) : [];
+    }
+    return [];
   });
   const [activity, setActivity] = useState<any[]>([]);
   const [selectedServer, setSelectedServer] = useState<string | null>(() => {
-    return localStorage.getItem("mcp_selected_server_cache") || null;
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("mcp_selected_server_cache") || null;
+    }
+    return null;
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

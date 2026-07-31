@@ -1,120 +1,126 @@
 import React, { useState } from 'react';
-import { formatDate, formatDriftScore } from '../lib/utils';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Activity, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { formatDate } from '../lib/utils';
 
 export default function AuditLog({ logs }) {
-  const [search, setSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
 
   if (!logs || logs.length === 0) {
     return (
-      <div className="bg-[#18181b] border border-white/10 p-5 rounded-xl text-center text-[#a1a1aa] text-sm">
-        No audit events recorded yet
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] p-4 rounded-lg text-center text-[var(--text-muted)] text-[13px]">
+        No audit logs available for this model.
       </div>
     );
   }
 
-  const getEventBadgeClass = (type) => {
-    switch (String(type).toLowerCase()) {
+  const getEventStyle = (type) => {
+    switch (type) {
+      case 'model_registered':
+        return 'text-[var(--amber)] bg-[var(--amber-dim)] border border-[var(--amber)]/20';
       case 'drift_detected':
-        return 'text-[#d29922] bg-[#3d2f00] border border-[#554000]/40';
-      case 'retrain_triggered':
-        return 'text-[#24b47e] bg-[#1c2d3a] border border-[#243e56]/40';
-      case 'model_promoted':
-        return 'text-[#3fb950] bg-[#1a4731] border border-[#1f5a3a]/40';
-      case 'rollback':
-        return 'text-[#f85149] bg-[#3d1515] border border-[#5a1e1e]/40';
+        return 'text-[var(--red)] bg-[var(--red-dim)] border border-[var(--red)]/20';
+      case 'retraining_triggered':
+        return 'text-[var(--blue)] bg-[var(--blue-dim)] border border-[var(--blue)]/20';
+      case 'retraining_completed':
+        return 'text-[var(--green)] bg-[var(--green-dim)] border border-[var(--green)]/20';
+      case 'retraining_failed':
+        return 'text-[var(--red)] bg-[var(--red-dim)] border border-[var(--red)]/20';
       default:
-        return 'text-[#ededed] bg-[#2e2e2e] border border-white/10';
+        return 'text-[var(--text-primary)] bg-[var(--bg-base)] border border-[var(--border)]';
     }
   };
 
-  const formatEventType = (type) => {
-    return String(type).replace('_', ' ').toUpperCase();
+  const formatEventName = (type) => {
+    return type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
 
-  // Filter logs based on search string
   const filteredLogs = logs.filter(log => {
-    const term = search.toLowerCase();
-    return (
-      String(log.event_type || '').toLowerCase().includes(term) ||
-      String(log.model_version || '').toLowerCase().includes(term) ||
-      String(log.triggered_by || '').toLowerCase().includes(term) ||
-      String(log.drift_score || '').toLowerCase().includes(term) ||
-      formatDate(log.timestamp).toLowerCase().includes(term)
-    );
+    const matchesSearch = 
+      log.event_type.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (log.details && JSON.stringify(log.details).toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesFilter = filterType === 'all' || log.event_type.includes(filterType);
+    return matchesSearch && matchesFilter;
   });
 
-  // Pagination parameters
-  const pageSize = 10;
-  const totalItems = filteredLogs.length;
-  const totalPages = Math.ceil(totalItems / pageSize) || 1;
-  
-  // Enforce page constraints
-  const activePage = Math.min(currentPage, totalPages);
-  const startIndex = (activePage - 1) * pageSize;
+  const totalPages = Math.ceil(filteredLogs.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
   const currentLogs = filteredLogs.slice(startIndex, startIndex + pageSize);
 
   return (
-    <div className="bg-[#18181b] border border-white/10 p-5 rounded-xl shadow-md flex flex-col space-y-4">
-      {/* Search Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <h3 className="text-sm font-bold text-[#ededed]">Audit Trail & Ledger</h3>
-        <div className="relative w-full md:w-72">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#a1a1aa]">
-            <Search className="w-3.5 h-3.5" />
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg flex flex-col h-[500px]">
+      <div className="p-4 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-[13px] font-semibold text-[var(--text-primary)] flex items-center">
+            <Activity className="w-4 h-4 mr-2 text-[var(--text-secondary)]" />
+            Audit Trail
+          </h3>
+          <span className="px-2 py-0.5 text-[11px] font-medium bg-[var(--bg-base)] text-[var(--text-secondary)] border border-[var(--border)] rounded">
+            {logs.length} Total Events
           </span>
-          <input
-            type="text"
-            placeholder="Filter audit logs..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full pl-9 pr-4 py-1.5 rounded-xl bg-[#09090b] border border-white/10 text-xs text-[#ededed] placeholder-[#7d8590] focus:outline-none focus:border-[#24b47e] transition-colors"
-          />
+        </div>
+
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[var(--text-muted)]" />
+            <input
+              type="text"
+              placeholder="Search logs..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="w-full bg-[var(--bg-base)] border border-[var(--border)] text-[var(--text-primary)] text-[12px] rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-[var(--border-hover)] transition-colors"
+            />
+          </div>
+          <div className="relative">
+            <Filter className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[var(--text-muted)]" />
+            <select
+              value={filterType}
+              onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}
+              className="appearance-none bg-[var(--bg-base)] border border-[var(--border)] text-[var(--text-primary)] text-[12px] rounded-md pl-8 pr-8 py-1.5 focus:outline-none focus:border-[var(--border-hover)] transition-colors cursor-pointer"
+            >
+              <option value="all">All Events</option>
+              <option value="drift">Drift Events</option>
+              <option value="retrain">Retraining</option>
+              <option value="register">Registration</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Table grid */}
-      <div className="overflow-x-auto border border-white/10/50 rounded-xl">
+      <div className="flex-1 overflow-auto">
         <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-[#09090b] border-b border-white/10 text-[10px] text-[#a1a1aa] uppercase tracking-wider font-semibold">
-              <th className="px-4 py-3">Timestamp</th>
-              <th className="px-4 py-3">Event Type</th>
-              <th className="px-4 py-3">Model Version</th>
-              <th className="px-4 py-3">Drift Score</th>
-              <th className="px-4 py-3">Triggered By</th>
+          <thead className="sticky top-0 bg-[var(--bg-base)] z-10 border-b border-[var(--border)]">
+            <tr>
+              <th className="px-3 py-1.5 text-[var(--text-secondary)] font-semibold text-[11px]">Timestamp</th>
+              <th className="px-3 py-1.5 text-[var(--text-secondary)] font-semibold text-[11px]">Event Type</th>
+              <th className="px-3 py-1.5 text-[var(--text-secondary)] font-semibold text-[11px]">Details</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#30363d]/30 text-xs">
+          <tbody className="divide-y divide-[var(--border)]">
             {currentLogs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-[#a1a1aa]">
-                  No matching audit logs located
+                <td colSpan={3} className="px-3 py-6 text-center text-[var(--text-muted)] text-[12px]">
+                  No events found matching your filters.
                 </td>
               </tr>
             ) : (
               currentLogs.map((log, index) => (
-                <tr key={index} className="hover:bg-[#2e2e2e]/20 transition-colors">
-                  <td className="px-4 py-3 text-[#a1a1aa] font-mono">
+                <tr key={index} className="hover:bg-[var(--bg-base)] transition-colors">
+                  <td className="px-3 py-2 text-[11px] text-[var(--text-secondary)] whitespace-nowrap align-top font-mono">
                     {formatDate(log.timestamp)}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase border ${getEventBadgeClass(log.event_type)}`}>
-                      {formatEventType(log.event_type)}
+                  <td className="px-3 py-2 align-top">
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${getEventStyle(log.event_type)}`}>
+                      {formatEventName(log.event_type)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[#ededed] font-semibold">
-                    {log.model_version !== null && log.model_version !== undefined ? `v${log.model_version}` : 'N/A'}
-                  </td>
-                  <td className="px-4 py-3 text-[#ededed] font-mono font-medium">
-                    {formatDriftScore(log.drift_score)}
-                  </td>
-                  <td className="px-4 py-3 text-[#a1a1aa] uppercase font-bold text-[9px] tracking-wider">
-                    {log.triggered_by || 'auto'}
+                  <td className="px-3 py-2 text-[12px] text-[var(--text-primary)] align-top">
+                    <div className="font-mono text-[10px] text-[var(--text-secondary)] overflow-x-auto whitespace-pre">
+                      {log.details ? JSON.stringify(log.details, null, 2) : '-'}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -123,29 +129,25 @@ export default function AuditLog({ logs }) {
         </table>
       </div>
 
-      {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2">
-          <span className="text-[10px] text-[#a1a1aa]">
-            Showing {startIndex + 1} to {Math.min(startIndex + pageSize, totalItems)} of {totalItems} logs
+        <div className="p-3 border-t border-[var(--border)] flex items-center justify-between">
+          <span className="text-[11px] text-[var(--text-secondary)]">
+            Showing <span className="font-medium text-[var(--text-primary)]">{logs.length === 0 ? 0 : startIndex + 1}</span> to <span className="font-medium text-[var(--text-primary)]">{Math.min(startIndex + pageSize, filteredLogs.length)}</span> of <span className="font-medium text-[var(--text-primary)]">{filteredLogs.length}</span>
           </span>
-          <div className="flex space-x-1.5">
+          <div className="flex gap-1">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={activePage === 1}
-              className="p-1.5 rounded-xl border border-white/10 bg-[#2e2e2e]/50 hover:bg-[#2e2e2e] text-[#ededed] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1 || logs.length === 0}
+              className="p-1 rounded border border-[var(--border)] hover:bg-[var(--bg-base)] text-[var(--text-primary)] disabled:opacity-50 transition-colors"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft size={14} />
             </button>
-            <span className="px-3 py-1.5 text-xs text-[#ededed] bg-[#2e2e2e] border border-white/10 rounded-xl font-bold">
-              {activePage} / {totalPages}
-            </span>
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={activePage === totalPages}
-              className="p-1.5 rounded-xl border border-white/10 bg-[#2e2e2e]/50 hover:bg-[#2e2e2e] text-[#ededed] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || logs.length === 0}
+              className="p-1 rounded border border-[var(--border)] hover:bg-[var(--bg-base)] text-[var(--text-primary)] disabled:opacity-50 transition-colors"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight size={14} />
             </button>
           </div>
         </div>

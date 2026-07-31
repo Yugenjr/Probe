@@ -1,15 +1,27 @@
 import React from 'react';
-import { getStatusColor } from '../lib/utils';
+
+const CONFIG = {
+  healthy:    { label: 'Healthy',    color: 'var(--green)', bg: 'var(--green-dim)' },
+  degraded:   { label: 'Drifting',   color: 'var(--amber)', bg: 'var(--amber-dim)' },
+  retraining: { label: 'Retraining', color: 'var(--blue)',  bg: 'var(--blue-dim)' },
+  failed:     { label: 'Failed',     color: 'var(--red)',   bg: 'var(--red-dim)' },
+  archived:   { label: 'Archived',   color: 'var(--text-secondary)', bg: 'var(--bg-base)' },
+};
 
 export default function StatusBadge({ status }) {
-  const colorClass = getStatusColor(status);
+  const cfg = CONFIG[status] || { label: status || 'Unknown', color: 'var(--text-secondary)', bg: 'var(--bg-base)' };
+
   return (
-    <div className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium tracking-tight border bg-opacity-10 ${colorClass}`}>
-      <span className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-40"></span>
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-current"></span>
-      </span>
-      <span className="capitalize">{status}</span>
-    </div>
+    <span
+      className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border"
+      style={{
+        backgroundColor: cfg.bg,
+        color: cfg.color,
+        borderColor: cfg.bg === 'var(--bg-base)' ? 'var(--border)' : 'transparent'
+      }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: cfg.color }} />
+      {cfg.label}
+    </span>
   );
 }

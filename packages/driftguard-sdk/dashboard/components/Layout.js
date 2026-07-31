@@ -11,35 +11,29 @@ export default function Layout({ children, onRefresh, lastUpdated, isRefreshing,
     async function loadActiveCount() {
       try {
         const data = await getModels();
-        if (Array.isArray(data)) {
-          setActiveCount(data.length);
-        }
-      } catch (err) {
-        console.error("Failed to load active model count in Layout:", err);
-      }
+        if (Array.isArray(data)) setActiveCount(data.length);
+      } catch (err) { /* silent */ }
     }
     loadActiveCount();
   }, [children]);
 
   return (
-    <div className="flex bg-[#09090b] min-h-screen text-[#ededed] font-sans antialiased overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex bg-[var(--bg-base)] min-h-screen text-[var(--text-primary)] font-sans antialiased">
       <Sidebar activeModelCount={activeCount} />
 
-      {/* Main content wrapper */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         <TopBar onRefresh={onRefresh} lastUpdated={lastUpdated} isRefreshing={isRefreshing} />
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto relative">
-          {/* Connection Error Banner */}
-          {error ? (
-            <div className="bg-[#3d1515] border border-[#5a1e1e] p-4 rounded-xl flex items-start space-x-3 text-xs text-[#f85149] animate-pulse-slow mb-6">
-              <ShieldAlert className="w-5 h-5 flex-shrink-0" />
-              <div className="space-y-0.5">
-                <span className="font-bold">Connection Error:</span>
-                <p className="text-[#a1a1aa]">{error}</p>
+
+        <main className="flex-1 p-6 w-full mx-auto">
+          {error && (
+            <div className="flex items-start gap-3 p-4 mb-6 rounded-md bg-[var(--red-dim)] border border-[var(--red)] text-[var(--red)]">
+              <ShieldAlert size={16} className="shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-semibold mb-1">Connection Error</div>
+                <div className="text-xs text-[var(--red)]">{error}</div>
               </div>
             </div>
-          ) : null}
+          )}
           {children}
         </main>
       </div>

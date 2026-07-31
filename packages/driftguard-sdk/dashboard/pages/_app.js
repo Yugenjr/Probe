@@ -10,9 +10,9 @@ export default function App({ Component, pageProps }) {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#1c2128',
-            color: '#e6edf3',
-            border: '1px solid #30363d',
+            background: '#ffffff',
+            color: '#111827',
+            border: '1px solid rgba(0,0,0,0.1)',
             fontSize: '13px',
             borderRadius: '8px',
             padding: '12px 16px'

@@ -68,7 +68,6 @@ dg = DriftGuard(
 # Register champion and validation set for challenger comparison
 dg.set_champion(champion)
 dg.set_validation_data(X_val, y_val)
-
 # Register retraining callback
 @dg.retrainer
 def retrain():

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { updateWebhookUrl } from '../lib/api';
-import { CloudRain, Save, Link as LinkIcon, CheckCircle2 } from 'lucide-react';
 
 export default function WebhookConfig({ modelId, initialUrl = '' }) {
   const [webhookUrl, setWebhookUrl] = useState(initialUrl || '');
@@ -25,63 +24,38 @@ export default function WebhookConfig({ modelId, initialUrl = '' }) {
   };
 
   return (
-    <div className="bg-[#09090b] border border-white/10 rounded-xl overflow-hidden shadow-sm mt-8 font-sans">
-      <div className="border-b border-white/10 px-6 py-5 flex items-center space-x-3 bg-gradient-to-r from-[#111111] to-[#000000]">
-        <div className="p-1.5 bg-[#ffffff]/10 rounded-xl ring-1 ring-inset ring-[#ffffff]/20">
-          <CloudRain className="w-4 h-4 text-[#ffffff]" />
-        </div>
-        <h2 className="text-base font-semibold tracking-tight text-[#ededed]">Cloud Retraining Webhook (Airflow Integration)</h2>
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg overflow-hidden font-sans">
+      <div className="border-b border-[var(--border)] px-5 py-3 bg-[var(--bg-base)]">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)]">Webhook Integration</h2>
       </div>
       
-      <div className="p-6 bg-[#09090b]">
-        <p className="text-sm text-[#a1a1aa] mb-6 max-w-3xl leading-relaxed">
-          Configure an external orchestrator (like Apache Airflow, Kubeflow, or AWS SageMaker) to handle model retraining when drift is detected. DriftGuard will POST a JSON payload to this URL instead of running the retraining pipeline locally.
+      <div className="p-5">
+        <p className="text-[13px] text-[var(--text-secondary)] mb-5 max-w-xl leading-relaxed">
+          Configure an external orchestrator (like Airflow or Kubeflow) to handle model retraining. DriftGuard will POST a JSON payload to this URL when drift is detected.
         </p>
         
-        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="relative flex-1 group">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-[#ededed] text-[#52525b]">
-              <LinkIcon className="h-4 w-4" />
-            </div>
-            <input
-              type="text"
-              value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-              placeholder="https://airflow.mycompany.com/api/v1/dags/retrain_model/dagRuns"
-              className="block w-full pl-10 pr-4 py-2.5 bg-[#09090b] border border-white/10 rounded-xl text-sm text-[#ededed] placeholder-[#52525b] focus:outline-none focus:border-[#666666] focus:ring-1 focus:ring-[#666666] transition-all shadow-inner"
-            />
-          </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={webhookUrl}
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            placeholder="https://airflow.mycompany.com/api/v1/dags/retrain_model/dagRuns"
+            className="flex-1 block w-full px-3 py-2 bg-[var(--bg-base)] border border-[var(--border)] rounded-md text-[13px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+          />
           
           <button
             onClick={handleSave}
             disabled={loading}
-            className={`flex items-center justify-center px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm ${
-              saved 
-                ? 'bg-transparent border border-[#10b981] text-[#10b981]'
-                : 'bg-[#ededed] hover:bg-[#ffffff] text-[#000000] border border-transparent active:scale-95'
-            } disabled:opacity-50`}
+            className="flex items-center justify-center px-4 py-2 rounded-md font-medium text-[13px] transition-colors bg-black hover:bg-neutral-800 text-white disabled:opacity-50 min-w-[100px]"
           >
-            {saved ? (
-              <>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                <span>Saved</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                <span>{loading ? 'Saving...' : 'Save Webhook'}</span>
-              </>
-            )}
+            {saved ? 'Saved' : loading ? 'Saving...' : 'Save'}
           </button>
         </div>
         
         {error && (
-          <div className="mt-4 p-3 bg-[#7f1d1d]/10 border border-[#7f1d1d]/50 rounded-xl">
-            <p className="text-sm text-[#f87171] flex items-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#f87171] mr-2"></span>
-              {error}
-            </p>
-          </div>
+          <p className="mt-3 text-[13px] text-[var(--red)] font-medium">
+            {error}
+          </p>
         )}
       </div>
     </div>

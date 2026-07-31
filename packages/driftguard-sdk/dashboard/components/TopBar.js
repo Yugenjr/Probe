@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { RefreshCw, User } from 'lucide-react';
+import { RefreshCw, Bell } from 'lucide-react';
 import { getMe } from '../lib/api';
+
+const PAGE_TITLES = {
+  '/dashboard': { label: 'Fleet Overview' },
+  '/docs':      { label: 'Documentation' },
+  '/settings':  { label: 'Settings' },
+};
 
 export default function TopBar({ onRefresh, lastUpdated, isRefreshing }) {
   const router = useRouter();
@@ -12,59 +18,52 @@ export default function TopBar({ onRefresh, lastUpdated, isRefreshing }) {
       try {
         const data = await getMe();
         setUser(data);
-      } catch (err) {
-        console.error("Failed to load user in top bar:", err);
-      }
+      } catch (err) { /* silent */ }
     }
     loadUser();
   }, []);
 
-  const getPageTitle = () => {
-    const { pathname, query } = router;
-    if (pathname === '/dashboard') return 'Fleet Overview';
-    if (pathname.startsWith('/models/')) return `Model Details > ${query.id || ''}`;
-    return 'DriftGuard Console';
-  };
-
-  const formatLastUpdated = () => {
-    if (!lastUpdated) return 'Never';
-    const hours = String(lastUpdated.getHours()).padStart(2, '0');
-    const minutes = String(lastUpdated.getMinutes()).padStart(2, '0');
-    const seconds = String(lastUpdated.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-  };
+  const page = PAGE_TITLES[router.pathname] ||
+    (router.pathname.startsWith('/models/') ? { label: `Model / ${router.query.id || ''}` } : { label: 'Overview' });
 
   return (
-    <header className="h-14 border-b border-white/10 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-40 px-6 flex items-center justify-between">
-      {/* Left: Breadcrumbs Page Title */}
-      <div className="flex items-center space-x-2 text-[13px]">
-        <span className="text-[#a1a1aa] font-medium tracking-tight">Console</span>
-        <span className="text-[#3f3f46]">/</span>
-        <h2 className="font-semibold text-[#ededed] tracking-tight">{getPageTitle()}</h2>
+    <header className="h-[64px] flex items-center justify-between px-6 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-40 shrink-0">
+      {/* Left: breadcrumb + title */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-[var(--text-secondary)]">DriftGuard</span>
+          <span className="text-[var(--border-hover)]">/</span>
+          <span className="font-medium text-[var(--text-primary)]">{page.label}</span>
+        </div>
       </div>
 
-      {/* Right: Sync Status and User Profile */}
-      <div className="flex items-center space-x-5">
-        {onRefresh ? (
-          <div className="flex items-center space-x-3">
-            <span className="text-[11px] text-[#71717a] font-mono tracking-tight">Last sync: {formatLastUpdated()}</span>
+      {/* Right: sync + user */}
+      <div className="flex items-center gap-4">
+        {onRefresh && (
+          <div className="flex items-center gap-3">
             <button
               onClick={onRefresh}
               disabled={isRefreshing}
-              className="p-1.5 rounded-md hover:bg-white/5 text-[#a1a1aa] hover:text-[#ededed] transition-colors cursor-pointer active:scale-95 disabled:opacity-50 group"
+              title="Refresh data"
+              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-md hover:bg-[var(--bg-base)] disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
+              <RefreshCw size={16} className={`${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
           </div>
-        ) : null}
-        
-        <div className="h-4 w-[1px] bg-white/10" />
-        
-        <div className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-white/5 transition-colors cursor-pointer">
-          <div className="w-5 h-5 rounded-full bg-white/10 border border-white/5 flex items-center justify-center">
-            <User className="w-3 h-3 text-[#ededed]" />
+        )}
+
+        <div className="w-[1px] h-5 bg-[var(--border)]" />
+
+        <button className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-md hover:bg-[var(--bg-base)]">
+          <Bell size={16} />
+        </button>
+
+        <div className="w-[1px] h-5 bg-[var(--border)]" />
+
+        <div className="flex items-center gap-2 cursor-pointer group">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#000000] to-[#666666] flex items-center justify-center text-[10px] font-medium text-white shadow-sm ring-1 ring-black/10">
+            {user ? user.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'DG'}
           </div>
-          <span className="text-[13px] font-medium text-[#ededed] tracking-tight">{user ? user.name : 'Loading...'}</span>
         </div>
       </div>
     </header>

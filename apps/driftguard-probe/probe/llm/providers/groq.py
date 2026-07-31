@@ -83,7 +83,11 @@ class GroqProvider(BaseLLMProvider):
         logger.debug("Executing Groq structured generation for schema %s", response_model.__name__)
         
         schema_json = json.dumps(response_model.model_json_schema(), indent=2)
-        system_prompt += f"\n\nYou MUST return a JSON object that strictly adheres to this JSON Schema:\n{schema_json}"
+        system_prompt += (
+            f"\n\nYou MUST return a valid JSON object containing the actual data. "
+            f"Do NOT return the schema definition itself. "
+            f"Your response must be an instance that strictly adheres to this JSON Schema:\n{schema_json}"
+        )
 
         while True:
             current_key = self.api_key
